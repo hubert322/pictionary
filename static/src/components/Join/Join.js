@@ -31,7 +31,7 @@ function Join() {
   const classes = useStyles();
 
   return (
-    <div className="Join">
+    <div className="Join" style={{ height: window.innerHeight }}>
       <div className="JoinGameForm">
         <TextField
           label="Game Code"
