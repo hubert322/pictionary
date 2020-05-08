@@ -16,3 +16,22 @@
   width: 100vw;
   height: 100vh;
 }
+
+.Button {
+  background-color: white;
+  margin-left: 2px;
+  margin-right: 2px;
+  border-width: 3px;
+  border-radius: 5px;
+  font-size: 2rem;
+  color: black;
+  text-decoration: none;
+}
+
+.GameButton:hover {
+  text-decoration: none;
+}
+
+.GameButton:focus {
+  outline: none;
+}

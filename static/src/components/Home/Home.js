@@ -8,12 +8,12 @@ function Home() {
       <h1>Skribbl</h1>
       <div className="MainFrame">
         <Link to="/join">
-          <button type="button" className="GameButton JoinGameButton">
+          <button type="button" className="Button JoinGameButton">
             Join Game
           </button>
         </Link>
         <Link to="/new">
-          <button type="button" className="GameButton NewGameButton">
+          <button type="button" className="Button NewGameButton">
             New Game
           </button>
         </Link>
