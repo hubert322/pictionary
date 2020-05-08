@@ -1,0 +1,60 @@
+.Home {
+  background-color: black;
+  background: #12c2e9; /* fallback for old browsers */
+  background: -webkit-linear-gradient(
+    to right,
+    #f64f59,
+    #c471ed,
+    #12c2e9
+  ); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(
+    to right,
+    #f64f59,
+    #c471ed,
+    #12c2e9
+  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.Home > h1 {
+  color:black
+}
+
+.MainFrame {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.MainFrame > form > input {
+  background-color: white;
+  margin-left: 2px;
+  margin-right: 2px;
+  border-width: 3px;
+  border-radius: 5px;
+  font-size: 2rem;
+  color: black;
+  text-decoration: none;
+}
+
+.MainFrame > button:hover {
+  text-decoration: none;
+}
+
+.MainFrame > button:focus {
+  outline: none;
+}
+
+.JoinGameButton {
+  border-color: #f64f59 !important;
+}
+
+.NewGameButton {
+  border-color: #12c2e9;
+}

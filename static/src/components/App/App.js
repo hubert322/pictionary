@@ -1,19 +1,16 @@
 import React from "react";
-import "./App.css";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import Home from "../Home/Home";
 
 function App() {
   return (
-    <div className="App" style={{ height: window.innerHeight }}>
-      <h1>Skribbl</h1>
-      <div className="MainFrame">
-        <form method="GET" action="https:google.com">
-          <input type="submit" value="Join Game" className="JoinGameButton" />
-        </form>
-        <form method="GET" action="https:google.com">
-          <input type="submit" value="New Game" className="NewGameButton" />
-        </form>
-      </div>
-    </div>
+    <Router>
+      <Switch>
+        <Route path="/">
+          <Home />
+        </Route>
+      </Switch>
+    </Router>
   );
 }
 
