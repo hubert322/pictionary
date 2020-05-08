@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import "./Home.css";
 
 function Home() {
@@ -6,12 +7,16 @@ function Home() {
     <div className="Home" style={{ height: window.innerHeight }}>
       <h1>Skribbl</h1>
       <div className="MainFrame">
-        <form method="GET" action="https:google.com">
-          <input type="submit" value="Join Game" className="JoinGameButton" />
-        </form>
-        <form method="GET" action="https:google.com">
-          <input type="submit" value="New Game" className="NewGameButton" />
-        </form>
+        <Link to="/join">
+          <button type="button" className="GameButton JoinGameButton">
+            Join Game
+          </button>
+        </Link>
+        <Link to="/new">
+          <button type="button" className="GameButton NewGameButton">
+            New Game
+          </button>
+        </Link>
       </div>
     </div>
   );
