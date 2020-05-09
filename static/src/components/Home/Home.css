@@ -13,15 +13,56 @@
 
 .MainFrame {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: space-around;
+  border: 5px solid white;
+  border-radius: 5px;
+  border-image-source: #12c2e9; /* fallback for old browsers */
+  border-image-source: -webkit-linear-gradient(
+    to right,
+    #12c2e9,
+    #c471ed,
+    #f64f59
+  ); /* Chrome 10-25, Safari 5.1-6 */
+  border-image-source: linear-gradient(
+    to right,
+    #12c2e9,
+    #c471ed,
+    #f64f59
+  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  border-image-slice: 1;
+}
+
+.JoinGameContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: space-around;
+}
+
+.JoinGameTextField {
+  flex: 1 1 50%;
+}
+
+.JoinGameLink {
+  flex: 1 1 50%;
+  margin: 5px;
 }
 
 .JoinGameButton {
-  border-color: #f64f59 !important;
+  width: 100%;
+  height: 100%;
+  margin: 0px;
+  border-color: #f64f59;
+}
+
+.NewGameLink {
+  margin: 3px 5px;
 }
 
 .NewGameButton {
+  width: 100%;
+  margin: 0px;
   border-color: #12c2e9;
 }
