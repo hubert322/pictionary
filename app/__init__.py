@@ -1,5 +1,6 @@
 import os
 from flask import Flask
+from flask_cors import CORS
 from .api import blueprints
 
 def create_app(test_config=None):
@@ -21,5 +22,7 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
+
+    cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
     return app

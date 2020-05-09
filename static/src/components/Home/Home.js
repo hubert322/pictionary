@@ -1,5 +1,6 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
+import axios from "axios";
 import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
 import "../App/App.css";
@@ -31,6 +32,39 @@ const useStyles = makeStyles({
 
 function Home() {
   const classes = useStyles();
+  const [gameCode, setGameCode] = useState("");
+  let history = useHistory();
+
+  async function joinGame() {
+    try {
+      let response = await axios.patch(
+        "http://192.168.43.2:5000/api/lobby/join",
+        {
+          gameCode: gameCode,
+          uid: "2000"
+        }
+      );
+      console.log(response.data);
+      history.push(`/lobby?gameCode=${gameCode}`);
+    } catch (e) {
+      console.log(e.response.data);
+    }
+  }
+
+  async function newGame() {
+    try {
+      let response = await axios.post(
+        "http://192.168.43.2:5000/api/lobby/new",
+        {
+          uid: "3000"
+        }
+      );
+      console.log(response.data);
+      history.push(`/lobby?gameCode=${response.data.gameCode}`);
+    } catch (e) {
+      console.log(e.response.data);
+    }
+  }
 
   return (
     <div className="Home" style={{ height: window.innerHeight }}>
@@ -46,18 +80,24 @@ function Home() {
             label="Game Code"
             variant="outlined"
             className={`${classes.textField} JoinGameTextField`}
+            value={gameCode}
+            onChange={e => setGameCode(e.target.value)}
           />
-          <Link to="/api/lobby/join" className="JoinGameLink">
-            <button type="button" className="Button JoinGameButton">
-              Join Game
-            </button>
-          </Link>
-        </div>
-        <Link to="/lobby" className="NewGameLink">
-          <button type="button" className="Button NewGameButton">
-            New Game
+          <button
+            type="button"
+            className="Button JoinGameButton"
+            onClick={joinGame}
+          >
+            Join Game
           </button>
-        </Link>
+        </div>
+        <button
+          type="button"
+          className="Button NewGameButton"
+          onClick={newGame}
+        >
+          New Game
+        </button>
       </div>
     </div>
   );
