@@ -3,10 +3,15 @@ from ..services import lobby_service
 
 lobby_api = Blueprint("lobby_api", __name__)
 
-@lobby_api.route("/api/lobby/join", methods=["POST"])
+@lobby_api.route("/api/lobby/join", methods=["PATCH"])
 def join_game():
     game_code = request.json["gameCode"]
-    
+    uid = request.json["uid"]
+    if not lobby_service.can_join_game(game_code):
+        return "Game Code doesn't exists.", 400
+
+    lobby_service.join_game(game_code, uid)
+    return "Joined Game!", 200
 
 @lobby_api.route("/api/lobby/new", methods=["POST"])
 def new_game():

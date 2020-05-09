@@ -15,6 +15,12 @@ def get_game_code() -> str:
 def register_game_code(game_code: str, uid: str) -> None:
     game_data.create_game(game_code, uid)
 
-def _game_code_exists(game):
-    return len(game) >= 1
+def can_join_game(game_code: str) -> bool:
+    game = game_data.get_game(game_code)
+    return _game_code_exists(game) and not game["isPlaying"]
 
+def join_game(game_code: str, uid: str) -> None:
+    game_data.add_user_to_game(game_code, uid)
+
+def _game_code_exists(game) -> bool:
+    return game is not None
