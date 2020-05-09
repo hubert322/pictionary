@@ -53,7 +53,7 @@ function Home() {
             </button>
           </Link>
         </div>
-        <Link to="/new" className="NewGameLink">
+        <Link to="/lobby" className="NewGameLink">
           <button type="button" className="Button NewGameButton">
             New Game
           </button>
