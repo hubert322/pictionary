@@ -47,7 +47,7 @@ function Home() {
             variant="outlined"
             className={`${classes.textField} JoinGameTextField`}
           />
-          <Link to="/join" className="JoinGameLink">
+          <Link to="/api/lobby/join" className="JoinGameLink">
             <button type="button" className="Button JoinGameButton">
               Join Game
             </button>
