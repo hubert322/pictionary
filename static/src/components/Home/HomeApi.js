@@ -13,7 +13,7 @@ export async function joinGame(gameCode, uid, history) {
   });
 
   socket.on("join_room_announcement", () => {
-    history.push(`/lobby?gameCode=${gameCode}`);
+    history.push(`/room?gameCode=${gameCode}`);
   });
   // try {
   //   let response = await axios.patch(serverBaseUrl + "/api/lobby/join", {
@@ -38,7 +38,7 @@ export function newGame(uid, history) {
   });
 
   socket.on("join_room_announcement", data => {
-    history.push(`/lobby?gameCode=${data.gameCode}`);
+    history.push(`/room?gameCode=${data.gameCode}`);
   });
   // try {
   //   let response = await axios.post(serverBaseUrl + "/api/lobby/new", {

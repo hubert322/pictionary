@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from ..services import lobby_service
+from ..services import room_service
 
 lobby_api = Blueprint("lobby_api", __name__)
 

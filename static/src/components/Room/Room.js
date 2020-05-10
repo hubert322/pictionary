@@ -1,13 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import "./Lobby.css";
+import "./Room.css";
 
-function Lobby() {
+function Room() {
   return (
-    <div className="Lobby">
+    <div className="Room">
       <Link to="/">BACK</Link>
     </div>
   );
 }
 
-export default Lobby;
+export default Room;

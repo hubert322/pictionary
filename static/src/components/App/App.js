@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Home from "../Home/Home";
-import Lobby from "../Lobby/Lobby";
+import Room from "../Room/Room";
 import "./App.css";
 
 function App() {
@@ -12,8 +12,8 @@ function App() {
           <Route exact path="/">
             <Home />
           </Route>
-          <Route path="/lobby">
-            <Lobby />
+          <Route path="/room">
+            <Room />
           </Route>
         </Switch>
       </div>
