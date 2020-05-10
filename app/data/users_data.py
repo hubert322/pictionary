@@ -11,5 +11,5 @@ def create_user(uid: str):
 def get_user(uid: str):
     if users_collection.count_documents({"uid": uid}, limit=1) == 0:
         return None
-    users = users_collection.find({"gameCode": uid})
+    users = users_collection.find({"_id": uid})
     return users[0]

@@ -60,7 +60,7 @@ function Home() {
           <button
             type="button"
             className="Button JoinGameButton"
-            onClick={() => joinGame(gameCode, uid, history)}
+            onClick={() => joinGame(gameCode, uid, name, history)}
           >
             Join Game
           </button>
@@ -68,7 +68,7 @@ function Home() {
         <button
           type="button"
           className="Button NewGameButton"
-          onClick={() => newGame(uid, history)}
+          onClick={() => newGame(uid, name, history)}
         >
           New Game
         </button>

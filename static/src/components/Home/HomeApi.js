@@ -1,20 +1,24 @@
 import axios from "axios";
-import io from "socket.io-client";
+import { socket } from "../../utils/socket";
 import { serverBaseUrl } from "../../utils/const";
 
-export async function joinGame(gameCode, uid, history) {
-  const socket = io.connect(serverBaseUrl);
-  socket.on("connect", () => {
-    console.log("connect");
-    socket.emit("join_room", {
+export async function joinGame(gameCode, uid, name, history) {
+  socket.emit(
+    "join_room",
+    {
       gameCode: gameCode,
-      uid: uid
-    });
-  });
-
-  socket.on("join_room_announcement", () => {
-    history.push(`/room?gameCode=${gameCode}`);
-  });
+      uid: uid,
+      name: name
+    },
+    isSuccess => {
+      console.log(isSuccess);
+      if (isSuccess) {
+        history.push(`/room?gameCode=${gameCode}`);
+      } else {
+        socket.disconnect();
+      }
+    }
+  );
   // try {
   //   let response = await axios.patch(serverBaseUrl + "/api/lobby/join", {
   //     gameCode: gameCode,
@@ -27,19 +31,21 @@ export async function joinGame(gameCode, uid, history) {
   // }
 }
 
-export function newGame(uid, history) {
-  const socket = io.connect(serverBaseUrl);
-  socket.on("connect", () => {
-    console.log("connect");
-    console.log(uid);
-    socket.emit("new_room", {
-      uid: uid
-    });
-  });
-
-  socket.on("join_room_announcement", data => {
-    history.push(`/room?gameCode=${data.gameCode}`);
-  });
+export function newGame(uid, name, history) {
+  socket.emit(
+    "new_room",
+    {
+      uid: uid,
+      name: name
+    },
+    gameCode => {
+      if (gameCode != "") {
+        history.push(`/room?gameCode=${gameCode}`);
+      } else {
+        socket.disconnect();
+      }
+    }
+  );
   // try {
   //   let response = await axios.post(serverBaseUrl + "/api/lobby/new", {
   //     uid: uid
