@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
-import axios from "axios";
 import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
+import { joinGame, newGame, getUid } from "./HomeApi";
+import { useLocalStorage } from "../../utils/hooks";
 import "../App/App.css";
 import "./Home.css";
 
@@ -33,38 +34,9 @@ const useStyles = makeStyles({
 function Home() {
   const classes = useStyles();
   const [gameCode, setGameCode] = useState("");
+  const [name, setName] = useLocalStorage("name", "");
   let history = useHistory();
-
-  async function joinGame() {
-    try {
-      let response = await axios.patch(
-        "http://192.168.43.2:5000/api/lobby/join",
-        {
-          gameCode: gameCode,
-          uid: "2000"
-        }
-      );
-      console.log(response.data);
-      history.push(`/lobby?gameCode=${gameCode}`);
-    } catch (e) {
-      console.log(e.response.data);
-    }
-  }
-
-  async function newGame() {
-    try {
-      let response = await axios.post(
-        "http://192.168.43.2:5000/api/lobby/new",
-        {
-          uid: "3000"
-        }
-      );
-      console.log(response.data);
-      history.push(`/lobby?gameCode=${response.data.gameCode}`);
-    } catch (e) {
-      console.log(e.response.data);
-    }
-  }
+  const uid = getUid();
 
   return (
     <div className="Home" style={{ height: window.innerHeight }}>
@@ -74,6 +46,8 @@ function Home() {
           label="Name"
           variant="outlined"
           className={classes.textField}
+          value={name}
+          onChange={e => setName(e.target.value)}
         />
         <div className="JoinGameContainer">
           <TextField
@@ -86,7 +60,7 @@ function Home() {
           <button
             type="button"
             className="Button JoinGameButton"
-            onClick={joinGame}
+            onClick={() => joinGame(gameCode, uid, history)}
           >
             Join Game
           </button>
@@ -94,7 +68,7 @@ function Home() {
         <button
           type="button"
           className="Button NewGameButton"
-          onClick={newGame}
+          onClick={() => newGame(uid, history)}
         >
           New Game
         </button>
