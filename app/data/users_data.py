@@ -1,11 +1,11 @@
 from . import db
 from flask_pymongo import pymongo
 
-users_collection = pymongo.collection.Collection(db, "users")
+users_collection = db.get_collection("users")
 
 def create_user(uid: str):
     users_collection.insert_one({
-        "uid": uid
+        "_id": uid
     })
 
 def get_user(uid: str):

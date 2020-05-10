@@ -47,11 +47,11 @@
 
 .JoinGameButton {
   flex: 1 1 50%;
-  margin: 5px;
+  margin: 7px;
   border-color: #f64f59;
 }
 
 .NewGameButton {
-  margin: 3px 5px;
+  margin: 5px 5px;
   border-color: #12c2e9;
 }

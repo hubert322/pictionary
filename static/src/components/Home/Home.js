@@ -9,7 +9,7 @@ import "./Home.css";
 
 const useStyles = makeStyles({
   textField: {
-    margin: "5px",
+    margin: "7px",
     "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
       borderColor: "#f64f59"
     },

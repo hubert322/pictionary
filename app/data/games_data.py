@@ -2,11 +2,11 @@ from . import db
 from typing import Dict
 from flask_pymongo import pymongo
 
-games_collection = pymongo.collection.Collection(db, "games")
+games_collection = db.get_collection("games")
 
 def create_game(game_code: str, owner_uid: str):
     games_collection.insert_one({
-        "gameCode": game_code,
+        "_id": game_code,
         "ownerUid": owner_uid,
         "users": [
             owner_uid

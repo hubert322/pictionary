@@ -1,13 +1,17 @@
 import os
 from flask import Flask, session
 from flask_cors import CORS
+from flask_socketio import SocketIO
 from .api import blueprints
+from .handlers import socketio, blueprints
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(SECRET_KEY="dev")
-    for blueprint in blueprints:
+    for blueprint in api.blueprints:
+        app.register_blueprint(blueprint)
+    for blueprint in handlers.blueprints:
         app.register_blueprint(blueprint)
 
     if test_config is None:
@@ -24,5 +28,6 @@ def create_app(test_config=None):
         pass
 
     cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+    socketio.init_app(app, cors_allowed_origins="*")
 
     return app
