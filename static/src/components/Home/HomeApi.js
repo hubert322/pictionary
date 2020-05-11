@@ -2,59 +2,43 @@ import axios from "axios";
 import { socket } from "../../utils/socket";
 import { serverBaseUrl } from "../../utils/const";
 
-export async function joinGame(gameCode, uid, name, history) {
+export async function joinGame(gameCode, uid, username, history) {
   socket.emit(
     "join_room",
     {
       gameCode: gameCode,
       uid: uid,
-      name: name
+      username: username
     },
-    isSuccess => {
-      console.log(isSuccess);
-      if (isSuccess) {
-        history.push(`/room?gameCode=${gameCode}`);
+    data => {
+      console.log("join game");
+      console.log(data);
+      if (data.users !== {}) {
+        history.push(`/room?gameCode=${gameCode}`, data);
       } else {
         socket.disconnect();
       }
     }
   );
-  // try {
-  //   let response = await axios.patch(serverBaseUrl + "/api/lobby/join", {
-  //     gameCode: gameCode,
-  //     uid: uid
-  //   });
-  //   console.log(response.data);
-  //   history.push(`/lobby?gameCode=${gameCode}`);
-  // } catch (e) {
-  //   console.log(e.response.data);
-  // }
 }
 
-export function newGame(uid, name, history) {
+export function newGame(uid, username, history) {
   socket.emit(
     "new_room",
     {
       uid: uid,
-      name: name
+      username: username
     },
-    gameCode => {
-      if (gameCode != "") {
-        history.push(`/room?gameCode=${gameCode}`);
+    data => {
+      console.log("new game");
+      console.log(data);
+      if (data.gameCode !== "") {
+        history.push(`/room?gameCode=${data.gameCode}`, data);
       } else {
         socket.disconnect();
       }
     }
   );
-  // try {
-  //   let response = await axios.post(serverBaseUrl + "/api/lobby/new", {
-  //     uid: uid
-  //   });
-  //   console.log(response.data);
-  //   history.push(`/lobby?gameCode=${response.data.gameCode}`);
-  // } catch (e) {
-  //   console.log(e.response.data);
-  // }
 }
 
 export function getUid() {
@@ -62,7 +46,7 @@ export function getUid() {
   if (uid != null) {
     return uid;
   }
-  return async () => {
+  return (async () => {
     try {
       let response = await axios.post(serverBaseUrl + "/api/user/new");
       console.log(response.data);
@@ -73,5 +57,5 @@ export function getUid() {
     }
 
     return uid;
-  };
+  })();
 }

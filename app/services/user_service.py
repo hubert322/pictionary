@@ -1,5 +1,6 @@
 import secrets
 import string
+from typing import List
 from ..data import users_data
 
 def get_uid() -> str:
@@ -12,8 +13,14 @@ def get_uid() -> str:
             return uid
     return ""
 
+def get_user(uid: str) -> List:
+    return users_data.get_user(uid)
+
 def register_user(uid: str) -> None:
     users_data.create_user(uid)
+
+def update_username(uid: str, username: str) -> None:
+    users_data.update_username(uid, username)
 
 def _uid_exists(user) -> bool:
     return user is not None

@@ -28,3 +28,29 @@ def add_user_to_game(game_code: str, uid: str):
             }
         }
     )
+
+def get_all_users_in_game(game_code: str):
+    return games_collection.aggregate([
+        {
+            "$match": 
+            {
+                "_id": game_code
+            }
+        },
+        {
+            "$lookup": 
+            {
+                "from": "users",
+                "localField": "users",
+                "foreignField": "_id",
+                "as": "users"
+            }
+        },
+        {
+            "$project":
+            {
+                "_id": 0,
+                "users": "$users"
+            }
+        }
+    ]).next()["users"]

@@ -34,7 +34,7 @@ const useStyles = makeStyles({
 function Home() {
   const classes = useStyles();
   const [gameCode, setGameCode] = useState("");
-  const [name, setName] = useLocalStorage("name", "");
+  const [username, setUsername] = useLocalStorage("username", "");
   let history = useHistory();
   const uid = getUid();
 
@@ -46,8 +46,8 @@ function Home() {
           label="Name"
           variant="outlined"
           className={classes.textField}
-          value={name}
-          onChange={e => setName(e.target.value)}
+          value={username}
+          onChange={e => setUsername(e.target.value)}
         />
         <div className="JoinGameContainer">
           <TextField
@@ -60,7 +60,7 @@ function Home() {
           <button
             type="button"
             className="Button JoinGameButton"
-            onClick={() => joinGame(gameCode, uid, name, history)}
+            onClick={() => joinGame(gameCode, uid, username, history)}
           >
             Join Game
           </button>
@@ -68,7 +68,7 @@ function Home() {
         <button
           type="button"
           className="Button NewGameButton"
-          onClick={() => newGame(uid, name, history)}
+          onClick={() => newGame(uid, username, history)}
         >
           New Game
         </button>

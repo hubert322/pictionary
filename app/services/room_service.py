@@ -1,5 +1,6 @@
 import secrets
 import string
+from typing import List
 from ..data import games_data
 
 def get_game_code() -> str:
@@ -21,6 +22,9 @@ def can_join_game(game_code: str) -> bool:
 
 def join_game(game_code: str, uid: str) -> None:
     games_data.add_user_to_game(game_code, uid)
+
+def get_all_users_in_game(game_code: str) -> List:
+    return games_data.get_all_users_in_game(game_code)
 
 def _game_code_exists(game) -> bool:
     return game is not None
