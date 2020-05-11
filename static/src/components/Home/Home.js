@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
-import { joinGame, newGame, getUid } from "./HomeApi";
+import { joinGame, newGame, getUid } from "./HomeApiSocket";
 import { useLocalStorage } from "../../utils/hooks";
 import "../App/App.css";
 import "./Home.css";
