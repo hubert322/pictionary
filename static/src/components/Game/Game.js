@@ -6,25 +6,24 @@ import { socket } from "../../utils/socket";
 import "./Game.css";
 
 function Game() {
-  // const state = useLocation().state;
-  const state = {
-    players: [
-      {
-        _id: "1",
-        playerName: "Player1"
-      },
-      {
-        _id: "2",
-        playerName: "Player2"
-      }
-    ],
-    gameCode: "LMAO"
-  }
+  const state = useLocation().state;
+  // const state = {
+  //   players: [
+  //     {
+  //       _id: "1",
+  //       playerName: "Player1"
+  //     },
+  //     {
+  //       _id: "2",
+  //       playerName: "Player2"
+  //     }
+  //   ],
+  //   gameCode: "LMAO"
+  // }
   const [players, setPlayers] = useState(state.players);
   const history = useHistory();
   const gameCode = state.gameCode;
-  const currentPlayer = players[players.length - 1];
-  console.log(`Current Player: ${currentPlayer}`);
+  const pid = state.pid;
 
   // const gameCode = state.gameCode;
 
@@ -47,7 +46,7 @@ function Game() {
           ))}
         </div>
         <Canvas />
-        <ChatRoom gameCode={gameCode} pid={currentPlayer._id} />
+        <ChatRoom gameCode={gameCode} pid={pid} />
       </div>
     </div>
   );

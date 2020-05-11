@@ -23,7 +23,8 @@ def get_game(game_code: str):
 def add_player_to_game(game_code: str, pid: str):
     games_collection.update({"_id": game_code},
         {
-            "$push": {
+            "$push": 
+            {
                 "players": pid
             }
         }
@@ -54,3 +55,13 @@ def get_all_players_in_game(game_code: str):
             }
         }
     ]).next()["players"]
+
+def update_playing_status(game_code: str, is_playing: str):
+    games_collection.update({"_id": game_code}, 
+        {
+            "$set":
+            {
+                "isPlaying": is_playing
+            }
+        }
+    )

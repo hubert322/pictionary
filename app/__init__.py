@@ -3,7 +3,7 @@ from flask import Flask, session
 from flask_cors import CORS
 from flask_socketio import SocketIO
 from .api import blueprints
-from .handlers import socketio, blueprints
+from .sockets import socketio, blueprints
 
 def create_app(test_config=None):
     # create and configure the app
@@ -11,7 +11,7 @@ def create_app(test_config=None):
     app.config.from_mapping(SECRET_KEY="dev")
     for blueprint in api.blueprints:
         app.register_blueprint(blueprint)
-    for blueprint in handlers.blueprints:
+    for blueprint in sockets.blueprints:
         app.register_blueprint(blueprint)
 
     if test_config is None:

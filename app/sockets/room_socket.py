@@ -12,13 +12,10 @@ def join_room_handler(data):
     player_name = data["playerName"]
 
     if not room_service.can_join_game(game_code):
-        return {"players": {}}
+        return {"players": None}
     
-    print(game_code, pid, player_name)
     room_service.join_game(game_code, pid)
-    players = join_room_helper(game_code, pid, player_name)
-    return {"players": players}
-
+    return join_room_helper(game_code, pid, player_name)
 
 @socketio.on("new_room")
 def new_room_handler(data):
@@ -29,12 +26,17 @@ def new_room_handler(data):
         return {"gameCode": ""}
 
     room_service.register_game_code(game_code, pid)
-    players = join_room_helper(game_code, pid, player_name)
-    return {"gameCode": game_code, "players": players}
+    return join_room_helper(game_code, pid, player_name)
 
 def join_room_helper(game_code: str, pid: str, player_name: str):
     join_room(game_code)
     player_service.update_player_name(pid, player_name)
     player = player_service.get_player(pid)
     socketio.emit("join_room_announcement", {"player": player}, broadcast=True, room=game_code)
-    return room_service.get_all_players_in_game(game_code)
+    players = room_service.get_all_players_in_game(game_code)
+
+    return {
+        "gameCode": game_code,
+        "pid": pid,
+        "players": players
+    }

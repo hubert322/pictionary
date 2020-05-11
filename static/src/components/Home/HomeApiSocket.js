@@ -13,8 +13,7 @@ export function joinGame(gameCode, pid, playerName, history) {
     data => {
       console.log("join game");
       console.log(data);
-      data.gameCode = gameCode;
-      if (data.players !== {}) {
+      if (data.players !== null) {
         history.push(`/room?gameCode=${gameCode}`, data);
       } else {
         socket.disconnect();

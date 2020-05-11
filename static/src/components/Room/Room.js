@@ -9,6 +9,7 @@ function Room() {
   const [players, setPlayers] = useState(state.players);
   const history = useHistory();
   const gameCode = state.gameCode;
+  const pid = state.pid;
 
   useEffect(() => {
     socket.on("join_room_announcement", data => {
@@ -16,7 +17,22 @@ function Room() {
       console.log(data.player);
       setPlayers(players => [...players, data.player]);
     });
-  });
+  }, []);
+
+  useEffect(() => {
+    socket.on("play_game_announcement", () => {
+      console.log(players);
+      history.push(`/game?gameCode=${gameCode}`, {
+        gameCode: gameCode,
+        pid: pid,
+        players: players
+      });
+    });
+
+    return () => {
+      socket.off("play_game_announcement");
+    };
+  }, [players]);
 
   return (
     <div className="Room">
