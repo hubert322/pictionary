@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
-import { joinGame, newGame, getUid } from "./HomeApiSocket";
+import { joinGame, newGame, getPid } from "./HomeApiSocket";
 import { useLocalStorage } from "../../utils/hooks";
 import "../App/App.css";
 import "./Home.css";
@@ -34,9 +34,9 @@ const useStyles = makeStyles({
 function Home() {
   const classes = useStyles();
   const [gameCode, setGameCode] = useState("");
-  const [username, setUsername] = useLocalStorage("username", "");
+  const [playerName, setPlayerName] = useLocalStorage("playerName", "");
   let history = useHistory();
-  const uid = getUid();
+  const pid = getPid();
 
   return (
     <div className="Home" style={{ height: window.innerHeight }}>
@@ -46,8 +46,8 @@ function Home() {
           label="Name"
           variant="outlined"
           className={classes.textField}
-          value={username}
-          onChange={e => setUsername(e.target.value)}
+          value={playerName}
+          onChange={e => setPlayerName(e.target.value)}
         />
         <div className="JoinGameContainer">
           <TextField
@@ -60,7 +60,7 @@ function Home() {
           <button
             type="button"
             className="Button JoinGameButton"
-            onClick={() => joinGame(gameCode, uid, username, history)}
+            onClick={() => joinGame(gameCode, pid, playerName, history)}
           >
             Join Game
           </button>
@@ -68,7 +68,7 @@ function Home() {
         <button
           type="button"
           className="Button NewGameButton"
-          onClick={() => newGame(uid, username, history)}
+          onClick={() => newGame(pid, playerName, history)}
         >
           New Game
         </button>

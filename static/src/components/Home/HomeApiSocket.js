@@ -2,18 +2,19 @@ import axios from "axios";
 import { socket } from "../../utils/socket";
 import { serverBaseUrl } from "../../utils/const";
 
-export async function joinGame(gameCode, uid, username, history) {
+export function joinGame(gameCode, pid, playerName, history) {
   socket.emit(
     "join_room",
     {
       gameCode: gameCode,
-      uid: uid,
-      username: username
+      pid: pid,
+      playerName: playerName
     },
     data => {
       console.log("join game");
       console.log(data);
-      if (data.users !== {}) {
+      data.gameCode = gameCode;
+      if (data.players !== {}) {
         history.push(`/room?gameCode=${gameCode}`, data);
       } else {
         socket.disconnect();
@@ -22,12 +23,12 @@ export async function joinGame(gameCode, uid, username, history) {
   );
 }
 
-export function newGame(uid, username, history) {
+export function newGame(pid, playerName, history) {
   socket.emit(
     "new_room",
     {
-      uid: uid,
-      username: username
+      pid: pid,
+      playerName: playerName
     },
     data => {
       console.log("new game");
@@ -41,21 +42,21 @@ export function newGame(uid, username, history) {
   );
 }
 
-export function getUid() {
-  let uid = localStorage.getItem("uid");
-  if (uid != null) {
-    return uid;
+export function getPid() {
+  let pid = localStorage.getItem("pid");
+  if (pid != null) {
+    return pid;
   }
   return (async () => {
     try {
-      let response = await axios.post(serverBaseUrl + "/api/user/new");
+      let response = await axios.post(serverBaseUrl + "/api/player/new");
       console.log(response.data);
-      uid = response.data["uid"];
-      localStorage.setItem("uid", uid);
+      pid = response.data["pid"];
+      localStorage.setItem("pid", pid);
     } catch (e) {
       console.log(e.response.data);
     }
 
-    return uid;
+    return pid;
   })();
 }

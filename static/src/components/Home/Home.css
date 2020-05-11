@@ -15,7 +15,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: space-around;
+  align-items: stretch;
   border: 5px solid white;
   border-radius: 5px;
   border-image-source: #12c2e9; /* fallback for old browsers */
@@ -38,7 +38,7 @@
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  align-items: space-around;
+  align-items: stretch;
 }
 
 .JoinGameTextField {

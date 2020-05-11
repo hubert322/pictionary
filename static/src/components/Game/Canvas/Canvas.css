@@ -1,0 +1,28 @@
+.CanvasContainer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+}
+  
+.Canvas {
+  width: 100% !important;
+  height: 100% !important;
+  flex: 1 1 90%;
+}
+
+.CanvasControlsContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: stretch;
+  flex: 1 1 10%;
+}
+
+.CanvasControl {
+  flex-grow: 1;
+}

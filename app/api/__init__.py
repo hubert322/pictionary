@@ -1,5 +1,5 @@
-from .user_api import user_api
+from .player_api import player_api
 
 blueprints = [
-    user_api
+    player_api
 ]

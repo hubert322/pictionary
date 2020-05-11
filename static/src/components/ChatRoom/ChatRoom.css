@@ -1,0 +1,14 @@
+.ChatRoom {
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.MessageArea {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+}

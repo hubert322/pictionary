@@ -13,18 +13,18 @@ def get_game_code() -> str:
             return game_code
     return ""
 
-def register_game_code(game_code: str, uid: str) -> None:
-    games_data.create_game(game_code, uid)
+def register_game_code(game_code: str, pid: str) -> None:
+    games_data.create_game(game_code, pid)
 
 def can_join_game(game_code: str) -> bool:
     game = games_data.get_game(game_code)
     return _game_code_exists(game) and not game["isPlaying"]
 
-def join_game(game_code: str, uid: str) -> None:
-    games_data.add_user_to_game(game_code, uid)
+def join_game(game_code: str, pid: str) -> None:
+    games_data.add_player_to_game(game_code, pid)
 
-def get_all_users_in_game(game_code: str) -> List:
-    return games_data.get_all_users_in_game(game_code)
+def get_all_players_in_game(game_code: str) -> List:
+    return games_data.get_all_players_in_game(game_code)
 
 def _game_code_exists(game) -> bool:
     return game is not None

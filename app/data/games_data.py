@@ -4,12 +4,12 @@ from flask_pymongo import pymongo
 
 games_collection = db.get_collection("games")
 
-def create_game(game_code: str, owner_uid: str):
+def create_game(game_code: str, owner_pid: str):
     games_collection.insert_one({
         "_id": game_code,
-        "ownerUid": owner_uid,
-        "users": [
-            owner_uid
+        "owner_pid": owner_pid,
+        "players": [
+            owner_pid
         ],
         "isPlaying": False
     })
@@ -20,16 +20,16 @@ def get_game(game_code: str):
     games = games_collection.find({"_id": game_code})
     return games[0]
 
-def add_user_to_game(game_code: str, uid: str):
+def add_player_to_game(game_code: str, pid: str):
     games_collection.update({"_id": game_code},
         {
             "$push": {
-                "users": uid
+                "players": pid
             }
         }
     )
 
-def get_all_users_in_game(game_code: str):
+def get_all_players_in_game(game_code: str):
     return games_collection.aggregate([
         {
             "$match": 
@@ -40,17 +40,17 @@ def get_all_users_in_game(game_code: str):
         {
             "$lookup": 
             {
-                "from": "users",
-                "localField": "users",
+                "from": "players",
+                "localField": "players",
                 "foreignField": "_id",
-                "as": "users"
+                "as": "players"
             }
         },
         {
             "$project":
             {
                 "_id": 0,
-                "users": "$users"
+                "players": "$players"
             }
         }
-    ]).next()["users"]
+    ]).next()["players"]
