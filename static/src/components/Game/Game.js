@@ -31,7 +31,11 @@ function Game() {
     socket.on("player_disconect", data => {
       setPlayers(players.filter(player => player._id !== data.player._id));
     });
-  });
+
+    return () => {
+      socket.off("player_disconnect");
+    };
+  }, []);
 
   return (
     <div className="Game">
