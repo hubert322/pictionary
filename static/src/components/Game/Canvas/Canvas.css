@@ -10,6 +10,8 @@
 .Canvas {
   width: 100% !important;
   height: 100% !important;
+  background-color: white;
+  border-radius: 7px;
   flex: 1 1 90%;
 }
 
