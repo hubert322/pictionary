@@ -10,7 +10,7 @@ import {
 } from "./CanvasApiSocket";
 
 function Canvas(props) {
-  const { gameCode } = props;
+  const { gameCode, pid, artist, isChoosing } = props;
   const canvas = useRef(null);
   let isMouseDragging = false;
   let prevX = 0;
@@ -24,6 +24,9 @@ function Canvas(props) {
   }
 
   function mouseDown(e, isTouch = false) {
+    // if (pid !== artist._id) {
+    //   return;
+    // }
     isMouseDragging = true;
     if (isTouch) {
       for (let i = 0; i < 1; ++i) {
@@ -40,6 +43,9 @@ function Canvas(props) {
   }
 
   function mouseMove(e, isTouch = false) {
+    // if (pid !== artist._id) {
+    //   return;
+    // }
     if (isMouseDragging) {
       if (isTouch) {
         for (let i = 0; i < 1; ++i) {
@@ -57,6 +63,9 @@ function Canvas(props) {
   }
 
   function mouseUp() {
+    // if (pid !== artist._id) {
+    //   return;
+    // }
     isMouseDragging = false;
   }
 
@@ -208,18 +217,28 @@ function Canvas(props) {
     };
   }, []);
 
+  console.log(paths);
+
   return (
     <div className="CanvasContainer">
-      <canvas
-        className="Canvas"
-        ref={canvas}
-        onTouchStart={touchStart}
-        onMouseDown={mouseDown}
-        onTouchMove={touchMove}
-        onMouseMove={mouseMove}
-        onTouchEnd={touchEnd}
-        onMouseUp={mouseUp}
-      />
+      {!isChoosing ? (
+        <canvas
+          className="Canvas"
+          ref={canvas}
+          onTouchStart={touchStart}
+          onMouseDown={mouseDown}
+          onTouchMove={touchMove}
+          onMouseMove={mouseMove}
+          onTouchEnd={touchEnd}
+          onMouseUp={mouseUp}
+        />
+      ) : (
+        <div className="Overlay">
+          {artist !== null
+            ? `${artist.playerName} is currently choosing their word...`
+            : `Loading...`}
+        </div>
+      )}
       <div className="CanvasControlsContainer">
         <button
           type="button"
@@ -242,14 +261,23 @@ function Canvas(props) {
         <button
           type="button"
           className="CanvasControl"
-          onClick={() => sendUndoCanvas(gameCode)}
+          onClick={() => {
+            console.log(paths.length);
+            if (paths.length) {
+              sendUndoCanvas(gameCode);
+            }
+          }}
         >
           Undo
         </button>
         <button
           type="button"
           className="CanvasControl"
-          onClick={() => sendClearCanvas(gameCode)}
+          onClick={() => {
+            if (paths.length) {
+              sendClearCanvas(gameCode);
+            }
+          }}
         >
           Clear
         </button>
@@ -259,7 +287,14 @@ function Canvas(props) {
 }
 
 Canvas.propTypes = {
-  gameCode: PropTypes.string.isRequired
+  gameCode: PropTypes.string.isRequired,
+  pid: PropTypes.string.isRequired,
+  artist: PropTypes.objectOf(PropTypes.string),
+  isChoosing: PropTypes.bool.isRequired
+};
+
+Canvas.defaultProps = {
+  artist: null
 };
 
 export default Canvas;

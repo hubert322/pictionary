@@ -65,3 +65,26 @@ def update_playing_status(game_code: str, is_playing: str):
             }
         }
     )
+
+def update_enter_game_count(game_code: str, enter_game_count: int):
+    games_collection.update({"_id": game_code},
+        {
+            "$set":
+            {
+                "enter_game_count": enter_game_count
+            }
+        },
+        True
+    )
+
+def update_artist_index(game_code: str, artist_index: int):
+    games_collection.update({"_id": game_code},
+        {
+            "$set":
+            {
+                "artist_index": artist_index
+            }
+        },
+        True
+    )
+    

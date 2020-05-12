@@ -1,6 +1,6 @@
 from flask import Blueprint
 from flask_socketio import SocketIO, emit, join_room
-from ..services import room_service, player_service
+from ..services import game_service, player_service
 from . import socketio
 
 room_socket = Blueprint("room_socket", __name__)
@@ -11,21 +11,21 @@ def join_room_handler(data):
     pid = data["pid"]
     player_name = data["playerName"]
 
-    if not room_service.can_join_game(game_code):
+    if not game_service.can_join_game(game_code):
         return {"players": None}
     
-    room_service.join_game(game_code, pid)
+    game_service.join_game(game_code, pid)
     return join_room_helper(game_code, pid, player_name)
 
 @socketio.on("new_room")
 def new_room_handler(data):
     pid = data["pid"]
     player_name = data["playerName"]
-    game_code = room_service.get_game_code()
+    game_code = game_service.get_game_code()
     if game_code == "":
         return {"gameCode": ""}
 
-    room_service.register_game_code(game_code, pid)
+    game_service.register_game_code(game_code, pid)
     return join_room_helper(game_code, pid, player_name)
 
 def join_room_helper(game_code: str, pid: str, player_name: str):
@@ -33,7 +33,7 @@ def join_room_helper(game_code: str, pid: str, player_name: str):
     player_service.update_player_name(pid, player_name)
     player = player_service.get_player(pid)
     socketio.emit("join_room_announcement", {"player": player}, broadcast=True, room=game_code)
-    players = room_service.get_all_players_in_game(game_code)
+    players = game_service.get_all_players_in_game(game_code)
 
     return {
         "gameCode": game_code,

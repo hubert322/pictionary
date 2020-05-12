@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import Canvas from "./Canvas/Canvas";
 import ChatRoom from "../ChatRoom/ChatRoom";
+import { sendEnterGame } from "./GameApiSocket";
 import { socket } from "../../utils/socket";
 import "./Game.css";
 
@@ -21,11 +22,17 @@ function Game() {
   //   gameCode: "LMAO"
   // }
   const [players, setPlayers] = useState(state.players);
+  const [artist, setArtist] = useState(null);
+  const [isChoosing, setIsChoosing] = useState(false);
   const history = useHistory();
   const gameCode = state.gameCode;
   const pid = state.pid;
 
   // const gameCode = state.gameCode;
+
+  useEffect(() => {
+    sendEnterGame(gameCode);
+  }, []);
 
   useEffect(() => {
     socket.on("player_disconect", data => {
@@ -34,6 +41,17 @@ function Game() {
 
     return () => {
       socket.off("player_disconnect");
+    };
+  }, []);
+
+  useEffect(() => {
+    socket.on("next_artist_announcement", data => {
+      console.log(data.artist.playerName);
+      setArtist(data.artist);
+    });
+
+    return () => {
+      socket.off("next_artist_announcement");
     };
   }, []);
 
@@ -49,7 +67,12 @@ function Game() {
             </div>
           ))}
         </div>
-        <Canvas gameCode={gameCode} pid={pid} />
+        <Canvas
+          gameCode={gameCode}
+          pid={pid}
+          artist={artist}
+          isChoosing={isChoosing}
+        />
         <ChatRoom gameCode={gameCode} pid={pid} />
       </div>
     </div>

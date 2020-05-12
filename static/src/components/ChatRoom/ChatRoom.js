@@ -49,7 +49,6 @@ function ChatRoom(props) {
         onChange={e => setMessage(e.target.value)}
         inputRef={messageTextField}
         onKeyUp={e => messageTextFieldOnKey(e)}
-        autoFocus
       />
       <button type="button" onClick={() => onSendMessage()}>
         Send
