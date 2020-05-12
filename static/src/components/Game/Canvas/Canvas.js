@@ -2,7 +2,12 @@ import React, { useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import { socket } from "../../../utils/socket";
 import "./Canvas.css";
-import { sendDrawLine, sendDrawDot } from "./CanvasApiSocket";
+import {
+  sendDrawLine,
+  sendDrawDot,
+  sendUndoCanvas,
+  sendClearCanvas
+} from "./CanvasApiSocket";
 
 function Canvas(props) {
   const { gameCode, pid } = props;
@@ -10,7 +15,7 @@ function Canvas(props) {
   let isMouseDragging = false;
   let prevX = 0;
   let prevY = 0;
-  let color = "#FF0000";
+  let color = "#f64f59";
   let paths = [];
 
   function mouseDown(e) {
@@ -29,45 +34,25 @@ function Canvas(props) {
   }
 
   function draw(e, isMouseMove) {
-    const ctx = canvas.current.getContext("2d");
     let { currX, currY } = getMousePos(e);
     if (isMouseMove) {
       const line = {
         prevX: prevX,
         prevY: prevY,
         currX: currX,
-        currY: currY,
-        color: color
+        currY: currY
       };
-      drawLine(ctx, line);
+      sendDrawLine(gameCode, line);
     } else {
       const dot = {
         x: currX,
         y: currY,
-        color: color
+        newColor: color
       };
-      drawDot(ctx, dot);
-      paths.push([]);
+      sendDrawDot(gameCode, dot);
     }
-    paths[paths.length - 1].push({ x: currX, y: currY });
     prevX = currX;
     prevY = currY;
-  }
-
-  function drawLine(ctx, line) {
-    const { prevX, prevY, currX, currY, color } = line;
-    ctx.strokeStyle = color;
-    ctx.moveTo(prevX, prevY);
-    ctx.lineTo(currX, currY);
-    ctx.stroke();
-    sendDrawLine(gameCode, pid, line);
-  }
-
-  function drawDot(ctx, dot) {
-    const { x, y, color } = dot;
-    ctx.fillStyle = color;
-    ctx.fillRect(x, y, 2, 2);
-    sendDrawDot(gameCode, pid, dot);
   }
 
   function getMousePos(e) {
@@ -82,12 +67,35 @@ function Canvas(props) {
     };
   }
 
-  function clearCanvas(isUndoCanvas) {
+  function drawLine(line, addPath) {
+    const { prevX, prevY, currX, currY } = line;
     const ctx = canvas.current.getContext("2d");
-    ctx.clearRect(0, 0, canvas.current.width, canvas.current.height);
     ctx.beginPath();
-    if (!isUndoCanvas) {
-      paths = [];
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.moveTo(prevX, prevY);
+    ctx.lineTo(currX, currY);
+    ctx.stroke();
+    ctx.closePath();
+    if (addPath) {
+      paths[paths.length - 1].points.push({ x: currX, y: currY });
+    }
+  }
+
+  function drawDot(dot, addPath) {
+    const { x, y, newColor } = dot;
+    const ctx = canvas.current.getContext("2d");
+    color = newColor;
+    ctx.beginPath();
+    ctx.fillStyle = color;
+    ctx.fillRect(x, y, 2, 2);
+    ctx.closePath();
+    if (addPath) {
+      paths.push({
+        points: [],
+        newColor: color
+      });
+      paths[paths.length - 1].points.push({ x: x, y: y });
     }
   }
 
@@ -95,57 +103,78 @@ function Canvas(props) {
     if (paths.length) {
       clearCanvas(true);
       paths.pop();
-      const ctx = canvas.current.getContext("2d");
-      for (const path of paths) {
+      for (let i = 0; i < paths.length; ++i) {
+        const { points, newColor } = paths[i];
         const dot = {
-          x: path[0].x,
-          y: path[0].y,
-          color: color
+          x: points[0].x,
+          y: points[0].y,
+          newColor: newColor
         };
-        drawDot(ctx, dot);
-        for (let i = 1; i < path.length; ++i) {
+        drawDot(dot, false);
+        for (let j = 1; j < points.length; ++j) {
           const line = {
-            prevX: path[i - 1].x,
-            prevY: path[i - 1].y,
-            currX: path[i].x,
-            currY: path[i].y,
-            color: color
+            prevX: points[j - 1].x,
+            prevY: points[j - 1].y,
+            currX: points[j].x,
+            currY: points[j].y
           };
-          drawLine(ctx, line);
+          drawLine(line, false);
         }
       }
     }
   }
 
+  function clearCanvas(isUndoCanvas) {
+    const ctx = canvas.current.getContext("2d");
+    ctx.clearRect(0, 0, canvas.current.width, canvas.current.height);
+    // ctx.beginPath();
+    if (!isUndoCanvas) {
+      paths = [];
+    }
+  }
+
   useEffect(() => {
     socket.on("draw_line_announcement", data => {
-      if (pid != data.pid) {
-        const ctx = canvas.current.getContext("2d");
-        drawLine(ctx, data.line);
-      }
+      drawLine(data.line, true);
     });
 
     return () => {
-      socket.off("draw_line_announcemen");
+      socket.off("draw_line_announcement");
     };
   }, []);
 
   useEffect(() => {
     socket.on("draw_dot_announcement", data => {
-      if (pid != data.pid) {
-        const ctx = canvas.current.getContext("2d");
-        drawDot(ctx, data.dot);
-      }
+      drawDot(data.dot, true);
     });
 
     return () => {
-      socket.off("draw_dot_announcemen");
+      socket.off("draw_dot_announcement");
+    };
+  }, []);
+
+  useEffect(() => {
+    socket.on("undo_canvas_announcement", () => {
+      undoCanvas();
+    });
+
+    return () => {
+      socket.off("undo_canvas_announcement");
+    };
+  }, []);
+
+  useEffect(() => {
+    socket.on("clear_canvas_announcement", () => {
+      clearCanvas(false);
+    });
+
+    return () => {
+      socket.off("clear_canvas_announcement");
     };
   }, []);
 
   return (
     <div className="CanvasContainer">
-      {/* <CanvasDraw className="Canvas" ref={canvas} onMouseDown={myFunction} /> */}
       <canvas
         className="Canvas"
         ref={canvas}
@@ -157,14 +186,32 @@ function Canvas(props) {
         <button
           type="button"
           className="CanvasControl"
-          onClick={() => undoCanvas()}
+          onClick={() => {
+            color = "#f64f59";
+          }}
+        >
+          Red
+        </button>
+        <button
+          type="button"
+          className="CanvasControl"
+          onClick={() => {
+            color = "#12c2e9";
+          }}
+        >
+          Blue
+        </button>
+        <button
+          type="button"
+          className="CanvasControl"
+          onClick={() => sendUndoCanvas(gameCode)}
         >
           Undo
         </button>
         <button
           type="button"
           className="CanvasControl"
-          onClick={() => clearCanvas(false)}
+          onClick={() => sendClearCanvas(gameCode)}
         >
           Clear
         </button>
