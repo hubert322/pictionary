@@ -1,5 +1,4 @@
 import React, { useState, useRef } from "react";
-import CanvasDraw from "react-canvas-draw";
 import "./Canvas.css";
 
 function Canvas() {
@@ -23,7 +22,6 @@ function Canvas() {
 
   function mouseUp() {
     isMouseDragging = false;
-    console.log(paths);
   }
 
   function draw(e, isMouseMove) {
@@ -75,7 +73,6 @@ function Canvas() {
 
   function undoCanvas() {
     if (paths.length) {
-      // console.log(paths);
       clearCanvas(true);
       paths.pop();
       const ctx = canvas.current.getContext("2d");
