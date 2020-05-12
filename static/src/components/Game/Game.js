@@ -49,7 +49,7 @@ function Game() {
             </div>
           ))}
         </div>
-        <Canvas />
+        <Canvas gameCode={gameCode} pid={pid} />
         <ChatRoom gameCode={gameCode} pid={pid} />
       </div>
     </div>

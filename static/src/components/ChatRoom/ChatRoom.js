@@ -13,7 +13,7 @@ function ChatRoom(props) {
   const messageTextField = useRef(null);
 
   useEffect(() => {
-    socket.on("receive_message", data => {
+    socket.on("send_message_announcement", data => {
       console.log("got message");
       console.log(data);
       let messageNode = document.createElement("p");
@@ -22,7 +22,7 @@ function ChatRoom(props) {
     });
 
     return () => {
-      socket.off("receive_message");
+      socket.off("send_message_announcement");
     };
   }, []);
 

@@ -19,7 +19,27 @@ def send_message_handler(data):
     pid = data["pid"]
     message = data["message"]
     player = player_service.get_player(pid)
-    socketio.emit("receive_message", {
+    socketio.emit("send_message_announcement", {
         "playerName": player["playerName"],
         "message": message
+    }, broadcast=True, room=game_code)
+
+@socketio.on("send_draw_line")
+def send_draw_line_handler(data):
+    game_code = data["gameCode"]
+    pid = data["pid"]
+    line = data["line"]
+    socketio.emit("draw_line_announcement", {
+        "pid": pid,
+        "line": line
+    }, broadcast=True, room=game_code)
+
+@socketio.on("send_draw_dot")
+def send_draw_dot_handler(data):
+    game_code = data["gameCode"]
+    pid = data["pid"]
+    dot = data["dot"]
+    socketio.emit("draw_dot_announcement", {
+        "pid": pid,
+        "dot": dot
     }, broadcast=True, room=game_code)

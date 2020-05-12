@@ -1,7 +1,11 @@
-import React, { useState, useRef } from "react";
+import React, { useEffect, useRef } from "react";
+import PropTypes from "prop-types";
+import { socket } from "../../../utils/socket";
 import "./Canvas.css";
+import { sendDrawLine, sendDrawDot } from "./CanvasApiSocket";
 
-function Canvas() {
+function Canvas(props) {
+  const { gameCode, pid } = props;
   const canvas = useRef(null);
   let isMouseDragging = false;
   let prevX = 0;
@@ -28,9 +32,21 @@ function Canvas() {
     const ctx = canvas.current.getContext("2d");
     let { currX, currY } = getMousePos(e);
     if (isMouseMove) {
-      drawLine(ctx, currX, currY, prevX, prevY);
+      const line = {
+        prevX: prevX,
+        prevY: prevY,
+        currX: currX,
+        currY: currY,
+        color: color
+      };
+      drawLine(ctx, line);
     } else {
-      drawDot(ctx, currX, currY);
+      const dot = {
+        x: currX,
+        y: currY,
+        color: color
+      };
+      drawDot(ctx, dot);
       paths.push([]);
     }
     paths[paths.length - 1].push({ x: currX, y: currY });
@@ -38,16 +54,20 @@ function Canvas() {
     prevY = currY;
   }
 
-  function drawLine(ctx, currX, currY, prevX, prevY) {
+  function drawLine(ctx, line) {
+    const { prevX, prevY, currX, currY, color } = line;
     ctx.strokeStyle = color;
     ctx.moveTo(prevX, prevY);
     ctx.lineTo(currX, currY);
     ctx.stroke();
+    sendDrawLine(gameCode, pid, line);
   }
 
-  function drawDot(ctx, x, y) {
+  function drawDot(ctx, dot) {
+    const { x, y, color } = dot;
     ctx.fillStyle = color;
     ctx.fillRect(x, y, 2, 2);
+    sendDrawDot(gameCode, pid, dot);
   }
 
   function getMousePos(e) {
@@ -77,13 +97,51 @@ function Canvas() {
       paths.pop();
       const ctx = canvas.current.getContext("2d");
       for (const path of paths) {
-        drawDot(ctx, path[0].x, path[0].y);
+        const dot = {
+          x: path[0].x,
+          y: path[0].y,
+          color: color
+        };
+        drawDot(ctx, dot);
         for (let i = 1; i < path.length; ++i) {
-          drawLine(ctx, path[i].x, path[i].y, path[i - 1].x, path[i - 1].y);
+          const line = {
+            prevX: path[i - 1].x,
+            prevY: path[i - 1].y,
+            currX: path[i].x,
+            currY: path[i].y,
+            color: color
+          };
+          drawLine(ctx, line);
         }
       }
     }
   }
+
+  useEffect(() => {
+    socket.on("draw_line_announcement", data => {
+      if (pid != data.pid) {
+        const ctx = canvas.current.getContext("2d");
+        drawLine(ctx, data.line);
+      }
+    });
+
+    return () => {
+      socket.off("draw_line_announcemen");
+    };
+  }, []);
+
+  useEffect(() => {
+    socket.on("draw_dot_announcement", data => {
+      if (pid != data.pid) {
+        const ctx = canvas.current.getContext("2d");
+        drawDot(ctx, data.dot);
+      }
+    });
+
+    return () => {
+      socket.off("draw_dot_announcemen");
+    };
+  }, []);
 
   return (
     <div className="CanvasContainer">
@@ -114,5 +172,10 @@ function Canvas() {
     </div>
   );
 }
+
+Canvas.propTypes = {
+  gameCode: PropTypes.string.isRequired,
+  pid: PropTypes.string.isRequired
+};
 
 export default Canvas;
