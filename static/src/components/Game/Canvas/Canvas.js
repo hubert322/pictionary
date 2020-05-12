@@ -10,7 +10,7 @@ import {
 } from "./CanvasApiSocket";
 
 function Canvas(props) {
-  const { gameCode, pid } = props;
+  const { gameCode } = props;
   const canvas = useRef(null);
   let isMouseDragging = false;
   let prevX = 0;
@@ -18,23 +18,50 @@ function Canvas(props) {
   let color = "#f64f59";
   let paths = [];
 
-  function mouseDown(e) {
-    isMouseDragging = true;
-    draw(e, false);
+  function touchStart(e) {
+    e.preventDefault();
+    mouseDown(e, true);
   }
 
-  function mouseMove(e) {
-    if (isMouseDragging) {
-      draw(e, true);
+  function mouseDown(e, isTouch = false) {
+    isMouseDragging = true;
+    if (isTouch) {
+      for (let i = 0; i < 1; ++i) {
+        draw(e, false, i);
+      }
+    } else {
+      draw(e, false, -1);
     }
+  }
+
+  function touchMove(e) {
+    e.preventDefault();
+    mouseMove(e, true);
+  }
+
+  function mouseMove(e, isTouch = false) {
+    if (isMouseDragging) {
+      if (isTouch) {
+        for (let i = 0; i < 1; ++i) {
+          draw(e, true, i);
+        }
+      } else {
+        draw(e, true, -1);
+      }
+    }
+  }
+
+  function touchEnd(e) {
+    e.preventDefault();
+    mouseUp();
   }
 
   function mouseUp() {
     isMouseDragging = false;
   }
 
-  function draw(e, isMouseMove) {
-    let { currX, currY } = getMousePos(e);
+  function draw(e, isMouseMove, touchIndex) {
+    let { currX, currY } = getMousePos(e, touchIndex);
     if (isMouseMove) {
       const line = {
         prevX: prevX,
@@ -55,14 +82,22 @@ function Canvas(props) {
     prevY = currY;
   }
 
-  function getMousePos(e) {
+  function getMousePos(e, touchIndex) {
     const rect = canvas.current.getBoundingClientRect();
+    let windowX, windowY;
+    if (touchIndex != -1) {
+      windowX = e.touches[touchIndex].clientX;
+      windowY = e.touches[touchIndex].clientY;
+    } else {
+      windowX = e.clientX;
+      windowY = e.clientY;
+    }
     return {
       currX:
-        ((e.clientX - rect.left) / (rect.right - rect.left)) *
+        ((windowX - rect.left) / (rect.right - rect.left)) *
         canvas.current.width,
       currY:
-        ((e.clientY - rect.top) / (rect.bottom - rect.top)) *
+        ((windowY - rect.top) / (rect.bottom - rect.top)) *
         canvas.current.height
     };
   }
@@ -178,8 +213,11 @@ function Canvas(props) {
       <canvas
         className="Canvas"
         ref={canvas}
+        onTouchStart={touchStart}
         onMouseDown={mouseDown}
+        onTouchMove={touchMove}
         onMouseMove={mouseMove}
+        onTouchEnd={touchEnd}
         onMouseUp={mouseUp}
       />
       <div className="CanvasControlsContainer">
@@ -221,8 +259,7 @@ function Canvas(props) {
 }
 
 Canvas.propTypes = {
-  gameCode: PropTypes.string.isRequired,
-  pid: PropTypes.string.isRequired
+  gameCode: PropTypes.string.isRequired
 };
 
 export default Canvas;
