@@ -23,7 +23,8 @@ function Game() {
   // }
   const [players, setPlayers] = useState(state.players);
   const [artist, setArtist] = useState(null);
-  const [isChoosing, setIsChoosing] = useState(false);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [words, setWords] = useState([]);
   const history = useHistory();
   const gameCode = state.gameCode;
   const pid = state.pid;
@@ -48,12 +49,23 @@ function Game() {
     socket.on("next_artist_announcement", data => {
       console.log(data.artist.playerName);
       setArtist(data.artist);
+      setWords(data.words);
     });
 
     return () => {
       socket.off("next_artist_announcement");
     };
   }, []);
+
+  useEffect(() => {
+    socket.on("selected_word_announcement", () => {
+      setIsDrawing(true);
+    });
+
+    return () => {
+      socket.off("selected_word_announcement");
+    };
+  });
 
   return (
     <div className="Game">
@@ -71,7 +83,8 @@ function Game() {
           gameCode={gameCode}
           pid={pid}
           artist={artist}
-          isChoosing={isChoosing}
+          isDrawing={isDrawing}
+          words={words}
         />
         <ChatRoom gameCode={gameCode} pid={pid} />
       </div>

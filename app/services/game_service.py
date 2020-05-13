@@ -1,8 +1,9 @@
 import secrets
 import string
 from typing import List, Dict
+from ..services import word_service
+from ..services import player_service
 from ..data import games_data
-from ..data import players_data
 
 def get_game_code() -> str:
     GAME_CODE_LENGTH = 4
@@ -36,7 +37,7 @@ def get_players_count(game_code: str) -> int:
 
 def can_start_game(game_code: str) -> None:
     game = games_data.get_game(game_code)
-    enter_game_count = game["enter_game_count"] if "enter_game_count" in game else 0
+    enter_game_count = game["enterGameCount"] if "enterGameCount" in game else 0
     print(f"enter_game_count: {enter_game_count}")
     enter_game_count += 1
     games_data.update_enter_game_count(game_code, enter_game_count)
@@ -44,12 +45,32 @@ def can_start_game(game_code: str) -> None:
 
 def get_next_artist(game_code: str) -> Dict:
     game = games_data.get_game(game_code)
-    artist_index = game["artist_index"] if "artist_index" in game else 0
+    artist_index = game["artistIndex"] if "artistIndex" in game else 0
     games_data.update_artist_index(game_code, artist_index)
     pid = game["players"][artist_index]
     
-    return players_data.get_player(pid)
-    
+    return player_service.get_player(pid)
+
+def get_next_words(game_code: str) -> List:
+    game = games_data.get_game(game_code)
+    prev_words = game["words"] if "words" in game else []
+
+    GET_WORDS_LIMIT = 10
+    for i in range(0, GET_WORDS_LIMIT):
+        next_words = [word["_id"] for word in word_service.get_words()]
+        if _are_valid_words(next_words, prev_words):
+            games_data.update_words(game_code, prev_words + next_words)
+            return next_words
+    return []
+
+def register_selected_word(game_code: str, selected_word: str) -> None:
+    games_data.update_selected_word(game_code, selected_word)
 
 def _game_code_exists(game) -> bool:
     return game is not None
+
+def _are_valid_words(next_words: List[str], prev_words: List) -> bool:
+    for word in next_words:
+        if word in prev_words:
+            return False
+    return True

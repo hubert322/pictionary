@@ -1,5 +1,5 @@
 from . import db
-from typing import Dict
+from typing import List
 from flask_pymongo import pymongo
 
 games_collection = db.get_collection("games")
@@ -7,7 +7,7 @@ games_collection = db.get_collection("games")
 def create_game(game_code: str, owner_pid: str):
     games_collection.insert_one({
         "_id": game_code,
-        "owner_pid": owner_pid,
+        "ownerPid": owner_pid,
         "players": [
             owner_pid
         ],
@@ -71,7 +71,7 @@ def update_enter_game_count(game_code: str, enter_game_count: int):
         {
             "$set":
             {
-                "enter_game_count": enter_game_count
+                "enterGameCount": enter_game_count
             }
         },
         True
@@ -82,9 +82,30 @@ def update_artist_index(game_code: str, artist_index: int):
         {
             "$set":
             {
-                "artist_index": artist_index
+                "artistIndex": artist_index
             }
         },
         True
     )
-    
+
+def update_words(game_code: str, words: List[str]):
+    games_collection.update({"_id": game_code},
+        {
+            "$set":
+            {
+                "words": words
+            }
+        },
+        True
+    )
+
+def update_selected_word(game_code: str, selected_word: str):
+    games_collection.update({"_id": game_code},
+        {
+            "$set":
+            {
+                "selectedWord": selected_word
+            }
+        },
+        True
+    )

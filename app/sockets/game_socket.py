@@ -70,7 +70,16 @@ def send_enter_game_handler(data):
 def send_next_artist_handler(data):
     game_code = data["gameCode"]
     artist = game_service.get_next_artist(game_code)
+    words = game_service.get_next_words(game_code)
     print("artist!!!")
     socketio.emit("next_artist_announcement", {
-        "artist": artist
+        "artist": artist,
+        "words": words
     }, broadcast=True, room=game_code)
+
+@socketio.on("send_selected_word")
+def send_selected_word_handler(data):
+    game_code = data["gameCode"]
+    word = data["word"]
+    game_service.register_selected_word(word)
+    socket.emit("selected_word_announcement", broadcast=True, room=game_code)

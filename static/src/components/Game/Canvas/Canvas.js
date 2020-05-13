@@ -8,9 +8,10 @@ import {
   sendUndoCanvas,
   sendClearCanvas
 } from "./CanvasApiSocket";
+import Overlay from "./Overlay/Overlay";
 
 function Canvas(props) {
-  const { gameCode, pid, artist, isChoosing } = props;
+  const { gameCode, pid, artist, isDrawing, words } = props;
   const canvas = useRef(null);
   let isMouseDragging = false;
   let prevX = 0;
@@ -24,9 +25,9 @@ function Canvas(props) {
   }
 
   function mouseDown(e, isTouch = false) {
-    // if (pid !== artist._id) {
-    //   return;
-    // }
+    if (pid !== artist._id) {
+      return;
+    }
     isMouseDragging = true;
     if (isTouch) {
       for (let i = 0; i < 1; ++i) {
@@ -43,9 +44,9 @@ function Canvas(props) {
   }
 
   function mouseMove(e, isTouch = false) {
-    // if (pid !== artist._id) {
-    //   return;
-    // }
+    if (pid !== artist._id) {
+      return;
+    }
     if (isMouseDragging) {
       if (isTouch) {
         for (let i = 0; i < 1; ++i) {
@@ -63,9 +64,9 @@ function Canvas(props) {
   }
 
   function mouseUp() {
-    // if (pid !== artist._id) {
-    //   return;
-    // }
+    if (pid !== artist._id) {
+      return;
+    }
     isMouseDragging = false;
   }
 
@@ -171,7 +172,6 @@ function Canvas(props) {
   function clearCanvas(isUndoCanvas) {
     const ctx = canvas.current.getContext("2d");
     ctx.clearRect(0, 0, canvas.current.width, canvas.current.height);
-    // ctx.beginPath();
     if (!isUndoCanvas) {
       paths = [];
     }
@@ -221,7 +221,7 @@ function Canvas(props) {
 
   return (
     <div className="CanvasContainer">
-      {!isChoosing ? (
+      {isDrawing ? (
         <canvas
           className="Canvas"
           ref={canvas}
@@ -233,11 +233,7 @@ function Canvas(props) {
           onMouseUp={mouseUp}
         />
       ) : (
-        <div className="Overlay">
-          {artist !== null
-            ? `${artist.playerName} is currently choosing their word...`
-            : `Loading...`}
-        </div>
+        <Overlay gameCode={gameCode} pid={pid} artist={artist} words={words} />
       )}
       <div className="CanvasControlsContainer">
         <button
@@ -290,7 +286,8 @@ Canvas.propTypes = {
   gameCode: PropTypes.string.isRequired,
   pid: PropTypes.string.isRequired,
   artist: PropTypes.objectOf(PropTypes.string),
-  isChoosing: PropTypes.bool.isRequired
+  isDrawing: PropTypes.bool.isRequired,
+  words: PropTypes.arrayOf(PropTypes.string).isRequired
 };
 
 Canvas.defaultProps = {
