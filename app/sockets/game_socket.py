@@ -9,17 +9,7 @@ game_socket = Blueprint("game_socket", __name__)
 def play_game_handler(data):
     game_code = data["gameCode"]
     game_service.update_playing_status(game_code, True)
-    # players_count = game_service.get_players_count(game_code)
     socketio.emit("play_game_announcement", broadcast=True, room=game_code)
-
-    # def ack(pid):
-    #     nonlocal players_count
-    #     print(pid)
-    #     players_count -= 1
-    #     if players_count == 0:
-    #         send_next_artist_handler({"gameCode": game_code})
-
-    # socketio.emit("in_game_ack", broadcast=True, room=game_code, callback=ack)
 
 # Maybe this should be in a chat room socket? not quite sure
 @socketio.on("send_message")
@@ -29,10 +19,13 @@ def send_message_handler(data):
     pid = data["pid"]
     message = data["message"]
     player = player_service.get_player(pid)
-    socketio.emit("send_message_announcement", {
-        "playerName": player["playerName"],
-        "message": message
-    }, broadcast=True, room=game_code)
+    if game_service.is_correct_word(game_code, pid, message):
+        _guessed_correct_word(game_code, pid, player)
+    else:
+        socketio.emit("send_message_announcement", {
+            "playerName": player["playerName"],
+            "message": message
+        }, broadcast=True, room=game_code)
 
 @socketio.on("send_draw_line")
 def send_draw_line_handler(data):
@@ -64,6 +57,7 @@ def send_clear_canvas_handler(data):
 def send_enter_game_handler(data):
     game_code = data["gameCode"]
     if game_service.can_start_game(game_code):
+        game_service.game_init(game_code)
         send_next_artist_handler(data)
 
 @socketio.on("send_next_artist")
@@ -81,5 +75,17 @@ def send_next_artist_handler(data):
 def send_selected_word_handler(data):
     game_code = data["gameCode"]
     word = data["word"]
-    game_service.register_selected_word(word)
-    socket.emit("selected_word_announcement", broadcast=True, room=game_code)
+    game_service.register_selected_word(game_code, word)
+    socketio.emit("selected_word_announcement", broadcast=True, room=game_code)
+
+def _guessed_correct_word(game_code, pid, player):
+    correct_message = f"{player['playerName']} guessed the word!"
+    socketio.emit("correct_word_announcement", {
+        "pid": player["_id"],
+        "playerName": player["playerName"],
+        "message": correct_message
+    }, broadcast=True, room=game_code)
+    game_service.register_player_guessed_correct(game_code, pid)
+    if game_service.has_finished_guessing(game_code):
+        game_service.next_turn(game_code)
+        socketio.emit("next_turn_announcement", broadcast=True, room=game_code)

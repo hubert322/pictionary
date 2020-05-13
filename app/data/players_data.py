@@ -15,7 +15,7 @@ def get_player(pid: str):
     return players[0]
 
 def update_player_name(pid: str, player_name: str):
-    players_collection.update({"_id": pid}, 
+    players_collection.update_one({"_id": pid}, 
         {
             "$set": {
                 "playerName": player_name

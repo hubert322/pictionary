@@ -35,7 +35,7 @@ def get_players_count(game_code: str) -> int:
     game = games_data.get_game(game_code)
     return len(game["players"])
 
-def can_start_game(game_code: str) -> None:
+def can_start_game(game_code: str) -> bool:
     game = games_data.get_game(game_code)
     enter_game_count = game["enterGameCount"] if "enterGameCount" in game else 0
     print(f"enter_game_count: {enter_game_count}")
@@ -43,17 +43,27 @@ def can_start_game(game_code: str) -> None:
     games_data.update_enter_game_count(game_code, enter_game_count)
     return enter_game_count == len(game["players"])
 
+def game_init(game_code: str) -> bool:
+    game = games_data.get_game(game_code)
+    for player in game["players"]:
+        player["score"] = 0
+    game["selectedWord"] = ""
+    game["artistIndex"] = 0
+    game["words"] = []
+    game["guessedCorrectPlayers"] = []
+    games_data.update_game(game_code, game)
+
 def get_next_artist(game_code: str) -> Dict:
     game = games_data.get_game(game_code)
-    artist_index = game["artistIndex"] if "artistIndex" in game else 0
+    artist_index = game["artistIndex"]
     games_data.update_artist_index(game_code, artist_index)
-    pid = game["players"][artist_index]
+    pid = game["players"][artist_index]["pid"]
     
     return player_service.get_player(pid)
 
 def get_next_words(game_code: str) -> List:
     game = games_data.get_game(game_code)
-    prev_words = game["words"] if "words" in game else []
+    prev_words = game["words"]
 
     GET_WORDS_LIMIT = 10
     for i in range(0, GET_WORDS_LIMIT):
@@ -65,6 +75,25 @@ def get_next_words(game_code: str) -> List:
 
 def register_selected_word(game_code: str, selected_word: str) -> None:
     games_data.update_selected_word(game_code, selected_word)
+
+def is_correct_word(game_code: str, pid: str, word: str) -> bool:
+    game = games_data.get_game(game_code)
+    return (word == game["selectedWord"] and 
+            pid != game["players"][game["artistIndex"]]["pid"] and
+            pid not in game["guessedCorrectPlayers"])
+
+def register_player_guessed_correct(game_code: str, pid: str) -> None:
+    games_data.add_payer_to_guessed_correct(game_code, pid)
+
+def has_finished_guessing(game_code: str) -> bool:
+    game = games_data.get_game(game_code)
+    return len(game["guessedCorrectPlayers"]) == len(game["players"]) - 1
+
+def next_turn(game_code: str) -> None:
+    game = games_data.get_game(game_code)
+    game["selectedWord"] = ""
+    game["guessedCorrectPlayers"] = []
+    games_data.update_game(game_code, game)
 
 def _game_code_exists(game) -> bool:
     return game is not None
