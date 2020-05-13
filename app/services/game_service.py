@@ -82,6 +82,14 @@ def is_correct_word(game_code: str, pid: str, word: str) -> bool:
             pid != game["players"][game["artistIndex"]]["pid"] and
             pid not in game["guessedCorrectPlayers"])
 
+def update_and_get_player_score(game_code: str, pid: str) -> int:
+    score_increment_value = 30
+    game = games_data.update_and_get_player_score(game_code, pid, score_increment_value)
+    for player in game["players"]:
+        if player["pid"] == pid:
+            return player["score"]
+    return -1000
+
 def register_player_guessed_correct(game_code: str, pid: str) -> None:
     games_data.add_payer_to_guessed_correct(game_code, pid)
 

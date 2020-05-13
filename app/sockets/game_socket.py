@@ -23,7 +23,7 @@ def send_message_handler(data):
         _guessed_correct_word(game_code, pid, player)
     else:
         socketio.emit("send_message_announcement", {
-            "playerName": player["playerName"],
+            "player": player,
             "message": message
         }, broadcast=True, room=game_code)
 
@@ -79,11 +79,10 @@ def send_selected_word_handler(data):
     socketio.emit("selected_word_announcement", broadcast=True, room=game_code)
 
 def _guessed_correct_word(game_code, pid, player):
-    correct_message = f"{player['playerName']} guessed the word!"
+    score = game_service.update_and_get_player_score(game_code, pid)
     socketio.emit("correct_word_announcement", {
-        "pid": player["_id"],
-        "playerName": player["playerName"],
-        "message": correct_message
+        "player": player,
+        "score": score
     }, broadcast=True, room=game_code)
     game_service.register_player_guessed_correct(game_code, pid)
     if game_service.has_finished_guessing(game_code):

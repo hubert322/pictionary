@@ -31,6 +31,21 @@ function Game() {
 
   // const gameCode = state.gameCode;
 
+  function addPlayerScore(pid, score) {
+    console.log(pid, score);
+    console.log(players);
+    setPlayers(
+      players.map(player => {
+        if (player._id !== pid) {
+          return player;
+        }
+        player.score = score;
+        return player;
+      })
+    );
+    console.log(players);
+  }
+
   useEffect(() => {
     sendEnterGame(gameCode);
   }, []);
@@ -75,7 +90,7 @@ function Game() {
         <div className="PlayersContainer">
           {players.map(player => (
             <div className="player" key={player._id}>
-              {player.playerName}
+              {player.playerName}: {player.score ? player.score : 0}
             </div>
           ))}
         </div>
@@ -86,7 +101,11 @@ function Game() {
           isDrawing={isDrawing}
           words={words}
         />
-        <ChatRoom gameCode={gameCode} pid={pid} />
+        <ChatRoom
+          gameCode={gameCode}
+          pid={pid}
+          addPlayerScore={addPlayerScore}
+        />
       </div>
     </div>
   );

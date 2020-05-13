@@ -1,6 +1,7 @@
 from . import db
 from typing import List
 from flask_pymongo import pymongo
+from pymongo.collection import ReturnDocument
 
 games_collection = db.get_collection("games")
 
@@ -105,6 +106,17 @@ def update_selected_word(game_code: str, selected_word: str):
                 "selectedWord": selected_word
             }
         }
+    )
+
+def update_and_get_player_score(game_code: str, pid: str, score_increment_value: int):
+    return games_collection.find_one_and_update({"_id": game_code, "players.pid": pid}, 
+        {
+            "$inc":
+            {
+                "players.$.score": score_increment_value
+            }
+        },
+        return_document=ReturnDocument.AFTER
     )
 
 def add_payer_to_guessed_correct(game_code: str, pid: str):

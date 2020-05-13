@@ -7,7 +7,7 @@ import "./ChatRoom.css";
 import { sendMessage } from "./ChatRoomApiSocket";
 
 function ChatRoom(props) {
-  const { gameCode, pid } = props;
+  const { gameCode, pid, addPlayerScore } = props;
   const [message, setMessage] = useState("");
   const messageArea = useRef(null);
   const messageTextField = useRef(null);
@@ -17,12 +17,28 @@ function ChatRoom(props) {
       console.log("got message");
       console.log(data);
       let messageNode = document.createElement("p");
-      messageNode.textContent = `${data.playerName}: ${data.message}`;
+      messageNode.textContent = `${data.player.playerName}: ${data.message}`;
       messageArea.current.appendChild(messageNode);
     });
 
     return () => {
       socket.off("send_message_announcement");
+    };
+  }, []);
+
+  useEffect(() => {
+    socket.on("correct_word_announcement", data => {
+      console.log("correct!");
+      console.log(data);
+      let messageNode = document.createElement("p");
+      messageNode.textContent = `${data.player.playerName} has guessed the word!`;
+      messageArea.current.appendChild(messageNode);
+
+      addPlayerScore(data.player._id, data.score);
+    });
+
+    return () => {
+      socket.off("correct_word_announcement");
     };
   }, []);
 
@@ -59,7 +75,8 @@ function ChatRoom(props) {
 
 ChatRoom.propTypes = {
   gameCode: PropTypes.string.isRequired,
-  pid: PropTypes.string.isRequired
+  pid: PropTypes.string.isRequired,
+  addPlayerScore: PropTypes.func.isRequired
 };
 
 export default ChatRoom;
