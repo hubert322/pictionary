@@ -2,34 +2,20 @@ import React, { useState, useEffect } from "react";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import Canvas from "./Canvas/Canvas";
 import ChatRoom from "../ChatRoom/ChatRoom";
-import { sendEnterGame } from "./GameApiSocket";
+import { sendNextTurn } from "./GameApiSocket";
 import { socket } from "../../utils/socket";
 import "./Game.css";
 
 function Game() {
   const state = useLocation().state;
-  // const state = {
-  //   players: [
-  //     {
-  //       _id: "1",
-  //       playerName: "Player1"
-  //     },
-  //     {
-  //       _id: "2",
-  //       playerName: "Player2"
-  //     }
-  //   ],
-  //   gameCode: "LMAO"
-  // }
   const [players, setPlayers] = useState(state.players);
   const [artist, setArtist] = useState(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [words, setWords] = useState([]);
+  const [endTurnData, setEndTurnData] = useState(null);
   const history = useHistory();
   const gameCode = state.gameCode;
   const pid = state.pid;
-
-  // const gameCode = state.gameCode;
 
   function addPlayerScore(pid, score) {
     console.log(pid, score);
@@ -47,8 +33,8 @@ function Game() {
   }
 
   useEffect(() => {
-    sendEnterGame(gameCode);
-  }, [gameCode]);
+    sendNextTurn(gameCode);
+  }, []);
 
   useEffect(() => {
     socket.on("player_disconnect", data => {
@@ -65,6 +51,7 @@ function Game() {
       console.log(data.artist.playerName);
       setArtist(data.artist);
       setWords(data.words);
+      setEndTurnData(null);
     });
 
     return () => {
@@ -79,6 +66,18 @@ function Game() {
 
     return () => {
       socket.off("selected_word_announcement");
+    };
+  }, []);
+
+  useEffect(() => {
+    socket.on("end_turn_announcement", data => {
+      setEndTurnData(data);
+      setIsDrawing(false);
+      setArtist(null);
+    });
+
+    return () => {
+      socket.off("end_turn_announcement");
     };
   });
 
@@ -100,6 +99,7 @@ function Game() {
           artist={artist}
           isDrawing={isDrawing}
           words={words}
+          endTurnData={endTurnData}
         />
         <ChatRoom
           gameCode={gameCode}

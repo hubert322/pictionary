@@ -2,9 +2,14 @@ from flask_socketio import SocketIO
 
 socketio = SocketIO()
 
-from .room_socket import room_socket
-from .game_socket import game_socket
+from .game_drawing_socket import game_drawing_socket
+from .game_logic_socket import game_logic_socket
+from .game_message_socket import game_message_socket
+from.game_room_socket import game_room_socket
+
 blueprints = [
-    room_socket,
-    game_socket
+    game_drawing_socket,
+    game_logic_socket,
+    game_message_socket,
+    game_room_socket
 ]

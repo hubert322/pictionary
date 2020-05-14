@@ -11,7 +11,7 @@ import {
 import Overlay from "./Overlay/Overlay";
 
 function Canvas(props) {
-  const { gameCode, pid, artist, isDrawing, words } = props;
+  const { gameCode, pid, artist, isDrawing, words, endTurnData } = props;
   const canvas = useRef(null);
   let isMouseDragging = useRef(false);
   let prevX = useRef(0);
@@ -236,7 +236,13 @@ function Canvas(props) {
           onMouseUp={mouseUp}
         />
       ) : (
-        <Overlay gameCode={gameCode} pid={pid} artist={artist} words={words} />
+        <Overlay
+          gameCode={gameCode}
+          pid={pid}
+          artist={artist}
+          words={words}
+          endTurnData={endTurnData}
+        />
       )}
       <div className="CanvasControlsContainer">
         <button
@@ -261,7 +267,7 @@ function Canvas(props) {
           type="button"
           className="CanvasControl"
           onClick={() => {
-            if (paths.current.length) {
+            if (paths.current.length && pid === artist._id) {
               sendUndoCanvas(gameCode);
             }
           }}
@@ -272,7 +278,7 @@ function Canvas(props) {
           type="button"
           className="CanvasControl"
           onClick={() => {
-            if (paths.current.length) {
+            if (paths.current.length && pid === artist._id) {
               sendClearCanvas(gameCode);
             }
           }}
@@ -289,11 +295,13 @@ Canvas.propTypes = {
   pid: PropTypes.string.isRequired,
   artist: PropTypes.objectOf(PropTypes.string),
   isDrawing: PropTypes.bool.isRequired,
-  words: PropTypes.arrayOf(PropTypes.string).isRequired
+  words: PropTypes.arrayOf(PropTypes.string).isRequired,
+  endTurnData: PropTypes.arrayOf(PropTypes.object)
 };
 
 Canvas.defaultProps = {
-  artist: null
+  artist: null,
+  endTurnData: null
 };
 
 export default Canvas;
