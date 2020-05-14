@@ -48,7 +48,7 @@ function Game() {
 
   useEffect(() => {
     sendEnterGame(gameCode);
-  }, []);
+  }, [gameCode]);
 
   useEffect(() => {
     socket.on("player_disconnect", data => {
@@ -58,7 +58,7 @@ function Game() {
     return () => {
       socket.off("player_disconnect");
     };
-  }, []);
+  }, [players]);
 
   useEffect(() => {
     socket.on("next_artist_announcement", data => {

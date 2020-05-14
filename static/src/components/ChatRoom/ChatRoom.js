@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
-import { Link, useHistory, useLocation } from "react-router-dom";
 import TextField from "@material-ui/core/TextField";
 import { socket } from "../../utils/socket";
 import "./ChatRoom.css";
@@ -14,8 +13,6 @@ function ChatRoom(props) {
 
   useEffect(() => {
     socket.on("send_message_announcement", data => {
-      console.log("got message");
-      console.log(data);
       let messageNode = document.createElement("p");
       messageNode.textContent = `${data.player.playerName}: ${data.message}`;
       messageArea.current.appendChild(messageNode);
@@ -40,7 +37,7 @@ function ChatRoom(props) {
     return () => {
       socket.off("correct_word_announcement");
     };
-  }, []);
+  }, [addPlayerScore]);
 
   function onSendMessage() {
     sendMessage(gameCode, pid, message);

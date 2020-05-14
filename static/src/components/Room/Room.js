@@ -31,7 +31,7 @@ function Room() {
     return () => {
       socket.off("play_game_announcement");
     };
-  }, [players]);
+  }, [gameCode, pid, players, history]);
 
   return (
     <div className="Room">

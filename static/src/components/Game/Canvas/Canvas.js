@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import { socket } from "../../../utils/socket";
 import "./Canvas.css";
@@ -95,7 +95,7 @@ function Canvas(props) {
   function getMousePos(e, touchIndex) {
     const rect = canvas.current.getBoundingClientRect();
     let windowX, windowY;
-    if (touchIndex != -1) {
+    if (touchIndex !== -1) {
       windowX = e.touches[touchIndex].clientX;
       windowY = e.touches[touchIndex].clientY;
     } else {
