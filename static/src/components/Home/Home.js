@@ -43,15 +43,21 @@ function Home() {
   let history = useHistory();
 
   function onJoinGame() {
-    setHasGameCodeError(true);
-    setGameCodeLabel("Game Code required");
-    joinGame(gameCode, pid.current, playerName, history);
+    if (gameCode === "") {
+      setHasGameCodeError(true);
+      setGameCodeLabel("Game Code required");
+    } else {
+      joinGame(gameCode, pid.current, playerName, history);
+    }
   }
 
   function onNewGame() {
-    setHasPlayerNameError(true);
-    setPlayerNameLabel("Name required");
-    newGame(pid, playerName, history);
+    if (playerName === "") {
+      setHasPlayerNameError(true);
+      setPlayerNameLabel("Name required");
+    } else {
+      newGame(pid.current, playerName, history);
+    }
   }
 
   return (

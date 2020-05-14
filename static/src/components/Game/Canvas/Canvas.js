@@ -192,7 +192,9 @@ function Canvas(props) {
 
   useEffect(() => {
     socket.on("draw_line_announcement", data => {
-      drawLine(data.line, true);
+      if (canvas.current !== null) {
+        drawLine(data.line, true);
+      }
     });
 
     return () => {
@@ -202,7 +204,9 @@ function Canvas(props) {
 
   useEffect(() => {
     socket.on("draw_dot_announcement", data => {
-      drawDot(data.dot, true);
+      if (canvas.current !== null) {
+        drawDot(data.dot, true);
+      }
     });
 
     return () => {
@@ -212,7 +216,9 @@ function Canvas(props) {
 
   useEffect(() => {
     socket.on("undo_canvas_announcement", () => {
-      undoCanvas();
+      if (canvas.current !== null) {
+        undoCanvas();
+      }
     });
 
     return () => {
@@ -222,13 +228,21 @@ function Canvas(props) {
 
   useEffect(() => {
     socket.on("clear_canvas_announcement", () => {
-      clearCanvas(true);
+      if (canvas.current !== null) {
+        clearCanvas(true);
+      }
     });
 
     return () => {
       socket.off("clear_canvas_announcement");
     };
   }, []);
+
+  useEffect(() => {
+    if (endTurnData !== null) {
+      paths.current = [];
+    }
+  }, [endTurnData]);
 
   return (
     <div className="CanvasContainer">
@@ -276,7 +290,7 @@ function Canvas(props) {
           type="button"
           className="CanvasControl"
           onClick={() => {
-            if (paths.current.length && pid === artist._id) {
+            if (paths.current.length && artist !== null && pid === artist._id) {
               sendUndoCanvas(gameCode);
             }
           }}
@@ -287,7 +301,7 @@ function Canvas(props) {
           type="button"
           className="CanvasControl"
           onClick={() => {
-            if (paths.current.length && pid === artist._id) {
+            if (paths.current.length && artist !== null && pid === artist._id) {
               sendClearCanvas(gameCode);
             }
           }}
