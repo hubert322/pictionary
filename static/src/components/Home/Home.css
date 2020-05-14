@@ -7,11 +7,13 @@
   align-items: center;
 }
 
-.Home > h1 {
-  color:black
+.Title {
+  color: black;
+  font-size: 5rem;
 }
 
-.MainFrame {
+.MainContainer {
+  background-color: rgba(255, 255, 255, 0.3);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -47,11 +49,31 @@
 
 .JoinGameButton {
   flex: 1 1 50%;
-  margin: 7px;
+  margin:7px;
   border-color: #f64f59;
 }
 
 .NewGameButton {
-  margin: 5px 5px;
+  margin: 7px 7px;
   border-color: #12c2e9;
+}
+
+@media (max-width: 767.98px) {
+  .MainContainer {
+    width: 90vw;
+  }
+}
+
+@media (min-width: 767.99px) {
+  .MainContainer {
+    width: 40vw;
+  }
+
+  .JoinGameButton {
+    font-size: 2rem;
+  }
+
+  .NewGameButton {
+    font-size: 2rem;
+  }
 }

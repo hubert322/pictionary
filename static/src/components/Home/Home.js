@@ -35,32 +35,50 @@ function Home() {
   const classes = useStyles();
   const [gameCode, setGameCode] = useState("");
   const [playerName, setPlayerName] = useLocalStorage("playerName", "");
-  let history = useHistory();
+  const [playerNameLabel, setPlayerNameLabel] = useState("Name");
+  const [hasPlayerNameError, setHasPlayerNameError] = useState(false);
+  const [gameCodeLabel, setGameCodeLabel] = useState("Game Code");
+  const [hasGameCodeError, setHasGameCodeError] = useState(false);
   const pid = useRef(getPid());
+  let history = useHistory();
+
+  function onJoinGame() {
+    setHasGameCodeError(true);
+    setGameCodeLabel("Game Code required");
+    joinGame(gameCode, pid.current, playerName, history);
+  }
+
+  function onNewGame() {
+    setHasPlayerNameError(true);
+    setPlayerNameLabel("Name required");
+    newGame(pid, playerName, history);
+  }
 
   return (
     <div className="Home" style={{ height: window.innerHeight }}>
-      <h1>Skribbl</h1>
-      <div className="MainFrame">
+      <h1 className="Title">Skribbl</h1>
+      <div className="MainContainer">
         <TextField
-          label="Name"
+          label={playerNameLabel}
           variant="outlined"
           className={classes.textField}
           value={playerName}
           onChange={e => setPlayerName(e.target.value)}
+          error={hasPlayerNameError}
         />
         <div className="JoinGameContainer">
           <TextField
-            label="Game Code"
+            label={gameCodeLabel}
             variant="outlined"
             className={`${classes.textField} JoinGameTextField`}
             value={gameCode}
             onChange={e => setGameCode(e.target.value)}
+            error={hasGameCodeError}
           />
           <button
             type="button"
             className="Button JoinGameButton"
-            onClick={() => joinGame(gameCode, pid.current, playerName, history)}
+            onClick={onJoinGame}
           >
             Join Game
           </button>
@@ -68,7 +86,7 @@ function Home() {
         <button
           type="button"
           className="Button NewGameButton"
-          onClick={() => newGame(pid.current, playerName, history)}
+          onClick={onNewGame}
         >
           New Game
         </button>
