@@ -12,13 +12,12 @@ import Overlay from "./Overlay/Overlay";
 
 function Canvas(props) {
   const { gameCode, pid, artist, isDrawing, words } = props;
-  const [hasPaths, setHasPaths] = useState(false);
-  const [isMouseDragging, setIsMouseDragging] = useState(false);
   const canvas = useRef(null);
-  let prevX = 0;
-  let prevY = 0;
-  let color = "#f64f59";
-  let paths = [];
+  let isMouseDragging = useRef(false);
+  let prevX = useRef(0);
+  let prevY = useRef(0);
+  let color = useRef("#f64f59");
+  const paths = useRef([]);
 
   function touchStart(e) {
     e.preventDefault();
@@ -29,7 +28,7 @@ function Canvas(props) {
     if (pid !== artist._id) {
       return;
     }
-    setIsMouseDragging(true);
+    isMouseDragging.current = true;
     if (isTouch) {
       for (let i = 0; i < 1; ++i) {
         draw(e, false, i);
@@ -48,7 +47,7 @@ function Canvas(props) {
     if (pid !== artist._id) {
       return;
     }
-    if (isMouseDragging) {
+    if (isMouseDragging.current) {
       if (isTouch) {
         for (let i = 0; i < 1; ++i) {
           draw(e, true, i);
@@ -68,15 +67,15 @@ function Canvas(props) {
     if (pid !== artist._id) {
       return;
     }
-    setIsMouseDragging(false);
+    isMouseDragging.current = false;
   }
 
   function draw(e, isMouseMove, touchIndex) {
-    let { currX, currY } = getMousePos(e, touchIndex);
+    const { currX, currY } = getMousePos(e, touchIndex);
     if (isMouseMove) {
       const line = {
-        prevX: prevX,
-        prevY: prevY,
+        prevX: prevX.current,
+        prevY: prevY.current,
         currX: currX,
         currY: currY
       };
@@ -85,12 +84,12 @@ function Canvas(props) {
       const dot = {
         x: currX,
         y: currY,
-        newColor: color
+        newColor: color.current
       };
       sendDrawDot(gameCode, dot);
     }
-    prevX = currX;
-    prevY = currY;
+    prevX.current = currX;
+    prevY.current = currY;
   }
 
   function getMousePos(e, touchIndex) {
@@ -117,40 +116,43 @@ function Canvas(props) {
     const { prevX, prevY, currX, currY } = line;
     const ctx = canvas.current.getContext("2d");
     ctx.beginPath();
-    ctx.strokeStyle = color;
+    ctx.strokeStyle = color.current;
     ctx.lineWidth = 2;
     ctx.moveTo(prevX, prevY);
     ctx.lineTo(currX, currY);
     ctx.stroke();
     ctx.closePath();
     if (addPath) {
-      paths[paths.length - 1].points.push({ x: currX, y: currY });
+      paths.current[paths.current.length - 1].points.push({
+        x: currX,
+        y: currY
+      });
     }
   }
 
   function drawDot(dot, addPath) {
     const { x, y, newColor } = dot;
     const ctx = canvas.current.getContext("2d");
-    color = newColor;
+    color.current = newColor;
     ctx.beginPath();
-    ctx.fillStyle = color;
+    ctx.fillStyle = color.current;
     ctx.fillRect(x, y, 2, 2);
     ctx.closePath();
     if (addPath) {
-      paths.push({
+      paths.current.push({
         points: [],
-        newColor: color
+        newColor: color.current
       });
-      paths[paths.length - 1].points.push({ x: x, y: y });
+      paths.current[paths.current.length - 1].points.push({ x: x, y: y });
     }
   }
 
   function undoCanvas() {
-    if (paths.length) {
-      clearCanvas(true);
-      paths.pop();
-      for (let i = 0; i < paths.length; ++i) {
-        const { points, newColor } = paths[i];
+    if (paths.current.length) {
+      clearCanvas(false);
+      paths.current.pop();
+      for (let i = 0; i < paths.current.length; ++i) {
+        const { points, newColor } = paths.current[i];
         const dot = {
           x: points[0].x,
           y: points[0].y,
@@ -170,12 +172,12 @@ function Canvas(props) {
     }
   }
 
-  function clearCanvas(isUndoCanvas) {
-    if (paths.length) {
+  function clearCanvas(clearPath) {
+    if (paths.current.length) {
       const ctx = canvas.current.getContext("2d");
       ctx.clearRect(0, 0, canvas.current.width, canvas.current.height);
-      if (!isUndoCanvas) {
-        paths = [];
+      if (clearPath) {
+        paths.current = [];
       }
     }
   }
@@ -183,7 +185,6 @@ function Canvas(props) {
   useEffect(() => {
     socket.on("draw_line_announcement", data => {
       drawLine(data.line, true);
-      setHasPaths(true);
     });
 
     return () => {
@@ -194,7 +195,6 @@ function Canvas(props) {
   useEffect(() => {
     socket.on("draw_dot_announcement", data => {
       drawDot(data.dot, true);
-      setHasPaths(true);
     });
 
     return () => {
@@ -205,7 +205,6 @@ function Canvas(props) {
   useEffect(() => {
     socket.on("undo_canvas_announcement", () => {
       undoCanvas();
-      setHasPaths(paths.length > 0);
     });
 
     return () => {
@@ -215,16 +214,13 @@ function Canvas(props) {
 
   useEffect(() => {
     socket.on("clear_canvas_announcement", () => {
-      clearCanvas(false);
-      setHasPaths(false);
+      clearCanvas(true);
     });
 
     return () => {
       socket.off("clear_canvas_announcement");
     };
   }, []);
-
-  console.log("YO\n");
 
   return (
     <div className="CanvasContainer">
@@ -247,7 +243,7 @@ function Canvas(props) {
           type="button"
           className="CanvasControl"
           onClick={() => {
-            color = "#f64f59";
+            color.current = "#f64f59";
           }}
         >
           Red
@@ -256,7 +252,7 @@ function Canvas(props) {
           type="button"
           className="CanvasControl"
           onClick={() => {
-            color = "#12c2e9";
+            color.current = "#12c2e9";
           }}
         >
           Blue
@@ -265,7 +261,7 @@ function Canvas(props) {
           type="button"
           className="CanvasControl"
           onClick={() => {
-            if (hasPaths) {
+            if (paths.current.length) {
               sendUndoCanvas(gameCode);
             }
           }}
@@ -276,7 +272,7 @@ function Canvas(props) {
           type="button"
           className="CanvasControl"
           onClick={() => {
-            if (hasPaths) {
+            if (paths.current.length) {
               sendClearCanvas(gameCode);
             }
           }}
