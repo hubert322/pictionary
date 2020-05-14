@@ -34,9 +34,11 @@ def join_room_helper(game_code: str, pid: str, player_name: str):
     player = player_service.get_player(pid)
     socketio.emit("join_room_announcement", {"player": player}, broadcast=True, room=game_code)
     players = game_room_service.get_all_players_in_game(game_code)
+    owner_pid = game_room_service.get_game_owner_pid(game_code)
 
     return {
         "gameCode": game_code,
         "pid": pid,
-        "players": players
+        "players": players,
+        "ownerPid": owner_pid
     }

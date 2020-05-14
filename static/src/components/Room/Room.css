@@ -6,3 +6,113 @@
   justify-content: center;
   align-items: center;
 }
+
+.TitleLink {
+  color: black;
+  font-size: 4rem;
+}
+
+.TitleLink:hover {
+  color: black;
+  text-decoration: none;
+}
+
+.RoomMainContainer {
+  display: flex;
+}
+
+.ContainerTitle {
+  text-align: center;
+  font-size: 3rem;
+}
+
+.PlayersContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+.PlayersList {
+  display: flex;
+  flex-direction: row;
+  flex-flow: wrap;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.Player {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 5px;
+}
+
+.PlayerName {
+  display: inline-block
+}
+
+.PlayerTag {
+  line-height: 1rem;
+  font-size: 1rem;
+}
+
+.GameControlsContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  color: white;
+}
+
+@media (max-width: 767.98px) {
+  .RoomMainContainer {
+    width: 90vw;
+    height: 70vh;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+  }
+
+  .PlayersContainer {
+    width: 100%;
+    max-height: 47%;
+  }
+
+  .PlayerName {
+    line-height: 1.5rem;
+    font-size: 1.5rem;
+  }
+
+  .GameControlsContainer {
+    width: 100%;
+    max-height: 47%;
+  }
+}
+
+@media (min-width: 767.99px) {
+  .RoomMainContainer {
+    width: 70vw;
+    height: 60vh;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+  }
+
+  .PlayersContainer {
+    width: 45%;
+    height: 100%;
+  }
+
+  .PlayerName {
+    line-height: 2rem;
+    font-size: 2rem;
+  }
+
+  .GameControlsContainer {
+    width: 45%;
+    height: 100%;
+  }
+}

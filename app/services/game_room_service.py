@@ -26,5 +26,9 @@ def join_game(game_code: str, pid: str) -> None:
 def get_all_players_in_game(game_code: str) -> List:
     return games_data.get_all_players_in_game(game_code)
 
+def get_game_owner_pid(game_code: str) -> str:
+    game = games_data.get_game(game_code)
+    return game["ownerPid"]
+
 def _game_code_exists(game) -> bool:
     return game is not None

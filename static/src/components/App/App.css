@@ -27,10 +27,6 @@
   text-decoration: none;
 }
 
-.GameButton:hover {
+.Button:hover {
   text-decoration: none;
-}
-
-.GameButton:focus {
-  outline: none;
 }

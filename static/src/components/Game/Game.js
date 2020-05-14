@@ -8,14 +8,13 @@ import "./Game.css";
 
 function Game() {
   const state = useLocation().state;
+  const { gameCode, pid, ownerPid } = state;
   const [players, setPlayers] = useState(state.players);
   const [artist, setArtist] = useState(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [words, setWords] = useState([]);
   const [endTurnData, setEndTurnData] = useState(null);
   const history = useHistory();
-  const gameCode = state.gameCode;
-  const pid = state.pid;
 
   function addPlayerScore(pid, score) {
     console.log(pid, score);

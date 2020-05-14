@@ -1,38 +1,13 @@
 import React, { useState, useRef } from "react";
 import { useHistory } from "react-router-dom";
-import TextField from "@material-ui/core/TextField";
-import { makeStyles } from "@material-ui/core/styles";
 import { joinGame, newGame, getPid } from "./HomeApiSocket";
 import { useLocalStorage } from "../../utils/hooks";
 import "../App/App.css";
 import "./Home.css";
-
-const useStyles = makeStyles({
-  textField: {
-    margin: "7px",
-    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#f64f59"
-    },
-    "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#c471ed"
-    },
-    "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#12c2e9"
-    },
-    "& .MuiOutlinedInput-root": {
-      color: "white"
-    },
-    "& label": {
-      color: "white"
-    },
-    "& label.Mui-focused": {
-      color: "white"
-    }
-  }
-});
+import Panel from "../Panel/Panel";
+import TextField from "../TextField/TextField";
 
 function Home() {
-  const classes = useStyles();
   const [gameCode, setGameCode] = useState("");
   const [playerName, setPlayerName] = useLocalStorage("playerName", "");
   const [playerNameLabel, setPlayerNameLabel] = useState("Name");
@@ -63,11 +38,10 @@ function Home() {
   return (
     <div className="Home" style={{ height: window.innerHeight }}>
       <h1 className="Title">Skribbl</h1>
-      <div className="MainContainer">
+      <Panel className="HomeMainContainer">
         <TextField
           label={playerNameLabel}
           variant="outlined"
-          className={classes.textField}
           value={playerName}
           onChange={e => setPlayerName(e.target.value)}
           error={hasPlayerNameError}
@@ -76,7 +50,7 @@ function Home() {
           <TextField
             label={gameCodeLabel}
             variant="outlined"
-            className={`${classes.textField} JoinGameTextField`}
+            className="JoinGameTextField"
             value={gameCode}
             onChange={e => setGameCode(e.target.value)}
             error={hasGameCodeError}
@@ -96,7 +70,7 @@ function Home() {
         >
           New Game
         </button>
-      </div>
+      </Panel>
     </div>
   );
 }
