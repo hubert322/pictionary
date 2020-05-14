@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
@@ -36,7 +36,7 @@ function Home() {
   const [gameCode, setGameCode] = useState("");
   const [playerName, setPlayerName] = useLocalStorage("playerName", "");
   let history = useHistory();
-  const pid = getPid();
+  const pid = useRef(getPid());
 
   return (
     <div className="Home" style={{ height: window.innerHeight }}>
@@ -60,7 +60,7 @@ function Home() {
           <button
             type="button"
             className="Button JoinGameButton"
-            onClick={() => joinGame(gameCode, pid, playerName, history)}
+            onClick={() => joinGame(gameCode, pid.current, playerName, history)}
           >
             Join Game
           </button>
@@ -68,7 +68,7 @@ function Home() {
         <button
           type="button"
           className="Button NewGameButton"
-          onClick={() => newGame(pid, playerName, history)}
+          onClick={() => newGame(pid.current, playerName, history)}
         >
           New Game
         </button>
