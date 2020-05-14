@@ -11,7 +11,15 @@ import {
 import Overlay from "./Overlay/Overlay";
 
 function Canvas(props) {
-  const { gameCode, pid, artist, isDrawing, words, endTurnData } = props;
+  const {
+    gameCode,
+    pid,
+    artist,
+    isDrawing,
+    words,
+    endTurnData,
+    onNextTurn
+  } = props;
   const canvas = useRef(null);
   let isMouseDragging = useRef(false);
   let prevX = useRef(0);
@@ -242,6 +250,7 @@ function Canvas(props) {
           artist={artist}
           words={words}
           endTurnData={endTurnData}
+          onNextTurn={onNextTurn}
         />
       )}
       <div className="CanvasControlsContainer">
@@ -296,7 +305,10 @@ Canvas.propTypes = {
   artist: PropTypes.objectOf(PropTypes.string),
   isDrawing: PropTypes.bool.isRequired,
   words: PropTypes.arrayOf(PropTypes.string).isRequired,
-  endTurnData: PropTypes.arrayOf(PropTypes.object)
+  endTurnData: PropTypes.objectOf(
+    PropTypes.oneOfType([PropTypes.array, PropTypes.string])
+  ),
+  onNextTurn: PropTypes.func.isRequired
 };
 
 Canvas.defaultProps = {

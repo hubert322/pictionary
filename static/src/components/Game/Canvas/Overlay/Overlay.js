@@ -1,11 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { sendSelectedWord } from "./OverlayApiSocket";
-import { sendNextTurn } from "../../GameApiSocket";
 import "./Overlay.css";
 
 function Overlay(props) {
-  const { gameCode, pid, artist, words, endTurnData } = props;
+  const { gameCode, pid, artist, words, endTurnData, onNextTurn } = props;
+
+  console.log("ENDTURNDATA");
+  console.log(endTurnData);
 
   function selectOverlayContent() {
     if (endTurnData !== null) {
@@ -16,7 +18,7 @@ function Overlay(props) {
               {player.playerName}: {player.score}
             </p>
           ))}
-          <button type="button" onClick={() => sendNextTurn(gameCode)}>
+          <button type="button" onClick={onNextTurn}>
             Next Turn
           </button>
         </>
@@ -51,7 +53,10 @@ Overlay.propTypes = {
   pid: PropTypes.string.isRequired,
   artist: PropTypes.objectOf(PropTypes.string),
   words: PropTypes.arrayOf(PropTypes.string).isRequired,
-  endTurnData: PropTypes.arrayOf(PropTypes.object)
+  endTurnData: PropTypes.objectOf(
+    PropTypes.oneOfType([PropTypes.array, PropTypes.string])
+  ),
+  onNextTurn: PropTypes.func.isRequired
 };
 
 Overlay.defaultProps = {

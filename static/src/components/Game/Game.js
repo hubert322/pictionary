@@ -32,6 +32,11 @@ function Game() {
     console.log(players);
   }
 
+  function onNextTurn() {
+    sendNextTurn(gameCode);
+    setEndTurnData(null);
+  }
+
   useEffect(() => {
     sendNextTurn(gameCode);
   }, []);
@@ -51,7 +56,6 @@ function Game() {
       console.log(data.artist.playerName);
       setArtist(data.artist);
       setWords(data.words);
-      setEndTurnData(null);
     });
 
     return () => {
@@ -100,6 +104,7 @@ function Game() {
           isDrawing={isDrawing}
           words={words}
           endTurnData={endTurnData}
+          onNextTurn={onNextTurn}
         />
         <ChatRoom
           gameCode={gameCode}
