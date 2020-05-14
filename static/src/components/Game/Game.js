@@ -51,7 +51,7 @@ function Game() {
   }, []);
 
   useEffect(() => {
-    socket.on("player_disconect", data => {
+    socket.on("player_disconnect", data => {
       setPlayers(players.filter(player => player._id !== data.player._id));
     });
 

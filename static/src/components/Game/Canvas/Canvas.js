@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import { socket } from "../../../utils/socket";
 import "./Canvas.css";
@@ -12,8 +12,9 @@ import Overlay from "./Overlay/Overlay";
 
 function Canvas(props) {
   const { gameCode, pid, artist, isDrawing, words } = props;
+  const [hasPaths, setHasPaths] = useState(false);
+  const [isMouseDragging, setIsMouseDragging] = useState(false);
   const canvas = useRef(null);
-  let isMouseDragging = false;
   let prevX = 0;
   let prevY = 0;
   let color = "#f64f59";
@@ -28,7 +29,7 @@ function Canvas(props) {
     if (pid !== artist._id) {
       return;
     }
-    isMouseDragging = true;
+    setIsMouseDragging(true);
     if (isTouch) {
       for (let i = 0; i < 1; ++i) {
         draw(e, false, i);
@@ -67,7 +68,7 @@ function Canvas(props) {
     if (pid !== artist._id) {
       return;
     }
-    isMouseDragging = false;
+    setIsMouseDragging(false);
   }
 
   function draw(e, isMouseMove, touchIndex) {
@@ -170,16 +171,19 @@ function Canvas(props) {
   }
 
   function clearCanvas(isUndoCanvas) {
-    const ctx = canvas.current.getContext("2d");
-    ctx.clearRect(0, 0, canvas.current.width, canvas.current.height);
-    if (!isUndoCanvas) {
-      paths = [];
+    if (paths.length) {
+      const ctx = canvas.current.getContext("2d");
+      ctx.clearRect(0, 0, canvas.current.width, canvas.current.height);
+      if (!isUndoCanvas) {
+        paths = [];
+      }
     }
   }
 
   useEffect(() => {
     socket.on("draw_line_announcement", data => {
       drawLine(data.line, true);
+      setHasPaths(true);
     });
 
     return () => {
@@ -190,6 +194,7 @@ function Canvas(props) {
   useEffect(() => {
     socket.on("draw_dot_announcement", data => {
       drawDot(data.dot, true);
+      setHasPaths(true);
     });
 
     return () => {
@@ -200,6 +205,7 @@ function Canvas(props) {
   useEffect(() => {
     socket.on("undo_canvas_announcement", () => {
       undoCanvas();
+      setHasPaths(paths.length > 0);
     });
 
     return () => {
@@ -210,6 +216,7 @@ function Canvas(props) {
   useEffect(() => {
     socket.on("clear_canvas_announcement", () => {
       clearCanvas(false);
+      setHasPaths(false);
     });
 
     return () => {
@@ -217,7 +224,7 @@ function Canvas(props) {
     };
   }, []);
 
-  console.log(paths);
+  console.log("YO\n");
 
   return (
     <div className="CanvasContainer">
@@ -258,8 +265,7 @@ function Canvas(props) {
           type="button"
           className="CanvasControl"
           onClick={() => {
-            console.log(paths.length);
-            if (paths.length) {
+            if (hasPaths) {
               sendUndoCanvas(gameCode);
             }
           }}
@@ -270,7 +276,7 @@ function Canvas(props) {
           type="button"
           className="CanvasControl"
           onClick={() => {
-            if (paths.length) {
+            if (hasPaths) {
               sendClearCanvas(gameCode);
             }
           }}
