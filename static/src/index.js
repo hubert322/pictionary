@@ -7,7 +7,7 @@ import * as serviceWorker from "./serviceWorker";
 import "./index.css";
 
 let root = document.getElementById("root");
-root.style.height = window.innerHeight;
+// root.style.height = window.innerHeight;
 ReactDOM.render(<App />, root);
 
 // If you want your app to work offline and load faster, you can change

@@ -36,13 +36,13 @@
 
 @media (max-width: 767.98px) {
   .HomeMainContainer {
-    width: 90vw;
+    width: 90%;
   }
 }
 
 @media (min-width: 767.99px) {
   .HomeMainContainer {
-    width: 40vw;
+    width: 40%;
   }
 
   .JoinGameButton {
