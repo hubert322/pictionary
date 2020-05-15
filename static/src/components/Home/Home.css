@@ -12,6 +12,11 @@
   font-size: 5rem;
 }
 
+.HomeTitle:hover {
+  color: black;
+  text-decoration: none;
+}
+
 .HomeJoinGameContainer {
   display: flex;
   flex-direction: row;

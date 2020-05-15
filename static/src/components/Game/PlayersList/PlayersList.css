@@ -44,7 +44,7 @@
 
 @media (min-width: 767.99px) {
     .PlayersList{
-        width: 30%;
+        width: 20%;
         height: 100%;
         flex-direction: column;
         justify-content: center;

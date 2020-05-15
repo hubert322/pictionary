@@ -1,7 +1,7 @@
 import React from "react";
 import MaterialTextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
-import PropTypes from "prop-types";
+import PropTypes, { object } from "prop-types";
 
 const useStyles = makeStyles({
   textField: {
@@ -29,7 +29,18 @@ const useStyles = makeStyles({
 
 function TextField(props) {
   const classes = useStyles();
-  const { label, variant, value, onChange, error, customStyle } = props;
+  const {
+    label,
+    variant,
+    value,
+    onChange,
+    error,
+    inputRef,
+    onKeyDown,
+    className
+  } = props;
+
+  console.log(props);
 
   return (
     <MaterialTextField
@@ -38,7 +49,9 @@ function TextField(props) {
       value={value}
       onChange={onChange}
       error={error}
-      className={`${classes.textField} ${customStyle}`}
+      inputRef={inputRef}
+      onKeyDown={onKeyDown}
+      className={`${classes.textField} ${className}`}
     />
   );
 }
@@ -49,16 +62,20 @@ TextField.propTypes = {
   value: PropTypes.string,
   onChange: PropTypes.func,
   error: PropTypes.bool,
-  customStyle: PropTypes.string
+  inputRef: PropTypes.objectOf(object),
+  onKeyDown: PropTypes.func,
+  className: PropTypes.string
 };
 
 TextField.defaultProps = {
   label: null,
-  variant: null,
+  variant: "standard",
   value: null,
   onChange: null,
   error: null,
-  customStyle: ""
+  inputRef: null,
+  onKeyDown: null,
+  className: ""
 };
 
 export default TextField;

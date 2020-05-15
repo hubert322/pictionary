@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { joinGame, newGame, getPid } from "./HomeApiSocket";
 import { useLocalStorage } from "../../utils/hooks";
 import "../App/App.css";
@@ -37,7 +37,9 @@ function Home() {
 
   return (
     <div className="Home">
-      <h1 className="HomeTitle">Skribbl</h1>
+      <Link to="/" className="HomeTitle">
+        Skribbl
+      </Link>
       <Panel className="HomeMainContainer">
         <TextField
           label={playerNameLabel}
