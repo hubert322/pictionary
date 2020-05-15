@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Link, useHistory, useLocation } from "react-router-dom";
+import { socket } from "../../utils/socket";
+import { mediumDeviceMinWidth } from "../../utils/const";
+import { useWindowSize } from "../../utils/hooks";
+import { sendNextTurn } from "./GameApiSocket";
+import PlayersList from "./PlayersList/PlayersList";
 import Canvas from "./Canvas/Canvas";
 import ChatRoom from "../ChatRoom/ChatRoom";
-import { sendNextTurn } from "./GameApiSocket";
-import { socket } from "../../utils/socket";
 import "./Game.css";
 
 function Game() {
@@ -14,6 +17,7 @@ function Game() {
   const [isDrawing, setIsDrawing] = useState(false);
   const [words, setWords] = useState([]);
   const [endTurnData, setEndTurnData] = useState(null);
+  const { width } = useWindowSize();
   const history = useHistory();
 
   function addPlayerScore(pid, score) {
@@ -34,6 +38,37 @@ function Game() {
   function onNextTurn() {
     sendNextTurn(gameCode);
     setEndTurnData(null);
+  }
+
+  function getPlayersList() {
+    return (
+      <PlayersList
+        players={players}
+        pid={pid}
+        ownerPid={ownerPid}
+        artistPid={artist !== null ? artist._id : 5}
+      />
+    );
+  }
+
+  function getCanvas() {
+    return (
+      <Canvas
+        gameCode={gameCode}
+        pid={pid}
+        artist={artist}
+        isDrawing={isDrawing}
+        words={words}
+        endTurnData={endTurnData}
+        onNextTurn={onNextTurn}
+      />
+    );
+  }
+
+  function getChatRoom() {
+    return (
+      <ChatRoom gameCode={gameCode} pid={pid} addPlayerScore={addPlayerScore} />
+    );
   }
 
   useEffect(() => {
@@ -90,27 +125,21 @@ function Game() {
       <h2>Game: {gameCode}</h2>
       <Link to="/">BACK</Link>
       <div className="GamePlayContainer">
-        <div className="PlayersContainer">
-          {players.map(player => (
-            <div className="player" key={player._id}>
-              {player.playerName}: {player.score ? player.score : 0}
+        {width >= mediumDeviceMinWidth ? (
+          <>
+            {getPlayersList()}
+            {getCanvas()}
+            {getChatRoom()}
+          </>
+        ) : (
+          <>
+            {getCanvas()}
+            <div className="GamePlayersChatContainer">
+              {getPlayersList()}
+              {getChatRoom()}
             </div>
-          ))}
-        </div>
-        <Canvas
-          gameCode={gameCode}
-          pid={pid}
-          artist={artist}
-          isDrawing={isDrawing}
-          words={words}
-          endTurnData={endTurnData}
-          onNextTurn={onNextTurn}
-        />
-        <ChatRoom
-          gameCode={gameCode}
-          pid={pid}
-          addPlayerScore={addPlayerScore}
-        />
+          </>
+        )}
       </div>
     </div>
   );

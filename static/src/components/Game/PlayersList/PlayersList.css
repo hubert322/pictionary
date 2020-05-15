@@ -1,0 +1,67 @@
+.PlayersList {
+    margin: 0px;
+    display: flex;
+}
+
+.PlayersListPlayer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.PlayersListPlayerRankingIcon {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items:center;
+}
+
+@media (max-width: 767.98px) {
+    .PlayersList{
+        width: 50%;
+        height: 100%;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .PlayersListPlayer {
+        margin: 3px;
+    }
+
+    .PlayersListRanking {
+        line-height: 1rem;
+        font-size: 1rem;
+    }
+
+    .PlayersListPlayerName {
+        line-height: 0.5rem;
+        font-size: 0.5rem;
+    }
+}
+
+@media (min-width: 767.99px) {
+    .PlayersList{
+        width: 30%;
+        height: 100%;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .PlayersListPlayer {
+        margin: 5px;
+    }
+
+    .PlayersListRanking {
+        line-height: 1rem;
+        font-size: 1.5rem;
+    }
+
+    .PlayersListPlayerName {
+        line-height: 0.5rem;
+        font-size: 1rem;
+    }
+}

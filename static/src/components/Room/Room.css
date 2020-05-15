@@ -7,12 +7,12 @@
   align-items: center;
 }
 
-.TitleLink {
+.RoomTitleLink {
   color: black;
   font-size: 4rem;
 }
 
-.TitleLink:hover {
+.RoomTitleLink:hover {
   color: black;
   text-decoration: none;
 }
@@ -21,12 +21,12 @@
   display: flex;
 }
 
-.ContainerTitle {
+.RoomContainerTitle {
   text-align: center;
   font-size: 3rem;
 }
 
-.PlayersContainer {
+.RoomPlayersContainer {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -34,7 +34,7 @@
   color: white;
 }
 
-.PlayersList {
+.RoomPlayersList {
   display: flex;
   flex-direction: row;
   flex-flow: wrap;
@@ -42,7 +42,7 @@
   align-items: flex-start;
 }
 
-.Player {
+.RoomPlayer {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -50,16 +50,16 @@
   margin: 5px;
 }
 
-.PlayerName {
+.RoomPlayerName {
   display: inline-block
 }
 
-.PlayerTag {
+.RoomPlayerTag {
   line-height: 1rem;
   font-size: 1rem;
 }
 
-.GameControlsContainer {
+.RoomGameControlsContainer {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -76,43 +76,51 @@
     align-items: center;
   }
 
-  .PlayersContainer {
-    width: 100%;
-    height: 47%;
+  .RoomContainerTitle {
+    font-size: 3rem;
   }
 
-  .PlayerName {
+  .RoomPlayersContainer {
+    width: 100%;
+    height: 50%;
+  }
+
+  .RoomPlayerName {
     line-height: 1.5rem;
-    font-size: 1.5rem;
+    font-size: 0.8rem;
   }
 
-  .GameControlsContainer {
+  .RoomGameControlsContainer {
     width: 100%;
-    height: 47%;
+    height: 50%;
   }
 }
 
 @media (min-width: 767.99px) {
   .RoomMainContainer {
-    width: 70%;
+    width: 80%;
     height: 60%;
     flex-direction: row;
     justify-content: space-around;
     align-items: center;
   }
 
-  .PlayersContainer {
-    width: 45%;
+  .RoomContainerTitle {
+    font-size: 3rem;
+  }
+
+  .RoomPlayersContainer {
+    width: 50%;
     height: 100%;
   }
 
-  .PlayerName {
+  .RoomPlayerName {
     line-height: 2rem;
-    font-size: 2rem;
+    font-size: 1.5rem;
   }
 
-  .GameControlsContainer {
-    width: 45%;
+  .RoomGameControlsContainer {
+    width: 50%;
     height: 100%;
   }
 }

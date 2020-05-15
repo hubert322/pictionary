@@ -1,20 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Home from "../Home/Home";
 import Room from "../Room/Room";
 import Game from "../Game/Game";
 import "./App.css";
+import { useWindowSize } from "../../utils/hooks";
 
 function App() {
-  const [currHeight, setCurrHeight] = useState(window.innerHeight);
-
-  useEffect(() => {
-    setCurrHeight(window.innerHeight);
-  });
+  const { height } = useWindowSize();
 
   return (
     <Router>
-      <div className="App" style={{ height: currHeight }}>
+      <div className="App" style={{ height: height }}>
         <Switch>
           <Route exact path="/">
             <Home />

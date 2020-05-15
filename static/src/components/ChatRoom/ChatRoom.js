@@ -2,8 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import TextField from "@material-ui/core/TextField";
 import { socket } from "../../utils/socket";
-import "./ChatRoom.css";
 import { sendMessage } from "./ChatRoomApiSocket";
+import Panel from "../Panel/Panel";
+import "./ChatRoom.css";
 
 function ChatRoom(props) {
   const { gameCode, pid, addPlayerScore } = props;
@@ -53,9 +54,9 @@ function ChatRoom(props) {
   }
 
   return (
-    <div className="ChatRoom">
+    <Panel className="ChatRoom">
       <h1>Chat Room</h1>
-      <div className="MessageArea" ref={messageArea} />
+      <div className="ChatRoomMessageArea" ref={messageArea} />
       <TextField
         label="message"
         value={message}
@@ -66,7 +67,7 @@ function ChatRoom(props) {
       <button type="button" onClick={() => onSendMessage()}>
         Send
       </button>
-    </div>
+    </Panel>
   );
 }
 

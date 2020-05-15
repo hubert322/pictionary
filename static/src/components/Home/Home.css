@@ -7,29 +7,29 @@
   align-items: center;
 }
 
-.Title {
+.HomeTitle {
   color: black;
   font-size: 5rem;
 }
 
-.JoinGameContainer {
+.HomeJoinGameContainer {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
   align-items: stretch;
 }
 
-.JoinGameTextField {
+.HomeJoinGameTextField {
   flex: 1 1 50%;
 }
 
-.JoinGameButton {
+.HomeJoinGameButton {
   flex: 1 1 50%;
   margin:7px;
   border-color: #f64f59;
 }
 
-.NewGameButton {
+.HomeNewGameButton {
   margin: 7px 7px;
   border-color: #12c2e9;
 }
@@ -45,11 +45,11 @@
     width: 40%;
   }
 
-  .JoinGameButton {
+  .HomeJoinGameButton {
     font-size: 2rem;
   }
 
-  .NewGameButton {
+  .HomeNewGameButton {
     font-size: 2rem;
   }
 }

@@ -3,12 +3,15 @@ import { Link, useHistory, useLocation } from "react-router-dom";
 import { Select, InputLabel, FormControl } from "@material-ui/core";
 import { IconContext } from "react-icons";
 import { MdPerson } from "react-icons/md";
+import { FaCrown } from "react-icons/fa";
 import { makeStyles } from "@material-ui/core/styles";
-import Panel from "../Panel/Panel";
+import { useWindowSize } from "../../utils/hooks";
 import { socket } from "../../utils/socket";
+import { mediumDeviceMinWidth } from "../../utils/const";
+import { playGame } from "./RoomApiSocket";
+import Panel from "../Panel/Panel";
 import "../App/App.css";
 import "./Room.css";
-import { playGame } from "./RoomApiSocket";
 
 const useStyles = makeStyles({
   formControl: {
@@ -58,30 +61,25 @@ const useStyles = makeStyles({
 function Room() {
   const classes = useStyles();
   const state = useLocation().state;
-  const { gameCode, pid, ownerPid } = state;
-  const [players, setPlayers] = useState(state.players);
-  // const [players, setPlayers] = useState(() => {
-  //   let tmp = [];
-  //   for (let i = 0; i < 8; ++i) {
-  //     tmp.push({
-  //       _id: i,
-  //       playerName: `Test${i}`
-  //     });
-  //   }
+  // const { gameCode, pid, ownerPid } = state;
+  // const [players, setPlayers] = useState(state.players);
+  const { gameCode } = state;
+  const pid = 0;
+  const ownerPid = 0;
+  const [players, setPlayers] = useState(() => {
+    let tmp = [];
+    for (let i = 0; i < 8; ++i) {
+      tmp.push({
+        _id: i,
+        playerName: `Hurgurto${i}`
+      });
+    }
 
-  //   return tmp;
-  // });
-  const [rounds, setRounds] = useState(3);
-  const [currWidth, setCurrWidth] = useState(window.innerWidth);
-  const history = useHistory();
-
-  const mediumDeviceMinWidth = 768;
-
-  useEffect(() => {
-    window.addEventListener("resize", () => {
-      setCurrWidth(window.innerWidth);
-    });
+    return tmp;
   });
+  const [rounds, setRounds] = useState(3);
+  const { width } = useWindowSize();
+  const history = useHistory();
 
   useEffect(() => {
     socket.on("join_room_announcement", data => {
@@ -108,39 +106,33 @@ function Room() {
 
   return (
     <div className="Room">
-      <Link to="/" className="TitleLink">
+      <Link to="/" className="RoomTitleLink">
         Skribbl
       </Link>
       <h2>Room: {gameCode}</h2>
       <div className="RoomMainContainer">
-        <Panel className="PlayersContainer">
-          <h3 className="ContainerTitle">Players</h3>
-          <div className="PlayersList">
+        <Panel className="RoomPlayersContainer">
+          <h3 className="RoomContainerTitle">Players</h3>
+          <div className="RoomPlayersList">
             {players.map(player => (
-              <div className="Player" key={player._id}>
+              <div className="RoomPlayer" key={player._id}>
                 <IconContext.Provider
                   value={{
-                    size: currWidth >= mediumDeviceMinWidth ? "3rem" : "2rem"
+                    size: width >= mediumDeviceMinWidth ? "3rem" : "2rem"
                   }}
                 >
-                  <MdPerson />
+                  {player._id === ownerPid ? <FaCrown /> : <MdPerson />}
                 </IconContext.Provider>
-                <span className="PlayerName">{player.playerName}</span>
-                <span className="PlayerTag">
-                  {player._id === ownerPid && player._id === pid
-                    ? "Owner/You"
-                    : player._id === ownerPid
-                    ? "Owner"
-                    : player._id === pid
-                    ? "You"
-                    : " "}
+                <span className="RoomPlayerName">{player.playerName}</span>
+                <span className="RoomPlayerTag">
+                  {player._id === pid ? "You" : " "}
                 </span>
               </div>
             ))}
           </div>
         </Panel>
-        <Panel className="GameControlsContainer">
-          <h3 className="ContainerTitle">Settings</h3>
+        <Panel className="RoomGameControlsContainer">
+          <h3 className="RoomContainerTitle">Settings</h3>
           <FormControl
             variant="outlined"
             className={classes.formControl}

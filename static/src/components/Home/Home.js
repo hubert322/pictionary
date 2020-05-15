@@ -36,8 +36,8 @@ function Home() {
   }
 
   return (
-    <div className="Home" style={{ height: window.innerHeight }}>
-      <h1 className="Title">Skribbl</h1>
+    <div className="Home">
+      <h1 className="HomeTitle">Skribbl</h1>
       <Panel className="HomeMainContainer">
         <TextField
           label={playerNameLabel}
@@ -46,18 +46,18 @@ function Home() {
           onChange={e => setPlayerName(e.target.value)}
           error={hasPlayerNameError}
         />
-        <div className="JoinGameContainer">
+        <div className="HomeJoinGameContainer">
           <TextField
             label={gameCodeLabel}
             variant="outlined"
-            className="JoinGameTextField"
+            className="HomeJoinGameTextField"
             value={gameCode}
             onChange={e => setGameCode(e.target.value)}
             error={hasGameCodeError}
           />
           <button
             type="button"
-            className="Button JoinGameButton"
+            className="Button HomeJoinGameButton"
             onClick={onJoinGame}
           >
             Join Game
@@ -65,7 +65,7 @@ function Home() {
         </div>
         <button
           type="button"
-          className="Button NewGameButton"
+          className="Button HomeNewGameButton"
           onClick={onNewGame}
         >
           New Game
