@@ -121,9 +121,10 @@ function Game() {
 
   return (
     <div className="Game">
-      <h1>Skribbl</h1>
-      <h2>Game: {gameCode}</h2>
-      <Link to="/">BACK</Link>
+      <Link to="/" className="GameTitleLink">
+        Skribbl
+      </Link>
+      <h2 className="GameGameCode">Game: {gameCode}</h2>
       <div className="GamePlayContainer">
         {width >= mediumDeviceMinWidth ? (
           <>

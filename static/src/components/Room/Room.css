@@ -10,6 +10,7 @@
 .RoomTitleLink {
   color: black;
   font-size: 4rem;
+  line-height: 4rem;
 }
 
 .RoomTitleLink:hover {
