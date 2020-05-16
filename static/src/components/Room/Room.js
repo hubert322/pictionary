@@ -79,6 +79,7 @@ function Room() {
   //   return tmp;
   // });
   const [rounds, setRounds] = useState(3);
+  const [drawTime, setDrawTime] = useState("60s");
   const { width } = useWindowSize();
   const history = useHistory();
 
@@ -110,8 +111,6 @@ function Room() {
       socket.off("play_game_announcement");
     };
   }, [gameCode, pid, players, history]);
-
-  console.log(players);
 
   return (
     <div className="Room">
@@ -160,12 +159,31 @@ function Room() {
               <option>10</option>
             </Select>
           </FormControl>
+          <FormControl
+            variant="outlined"
+            className={classes.formControl}
+            disabled={pid !== ownerPid}
+          >
+            <InputLabel htmlFor="roundsSelector">Draw Time</InputLabel>
+            <Select
+              native
+              label="Rounds"
+              value={drawTime}
+              onChange={e => setDrawTime(e.target.value)}
+              inputProps={{ id: "drawTime" }}
+            >
+              <option>30s</option>
+              <option>60s</option>
+              <option>90s</option>
+            </Select>
+          </FormControl>
           <button
             type="button"
             className="Button"
             onClick={() => {
               if (players.length > 1) {
-                sendPlayGame(gameCode, rounds);
+                const drawTimeInt = parseInt(drawTime.slice(0, -1));
+                sendPlayGame(gameCode, rounds, drawTimeInt);
               }
             }}
             disabled={pid !== ownerPid}

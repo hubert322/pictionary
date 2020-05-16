@@ -3,7 +3,7 @@ from flask_socketio import SocketIO, emit
 from ..services import game_message_service, player_service, game_room_service
 from . import socketio, game_logic_socket
 
-game_message_socket = Blueprint("game_message_socket", __name__)
+game_message_socket_blueprint = Blueprint("game_message_socket", __name__)
 
 @socketio.on("send_message")
 def send_message_handler(data):

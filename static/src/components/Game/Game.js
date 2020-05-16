@@ -17,22 +17,51 @@ function Game() {
   const [artist, setArtist] = useState(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [words, setWords] = useState([]);
+  const [rankings, setRankings] = useState(new Array(players.length).fill(1));
   const [endTurnData, setEndTurnData] = useState(null);
   const [guessedCorrectPid, setGuessedCorrectPid] = useState(null);
   const [timer, setTimer] = useState(null);
+  const [results, setResults] = useState(null);
   const { width } = useWindowSize();
-  const history = useHistory();
+  let history = useHistory();
 
   function onNextTurn() {
     sendNextTurn(gameCode);
-    setPlayers(
-      players.map((player, index) => {
-        const newPlayer = endTurnData.players[index];
-        player["score"] = newPlayer.score + newPlayer.earnedScore;
-        return player;
-      })
-    );
+    updatePlayersScore();
     setEndTurnData(null);
+  }
+
+  function onShowResults() {
+    const [newPlayers, newRankings] = updatePlayersScore();
+    setResults({
+      players: newPlayers,
+      rankings: newRankings
+    });
+  }
+
+  function updatePlayersScore() {
+    const newPlayers = players.map((player, index) => {
+      const newPlayer = endTurnData.players[index];
+      player["score"] = newPlayer.score + newPlayer.earnedScore;
+      return player;
+    });
+    setPlayers(newPlayers);
+
+    function getScore(score) {
+      return score ? score : 0;
+    }
+
+    const sortedScores = players
+      .map(player => getScore(player.score))
+      .sort()
+      .reverse();
+
+    const newRankings = players.map(
+      player => sortedScores.indexOf(getScore(player.score)) + 1
+    );
+    setRankings(newRankings);
+
+    return [newPlayers, newRankings];
   }
 
   function getPlayersList() {
@@ -43,6 +72,7 @@ function Game() {
         ownerPid={ownerPid}
         artistPid={artist !== null ? artist._id : null}
         guessedCorrectPid={guessedCorrectPid}
+        rankings={rankings}
       />
     );
   }
@@ -70,6 +100,10 @@ function Game() {
         words={words}
         endTurnData={endTurnData}
         onNextTurn={onNextTurn}
+        onShowResults={onShowResults}
+        players={players}
+        results={results}
+        history={history}
       />
     );
   }
@@ -103,6 +137,7 @@ function Game() {
       console.log(data.artist.playerName);
       setArtist(data.artist);
       setWords(data.words);
+      setGuessedCorrectPid(null);
     });
 
     return () => {
@@ -131,7 +166,7 @@ function Game() {
     return () => {
       socket.off("end_turn_announcement");
     };
-  });
+  }, []);
 
   useEffect(() => {
     socket.on("timer_announcement", data => {
@@ -141,7 +176,7 @@ function Game() {
     return () => {
       socket.off("timer_announcement");
     };
-  });
+  }, []);
 
   return (
     <div className="Game">

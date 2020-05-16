@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Link, useHistory } from "react-router-dom";
-import { joinGame, newGame, getPid } from "./HomeApiSocket";
+import { sendJoinGame, sendNewGame, getPid } from "./HomeApiSocket";
 import { useLocalStorage } from "../../utils/hooks";
 import "../App/App.css";
 import "./Home.css";
@@ -28,7 +28,7 @@ function Home() {
         setPlayerNameLabel("Name required");
       }
     } else {
-      joinGame(gameCode, pid.current, playerName, history);
+      sendJoinGame(gameCode, pid.current, playerName, history);
     }
   }
 
@@ -37,7 +37,7 @@ function Home() {
       setHasPlayerNameError(true);
       setPlayerNameLabel("Name required");
     } else {
-      newGame(pid.current, playerName, history);
+      sendNewGame(pid.current, playerName, history);
     }
   }
 

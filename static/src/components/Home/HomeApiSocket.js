@@ -2,7 +2,8 @@ import axios from "axios";
 import { socket } from "../../utils/socket";
 import { serverBaseUrl } from "../../utils/const";
 
-export function joinGame(gameCode, pid, playerName, history) {
+export function sendJoinGame(gameCode, pid, playerName, history) {
+  console.log(history);
   socket.emit("send_join_room", {
     gameCode: gameCode,
     pid: pid,
@@ -11,6 +12,7 @@ export function joinGame(gameCode, pid, playerName, history) {
 
   socket.on("join_room_success", data => {
     socket.off("join_room_success");
+    console.log(history);
     onJoinRoomAnnouncement(gameCode, pid, history);
   });
 
@@ -20,7 +22,7 @@ export function joinGame(gameCode, pid, playerName, history) {
   });
 }
 
-export function newGame(pid, playerName, history) {
+export function sendNewGame(pid, playerName, history) {
   socket.emit("send_new_room", {
     pid: pid,
     playerName: playerName

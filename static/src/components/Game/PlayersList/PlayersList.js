@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { PropTypes } from "prop-types";
 import { IconContext } from "react-icons";
 import { MdPerson } from "react-icons/md";
@@ -9,26 +9,15 @@ import Panel from "../../Panel/Panel";
 import "./PlayersList.css";
 
 function PlayerList(props) {
-  const { players, pid, ownerPid, artistPid, guessedCorrectPid } = props;
-  const [rankings, setRankings] = useState(new Array(players.length).fill(1));
+  const {
+    players,
+    pid,
+    ownerPid,
+    artistPid,
+    guessedCorrectPid,
+    rankings
+  } = props;
   const { width } = useWindowSize();
-
-  function getScore(score) {
-    return score ? score : 0;
-  }
-
-  useEffect(() => {
-    const sortedScores = players
-      .map(player => getScore(player.score))
-      .sort()
-      .reverse();
-    setRankings(
-      players.map(player => sortedScores.indexOf(getScore(player.score)) + 1)
-    );
-  }, [players]);
-
-  console.log(players);
-  console.log(ownerPid);
 
   return (
     <Panel className="PlayersList">
@@ -60,7 +49,7 @@ function PlayerList(props) {
           </div>
           <span className="PlayersListPlayerName">
             {playerName}
-            {pid === _id ? " (You)" : null}: {getScore(score)}
+            {pid === _id ? " (You)" : null}: {score ? score : 0}
           </span>
         </div>
       ))}
@@ -73,7 +62,8 @@ PlayerList.propTypes = {
   pid: PropTypes.string.isRequired,
   ownerPid: PropTypes.string.isRequired,
   artistPid: PropTypes.string,
-  guessedCorrectPid: PropTypes.string
+  guessedCorrectPid: PropTypes.string,
+  rankings: PropTypes.arrayOf(PropTypes.number).isRequired
 };
 
 PlayerList.defaultProps = {

@@ -38,6 +38,18 @@ def get_next_turn(game_code: str) -> Tuple:
 def register_selected_word(game_code: str, selected_word: str) -> None:
     games_data.update_selected_word(game_code, selected_word)
 
+def is_end_game(game_code: str) -> bool:
+    game = games_data.get_game(game_code)
+    if game["artistIndex"] == len(game["players"]) - 1:
+        game["rounds"] -= 1
+        if game["rounds"] == 0:
+            games_data.update_players(game_code, [])
+            games_data.update_playing_status(game_code, False)
+            return True
+        games_data.update_rounds(game_code, game["rounds"])
+    return False
+
+
 
 def _get_next_artist(game) -> Dict:
     artist_index = game["artistIndex"]

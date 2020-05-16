@@ -1,12 +1,13 @@
 from . import socketio, game_logic_socket
 
 class Timer:
-    def __init__(self, game_code):
+    def __init__(self, game_code, draw_time):
         self.is_running = True
         self.game_code = game_code
+        self.draw_time = draw_time
 
     def start_timer(self):
-        time_count = 5
+        time_count = self.draw_time
         self.is_running = True
         while time_count > 0 and self.is_running:
             print(time_count)

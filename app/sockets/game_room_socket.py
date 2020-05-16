@@ -3,7 +3,7 @@ from flask_socketio import SocketIO, emit, join_room
 from ..services import game_room_service, player_service
 from . import socketio
 
-game_room_socket = Blueprint("game_room_socket", __name__)
+game_room_socket_blueprint = Blueprint("game_room_socket", __name__)
 
 @socketio.on("send_join_room")
 def join_room_handler(data):

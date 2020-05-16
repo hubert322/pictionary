@@ -152,3 +152,13 @@ def update_players(game_code: str, players):
             }
         }
     )
+
+def update_rounds(game_code: str, rounds: int):
+    games_collection.update_one({"_id": game_code},
+        {
+            "$set":
+            {
+                "rounds": rounds
+            }
+        }
+    )

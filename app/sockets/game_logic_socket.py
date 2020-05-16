@@ -4,15 +4,16 @@ from ..services import game_logic_service, game_room_service, game_message_servi
 from . import socketio
 from .timer_socket import Timer
 
-game_logic_socket = Blueprint("game_logic_socket", __name__)
+game_logic_socket_blueprint = Blueprint("game_logic_socket", __name__)
 timer_threads = {}
 
 @socketio.on("send_play_game")
 def play_game_handler(data):
     game_code = data["gameCode"]
     rounds = data["rounds"]
+    draw_time = data["drawTime"]
     game_logic_service.game_init(game_code, rounds)
-    timer_threads[game_code] = Timer(game_code)
+    timer_threads[game_code] = Timer(game_code, draw_time)
     socketio.emit("play_game_announcement", broadcast=True, room=game_code)
 
 @socketio.on("send_next_turn")
@@ -38,7 +39,9 @@ def send_selected_word_handler(data):
 def _finished_guessing(game_code):
     timer_threads[game_code].stop_timer()
     players = game_room_service.get_all_players_in_game(game_code)
+    isEndGame = game_logic_service.is_end_game(game_code)
     socketio.emit("end_turn_announcement", {
-        "players": players
+        "players": players,
+        "isEndGame": isEndGame
     }, broadcast=True, room=game_code)
     game_message_service.update_all_players_scores(game_code)

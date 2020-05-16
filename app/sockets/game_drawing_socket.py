@@ -2,7 +2,7 @@ from flask import Blueprint
 from flask_socketio import SocketIO, emit
 from . import socketio
 
-game_drawing_socket = Blueprint("game_drawing_socket", __name__)
+game_drawing_socket_blueprint = Blueprint("game_drawing_socket", __name__)
 
 @socketio.on("send_draw_line")
 def send_draw_line_handler(data):
