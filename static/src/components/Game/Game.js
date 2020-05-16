@@ -7,6 +7,7 @@ import { sendNextTurn } from "./GameApiSocket";
 import PlayersList from "./PlayersList/PlayersList";
 import Canvas from "./Canvas/Canvas";
 import ChatRoom from "../ChatRoom/ChatRoom";
+import Overlay from "./Overlay/Overlay";
 import "./Game.css";
 
 function Game() {
@@ -18,6 +19,7 @@ function Game() {
   const [words, setWords] = useState([]);
   const [endTurnData, setEndTurnData] = useState(null);
   const [guessedCorrectPid, setGuessedCorrectPid] = useState(null);
+  const [timer, setTimer] = useState(null);
   const { width } = useWindowSize();
   const history = useHistory();
 
@@ -45,13 +47,26 @@ function Game() {
     );
   }
 
-  function getCanvas() {
+  function getCanvasOrOverlay() {
+    if (isDrawing) {
+      return (
+        <Canvas
+          gameCode={gameCode}
+          pid={pid}
+          artist={artist}
+          isDrawing={isDrawing}
+          words={words}
+          endTurnData={endTurnData}
+          onNextTurn={onNextTurn}
+          timer={timer}
+        />
+      );
+    }
     return (
-      <Canvas
+      <Overlay
         gameCode={gameCode}
         pid={pid}
         artist={artist}
-        isDrawing={isDrawing}
         words={words}
         endTurnData={endTurnData}
         onNextTurn={onNextTurn}
@@ -120,8 +135,7 @@ function Game() {
 
   useEffect(() => {
     socket.on("timer_announcement", data => {
-      console.log("Timer");
-      console.log(data);
+      setTimer(data.time);
     });
 
     return () => {
@@ -139,12 +153,12 @@ function Game() {
         {width >= mediumDeviceMinWidth ? (
           <>
             {getPlayersList()}
-            {getCanvas()}
+            {getCanvasOrOverlay()}
             {getChatRoom()}
           </>
         ) : (
           <>
-            {getCanvas()}
+            {getCanvasOrOverlay()}
             <div className="GamePlayersChatContainer">
               {getPlayersList()}
               {getChatRoom()}

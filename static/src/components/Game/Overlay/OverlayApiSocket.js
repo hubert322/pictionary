@@ -1,4 +1,4 @@
-import { socket } from "../../../../utils/socket";
+import { socket } from "../../../utils/socket";
 
 export function sendSelectedWord(gameCode, word) {
   socket.emit("send_selected_word", {

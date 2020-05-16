@@ -7,7 +7,7 @@ class Timer:
 
     def start_timer(self):
         time_count = 60
-        while time_count > 0 and self.is_running:
+        while time_count >= 0 and self.is_running:
             socketio.emit("timer_announcement", {
                 "time": time_count
             }, broadcast=True, room=self.game_code)

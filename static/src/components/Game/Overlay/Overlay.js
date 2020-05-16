@@ -1,11 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { sendSelectedWord } from "./OverlayApiSocket";
+import Panel from "../../Panel/Panel";
 import "./Overlay.css";
 
 function Overlay(props) {
   const { gameCode, pid, artist, words, endTurnData, onNextTurn } = props;
 
+  console.log(props);
   console.log(endTurnData);
 
   function selectOverlayContent() {
@@ -44,7 +46,7 @@ function Overlay(props) {
     );
   }
 
-  return <div className="Overlay">{selectOverlayContent()}</div>;
+  return <Panel className="Overlay">{selectOverlayContent()}</Panel>;
 }
 
 Overlay.propTypes = {

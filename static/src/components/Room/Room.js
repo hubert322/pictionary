@@ -8,7 +8,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useWindowSize } from "../../utils/hooks";
 import { socket } from "../../utils/socket";
 import { mediumDeviceMinWidth } from "../../utils/const";
-import { sendEnterRoom, sendPlayGame } from "./RoomApiSocket";
+import { sendPlayGame } from "./RoomApiSocket";
 import Panel from "../Panel/Panel";
 import "../App/App.css";
 import "./Room.css";

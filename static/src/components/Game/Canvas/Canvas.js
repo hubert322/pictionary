@@ -1,25 +1,17 @@
 import React, { useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import { socket } from "../../../utils/socket";
-import "./Canvas.css";
 import {
   sendDrawLine,
   sendDrawDot,
   sendUndoCanvas,
   sendClearCanvas
 } from "./CanvasApiSocket";
-import Overlay from "./Overlay/Overlay";
+import Panel from "../../Panel/Panel";
+import "./Canvas.css";
 
 function Canvas(props) {
-  const {
-    gameCode,
-    pid,
-    artist,
-    isDrawing,
-    words,
-    endTurnData,
-    onNextTurn
-  } = props;
+  const { gameCode, pid, artist, endTurnData, timer, selectedWord } = props;
   const canvas = useRef(null);
   let isMouseDragging = useRef(false);
   let prevX = useRef(0);
@@ -245,28 +237,24 @@ function Canvas(props) {
   }, [endTurnData]);
 
   return (
-    <div className="CanvasContainer">
-      {isDrawing ? (
-        <canvas
-          className="Canvas"
-          ref={canvas}
-          onTouchStart={touchStart}
-          onMouseDown={mouseDown}
-          onTouchMove={touchMove}
-          onMouseMove={mouseMove}
-          onTouchEnd={touchEnd}
-          onMouseUp={mouseUp}
-        />
-      ) : (
-        <Overlay
-          gameCode={gameCode}
-          pid={pid}
-          artist={artist}
-          words={words}
-          endTurnData={endTurnData}
-          onNextTurn={onNextTurn}
-        />
-      )}
+    <Panel className="CanvasContainer">
+      <div className="CanvasHeader">
+        <span className="CanvasHeaderDummy" />
+        <span>{selectedWord}</span>
+        <span className="CanvasTimer">
+          {timer !== null ? `Time: ${timer}` : null}
+        </span>
+      </div>
+      <canvas
+        className="Canvas"
+        ref={canvas}
+        onTouchStart={touchStart}
+        onMouseDown={mouseDown}
+        onTouchMove={touchMove}
+        onMouseMove={mouseMove}
+        onTouchEnd={touchEnd}
+        onMouseUp={mouseUp}
+      />
       <div className="CanvasControlsContainer">
         <button
           type="button"
@@ -309,7 +297,7 @@ function Canvas(props) {
           Clear
         </button>
       </div>
-    </div>
+    </Panel>
   );
 }
 
@@ -317,17 +305,18 @@ Canvas.propTypes = {
   gameCode: PropTypes.string.isRequired,
   pid: PropTypes.string.isRequired,
   artist: PropTypes.objectOf(PropTypes.string),
-  isDrawing: PropTypes.bool.isRequired,
-  words: PropTypes.arrayOf(PropTypes.string).isRequired,
   endTurnData: PropTypes.objectOf(
     PropTypes.oneOfType([PropTypes.array, PropTypes.string])
   ),
-  onNextTurn: PropTypes.func.isRequired
+  timer: PropTypes.number,
+  selectedWord: PropTypes.string
 };
 
 Canvas.defaultProps = {
   artist: null,
-  endTurnData: null
+  endTurnData: null,
+  timer: null,
+  selectedWord: ""
 };
 
 export default Canvas;
