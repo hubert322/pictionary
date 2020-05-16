@@ -28,7 +28,7 @@ const useStyles = makeStyles({
 
 function ChatRoom(props) {
   const classes = useStyles();
-  const { gameCode, pid, addPlayerScore } = props;
+  const { gameCode, pid, setGuessedCorrectPid } = props;
   const [message, setMessage] = useState("");
   // const [isFirstTime, setIsFirstTime] = useState(true);
   const messageArea = useRef(null);
@@ -73,13 +73,13 @@ function ChatRoom(props) {
       console.log("correct!");
       console.log(data);
       addMessage(`${data.player.playerName} has guessed the word!`, true);
-      addPlayerScore(data.player._id, data.score);
+      setGuessedCorrectPid(data.player._id);
     });
 
     return () => {
       socket.off("correct_word_announcement");
     };
-  }, [addPlayerScore]);
+  }, [setGuessedCorrectPid]);
 
   function onSendMessage() {
     sendMessage(gameCode, pid, message);
@@ -120,7 +120,7 @@ function ChatRoom(props) {
 ChatRoom.propTypes = {
   gameCode: PropTypes.string.isRequired,
   pid: PropTypes.string.isRequired,
-  addPlayerScore: PropTypes.func.isRequired
+  setGuessedCorrectPid: PropTypes.func.isRequired
 };
 
 export default ChatRoom;

@@ -6,7 +6,6 @@ import "./Overlay.css";
 function Overlay(props) {
   const { gameCode, pid, artist, words, endTurnData, onNextTurn } = props;
 
-  console.log("ENDTURNDATA");
   console.log(endTurnData);
 
   function selectOverlayContent() {
@@ -15,7 +14,7 @@ function Overlay(props) {
         <>
           {endTurnData.players.map(player => (
             <p key={player._id}>
-              {player.playerName}: {player.score}
+              {player.playerName}: {player.score} + {player.earnedScore}
             </p>
           ))}
           <button type="button" onClick={onNextTurn}>

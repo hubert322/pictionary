@@ -18,9 +18,15 @@ function Home() {
   let history = useHistory();
 
   function onJoinGame() {
-    if (gameCode === "") {
-      setHasGameCodeError(true);
-      setGameCodeLabel("Game Code required");
+    if (gameCode === "" || playerName === "") {
+      if (gameCode === "") {
+        setHasGameCodeError(true);
+        setGameCodeLabel("Game Code required");
+      }
+      if (playerName === "") {
+        setHasPlayerNameError(true);
+        setPlayerNameLabel("Name required");
+      }
     } else {
       joinGame(gameCode, pid.current, playerName, history);
     }

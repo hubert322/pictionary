@@ -21,13 +21,14 @@ def send_message_handler(data):
         }, broadcast=True, room=game_code)
 
 def _guessed_correct_word(game_code, pid, player):
-    score = game_message_service.update_and_get_player_score(game_code, pid)
+    game_message_service.set_player_earned_score(game_code, pid)
     socketio.emit("correct_word_announcement", {
-        "player": player,
-        "score": score
+        "player": player
     }, broadcast=True, room=game_code)
     game_message_service.register_player_guessed_correct(game_code, pid)
     if game_message_service.has_finished_guessing(game_code):
+        players = game_room_service.get_all_players_in_game(game_code)
         socketio.emit("end_turn_announcement", {
-            "players": game_room_service.get_all_players_in_game(game_code)
+            "players": players
         }, broadcast=True, room=game_code)
+        game_message_service.update_all_players_scores(game_code)

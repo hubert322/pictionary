@@ -40,8 +40,6 @@ function TextField(props) {
     className
   } = props;
 
-  console.log(props);
-
   return (
     <MaterialTextField
       label={label}

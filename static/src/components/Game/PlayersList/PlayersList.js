@@ -9,27 +9,37 @@ import Panel from "../../Panel/Panel";
 import "./PlayersList.css";
 
 function PlayerList(props) {
-  const { players, pid, ownerPid, artistPid } = props;
+  const { players, pid, ownerPid, artistPid, guessedCorrectPid } = props;
   const [rankings, setRankings] = useState(new Array(players.length).fill(1));
   const { width } = useWindowSize();
 
   function getScore(score) {
-    return score ? score : 5987;
+    return score ? score : 0;
   }
 
   useEffect(() => {
     const sortedPlayers = players
       .map(player => getScore(player.score))
-      .sort((a, b) => a.score - b.score);
+      .sort((a, b) => b.score - a.score);
     setRankings(
       players.map(player => sortedPlayers.indexOf(getScore(player.score)) + 1)
     );
   }, [players]);
 
+  console.log(players);
+  console.log(ownerPid);
+
   return (
     <Panel className="PlayersList">
       {players.map(({ playerName, _id, score }, index) => (
-        <div className="PlayersListPlayer" key={_id}>
+        <div
+          className="PlayersListPlayer"
+          key={_id}
+          style={{
+            backgroundColor:
+              _id === guessedCorrectPid ? "rgb(35, 231, 17)" : "transparent"
+          }}
+        >
           <div className="PlayersListPlayerRankingIcon">
             <span className="PlayersListRanking">#{rankings[index]}</span>
             <IconContext.Provider
@@ -44,7 +54,7 @@ function PlayerList(props) {
                 size: width >= mediumDeviceMinWidth ? "1.5rem" : "1.2rem"
               }}
             >
-            {_id === artistPid ? <FaPaintBrush /> : null}
+              {_id === artistPid ? <FaPaintBrush /> : null}
             </IconContext.Provider>
           </div>
           <span className="PlayersListPlayerName">
@@ -61,11 +71,13 @@ PlayerList.propTypes = {
   players: PropTypes.arrayOf(PropTypes.object).isRequired,
   pid: PropTypes.string.isRequired,
   ownerPid: PropTypes.string.isRequired,
-  artistPid: PropTypes.string
+  artistPid: PropTypes.string,
+  guessedCorrectPid: PropTypes.string
 };
 
 PlayerList.defaultProps = {
-  artistPid: null
+  artistPid: null,
+  guessedCorrectPid: null
 };
 
 export default PlayerList;

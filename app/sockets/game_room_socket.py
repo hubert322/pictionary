@@ -5,40 +5,44 @@ from . import socketio
 
 game_room_socket = Blueprint("game_room_socket", __name__)
 
-@socketio.on("join_room")
+@socketio.on("send_join_room")
 def join_room_handler(data):
     game_code = data["gameCode"]
     pid = data["pid"]
     player_name = data["playerName"]
 
     if not game_room_service.can_join_game(game_code):
-        return {"players": None}
-    
-    game_room_service.join_game(game_code, pid)
-    return join_room_helper(game_code, pid, player_name)
+        socketio.emit("join_room_error")
+    else:
+        socketio.emit("join_room_success")
+        join_room_announcement(data)
 
-@socketio.on("new_room")
+@socketio.on("send_new_room")
 def new_room_handler(data):
     pid = data["pid"]
     player_name = data["playerName"]
     game_code = game_room_service.get_game_code()
     if game_code == "":
-        return {"gameCode": ""}
+        socketio.emit("new_room_error");
+    else:
+        game_room_service.register_game_code(game_code, pid)
+        socketio.emit("new_room_success", {
+            "gameCode": game_code
+        })
+        data["gameCode"] = game_code
+        join_room_announcement(data)
 
-    game_room_service.register_game_code(game_code, pid)
-    return join_room_helper(game_code, pid, player_name)
 
-def join_room_helper(game_code: str, pid: str, player_name: str):
+def join_room_announcement(data):
+    game_code = data["gameCode"]
+    pid = data["pid"]
+    player_name = data["playerName"]
+    game_room_service.join_game(game_code, pid)
     join_room(game_code)
     player_service.update_player_name(pid, player_name)
-    player = player_service.get_player(pid)
-    socketio.emit("join_room_announcement", {"player": player}, broadcast=True, room=game_code)
     players = game_room_service.get_all_players_in_game(game_code)
     owner_pid = game_room_service.get_game_owner_pid(game_code)
-
-    return {
-        "gameCode": game_code,
-        "pid": pid,
+    socketio.emit("join_room_announcement", {
         "players": players,
         "ownerPid": owner_pid
-    }
+    }, broadcast=True, room=game_code)

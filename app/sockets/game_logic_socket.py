@@ -5,10 +5,11 @@ from . import socketio
 
 game_logic_socket = Blueprint("game_logic_socket", __name__)
 
-@socketio.on("play_game")
+@socketio.on("send_play_game")
 def play_game_handler(data):
     game_code = data["gameCode"]
-    game_logic_service.game_init(game_code)
+    rounds = data["rounds"]
+    game_logic_service.game_init(game_code, rounds)
     socketio.emit("play_game_announcement", broadcast=True, room=game_code)
 
 @socketio.on("send_next_turn")

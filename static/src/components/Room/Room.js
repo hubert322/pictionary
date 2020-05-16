@@ -8,7 +8,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useWindowSize } from "../../utils/hooks";
 import { socket } from "../../utils/socket";
 import { mediumDeviceMinWidth } from "../../utils/const";
-import { playGame } from "./RoomApiSocket";
+import { sendEnterRoom, sendPlayGame } from "./RoomApiSocket";
 import Panel from "../Panel/Panel";
 import "../App/App.css";
 import "./Room.css";
@@ -61,8 +61,9 @@ const useStyles = makeStyles({
 function Room() {
   const classes = useStyles();
   const state = useLocation().state;
-  const { gameCode, pid, ownerPid } = state;
+  const { gameCode, pid } = state;
   const [players, setPlayers] = useState(state.players);
+  const [ownerPid, setOwnerPid] = useState(state.ownerPid);
   // const { gameCode } = state;
   // const pid = 0;
   // const ownerPid = 0;
@@ -83,10 +84,16 @@ function Room() {
 
   useEffect(() => {
     socket.on("join_room_announcement", data => {
+      console.log("join_room_announcement");
       console.log(data);
-      console.log(data.player);
-      setPlayers(players => [...players, data.player]);
+      console.log(players);
+      setPlayers(data.players);
+      setOwnerPid(ownerPid);
     });
+
+    return () => {
+      socket.off("join_room_announcement");
+    };
   }, []);
 
   useEffect(() => {
@@ -103,6 +110,8 @@ function Room() {
       socket.off("play_game_announcement");
     };
   }, [gameCode, pid, players, history]);
+
+  console.log(players);
 
   return (
     <div className="Room">
@@ -154,7 +163,7 @@ function Room() {
           <button
             type="button"
             className="Button"
-            onClick={() => playGame(gameCode, history)}
+            onClick={() => sendPlayGame(gameCode, rounds)}
             disabled={pid !== ownerPid}
           >
             Play

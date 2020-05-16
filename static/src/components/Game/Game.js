@@ -17,27 +17,20 @@ function Game() {
   const [isDrawing, setIsDrawing] = useState(false);
   const [words, setWords] = useState([]);
   const [endTurnData, setEndTurnData] = useState(null);
+  const [guessedCorrectPid, setGuessedCorrectPid] = useState(null);
   const { width } = useWindowSize();
   const history = useHistory();
-
-  function addPlayerScore(pid, score) {
-    console.log(pid, score);
-    console.log(players);
-    setPlayers(
-      players.map(player => {
-        if (player._id !== pid) {
-          return player;
-        }
-        player.score = score;
-        return player;
-      })
-    );
-    console.log(players);
-  }
 
   function onNextTurn() {
     sendNextTurn(gameCode);
     setEndTurnData(null);
+    setPlayers(
+      players.map((player, index) => {
+        const newPlayer = endTurnData.players[index];
+        player["score"] = newPlayer.score + newPlayer.earnedScore;
+        return player;
+      })
+    );
   }
 
   function getPlayersList() {
@@ -46,7 +39,8 @@ function Game() {
         players={players}
         pid={pid}
         ownerPid={ownerPid}
-        artistPid={artist !== null ? artist._id : 5}
+        artistPid={artist !== null ? artist._id : null}
+        guessedCorrectPid={guessedCorrectPid}
       />
     );
   }
@@ -67,7 +61,11 @@ function Game() {
 
   function getChatRoom() {
     return (
-      <ChatRoom gameCode={gameCode} pid={pid} addPlayerScore={addPlayerScore} />
+      <ChatRoom
+        gameCode={gameCode}
+        pid={pid}
+        setGuessedCorrectPid={setGuessedCorrectPid}
+      />
     );
   }
 
@@ -109,6 +107,7 @@ function Game() {
 
   useEffect(() => {
     socket.on("end_turn_announcement", data => {
+      console.log(data);
       setEndTurnData(data);
       setIsDrawing(false);
       setArtist(null);

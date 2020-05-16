@@ -3,42 +3,39 @@ import { socket } from "../../utils/socket";
 import { serverBaseUrl } from "../../utils/const";
 
 export function joinGame(gameCode, pid, playerName, history) {
-  socket.emit(
-    "join_room",
-    {
-      gameCode: gameCode,
-      pid: pid,
-      playerName: playerName
-    },
-    data => {
-      console.log("join game");
-      console.log(data);
-      if (data.players !== null) {
-        history.push(`/room?gameCode=${gameCode}`, data);
-      } else {
-        socket.disconnect();
-      }
-    }
-  );
+  socket.emit("send_join_room", {
+    gameCode: gameCode,
+    pid: pid,
+    playerName: playerName
+  });
+
+  socket.on("join_room_success", data => {
+    socket.off("join_room_success");
+    onJoinRoomAnnouncement(gameCode, pid, history);
+  });
+
+  socket.on("join_room_error", data => {
+    socket.off("join_room_error");
+    console.log("join room error");
+  });
 }
 
 export function newGame(pid, playerName, history) {
-  socket.emit(
-    "new_room",
-    {
-      pid: pid,
-      playerName: playerName
-    },
-    data => {
-      console.log("new game");
-      console.log(data);
-      if (data.gameCode !== "") {
-        history.push(`/room?gameCode=${data.gameCode}`, data);
-      } else {
-        socket.disconnect();
-      }
-    }
-  );
+  socket.emit("send_new_room", {
+    pid: pid,
+    playerName: playerName
+  });
+
+  socket.on("new_room_success", data => {
+    socket.off("new_room_success");
+    onJoinRoomAnnouncement(data.gameCode, pid, history);
+  });
+
+  socket.on("new_room_error", data => {
+    console.log("new room error");
+    console.log(data);
+    socket.off("new_room_error");
+  });
 }
 
 export function getPid() {
@@ -58,4 +55,13 @@ export function getPid() {
 
     return pid;
   })();
+}
+
+function onJoinRoomAnnouncement(gameCode, pid, history) {
+  socket.on("join_room_announcement", data => {
+    socket.off("join_room_announcement");
+    data.gameCode = gameCode;
+    data.pid = pid;
+    history.push(`/room?gameCode=${gameCode}`, data);
+  });
 }

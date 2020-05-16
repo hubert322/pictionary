@@ -2,7 +2,7 @@ from typing import List, Dict, Tuple
 from ..services import player_service, word_service
 from ..data import games_data
 
-def game_init(game_code: str) -> None:
+def game_init(game_code: str, rounds: int) -> None:
     game = games_data.get_game(game_code)
     for player in game["players"]:
         player["score"] = 0
@@ -12,6 +12,7 @@ def game_init(game_code: str) -> None:
     game["words"] = []
     game["guessedCorrectPlayers"] = []
     game["nextTurnCount"] = 0
+    game["rounds"] = rounds
     games_data.update_game(game_code, game)
 
 def can_next_turn(game_code: str) -> bool:
@@ -21,6 +22,8 @@ def can_next_turn(game_code: str) -> bool:
 
 def get_next_turn(game_code: str) -> Tuple:
     game = games_data.get_game(game_code)
+    for player in game["players"]:
+        player["earnedScore"] = 0
     game["selectedWord"] = ""
     game["guessedCorrectPlayers"] = []
     game["artistIndex"] = (game["artistIndex"] + 1) % len(game["players"])
@@ -38,7 +41,7 @@ def register_selected_word(game_code: str, selected_word: str) -> None:
 
 def _get_next_artist(game) -> Dict:
     artist_index = game["artistIndex"]
-    pid = game["players"][artist_index]["pid"]
+    pid = game["players"][artist_index]["_id"]
     
     return player_service.get_player(pid)
 

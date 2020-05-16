@@ -9,9 +9,7 @@ def create_game(game_code: str, owner_pid: str):
     games_collection.insert_one({
         "_id": game_code,
         "ownerPid": owner_pid,
-        "players": [{
-            "pid": owner_pid
-        }],
+        "players": [],
         "isPlaying": False
     })
 
@@ -27,7 +25,7 @@ def add_player_to_game(game_code: str, pid: str):
             "$push": 
             {
                 "players": {
-                    "pid": pid
+                    "_id": pid
                 }
             }
         }
@@ -36,21 +34,24 @@ def add_player_to_game(game_code: str, pid: str):
 def get_all_players_in_game(game_code: str):
     return games_collection.aggregate([
         {"$match": {"_id": game_code}},
-        {"$unwind": {"path": "$players"}},
-        {"$lookup": {
+        {"$unwind": {"path": "$players"}}, 
+        {
+            "$lookup": {
                 "from": "players",
-                "localField": "players.pid",
+                "localField": "players._id",
                 "foreignField": "_id",
-                "as": "players"
+                "as": "newPlayers"
             }
         },
-        {"$unwind":{"path": "$players"}},
-        {"$group": {
+        {"$unwind":{"path": "$newPlayers"}},
+        {
+            "$group": {
                 "_id": "$_id",
-                "players": {"$push": "$players"}
+                "players": {"$push": {"$mergeObjects": ["$players", "$newPlayers"]}}
             }
         },
-        {"$project": {
+        {
+            "$project": {
                 "_id": 0,
                 "players": "$players"
             }
@@ -108,16 +109,26 @@ def update_selected_word(game_code: str, selected_word: str):
         }
     )
 
-def update_and_get_player_score(game_code: str, pid: str, score_increment_value: int):
-    return games_collection.find_one_and_update({"_id": game_code, "players.pid": pid}, 
+def insert_player_earned_score(game_code: str, pid: str, earned_score: int):
+    games_collection.update_one({"_id": game_code, "players._id": pid},
         {
-            "$inc":
+            "$set":
             {
-                "players.$.score": score_increment_value
+                "players.$.earnedScore": earned_score
             }
         },
-        return_document=ReturnDocument.AFTER
     )
+
+# def update_and_get_player_score(game_code: str, pid: str, score_increment_value: int):
+#     return games_collection.find_one_and_update({"_id": game_code, "players.pid": pid}, 
+#         {
+#             "$inc":
+#             {
+#                 "players.$.score": score_increment_value
+#             }
+#         },
+#         return_document=ReturnDocument.AFTER
+#     )
 
 def add_payer_to_guessed_correct(game_code: str, pid: str):
     games_collection.update({"_id": game_code},
@@ -131,3 +142,13 @@ def add_payer_to_guessed_correct(game_code: str, pid: str):
 
 def update_game(game_code: str, game):
     games_collection.replace_one({"_id": game_code}, game)
+
+def update_players(game_code: str, players):
+    games_collection.update_one({"_id": game_code},
+        {
+            "$set":
+            {
+                "players": players
+            }
+        }
+    )
