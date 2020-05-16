@@ -118,6 +118,17 @@ function Game() {
     };
   });
 
+  useEffect(() => {
+    socket.on("timer_announcement", data => {
+      console.log("Timer");
+      console.log(data);
+    });
+
+    return () => {
+      socket.off("timer_announcement");
+    };
+  });
+
   return (
     <div className="Game">
       <Link to="/" className="GameTitleLink">

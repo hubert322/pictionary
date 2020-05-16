@@ -163,7 +163,11 @@ function Room() {
           <button
             type="button"
             className="Button"
-            onClick={() => sendPlayGame(gameCode, rounds)}
+            onClick={() => {
+              if (players.length > 1) {
+                sendPlayGame(gameCode, rounds);
+              }
+            }}
             disabled={pid !== ownerPid}
           >
             Play

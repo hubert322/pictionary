@@ -2,8 +2,10 @@ from flask import Blueprint
 from flask_socketio import SocketIO, emit, join_room
 from ..services import game_logic_service
 from . import socketio
+from .timer_socket import Timer
 
 game_logic_socket = Blueprint("game_logic_socket", __name__)
+timer_threads = {}
 
 @socketio.on("send_play_game")
 def play_game_handler(data):
@@ -28,3 +30,7 @@ def send_selected_word_handler(data):
     word = data["word"]
     game_logic_service.register_selected_word(game_code, word)
     socketio.emit("selected_word_announcement", broadcast=True, room=game_code)
+
+    timer = Timer(game_code)
+    timer_thread = socketio.start_background_task(target=timer.start_timer)
+    timer_threads[game_code] = timer

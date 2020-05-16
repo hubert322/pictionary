@@ -2,6 +2,8 @@ from flask import Blueprint
 from flask_socketio import SocketIO, emit
 from ..services import game_message_service, player_service, game_room_service
 from . import socketio
+from .game_logic_socket import timer_threads
+from .timer_socket import Timer
 
 game_message_socket = Blueprint("game_message_socket", __name__)
 
@@ -27,6 +29,7 @@ def _guessed_correct_word(game_code, pid, player):
     }, broadcast=True, room=game_code)
     game_message_service.register_player_guessed_correct(game_code, pid)
     if game_message_service.has_finished_guessing(game_code):
+        timer_threads[game_code].stop_timer()
         players = game_room_service.get_all_players_in_game(game_code)
         socketio.emit("end_turn_announcement", {
             "players": players

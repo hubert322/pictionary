@@ -18,11 +18,12 @@ function PlayerList(props) {
   }
 
   useEffect(() => {
-    const sortedPlayers = players
+    const sortedScores = players
       .map(player => getScore(player.score))
-      .sort((a, b) => b.score - a.score);
+      .sort()
+      .reverse();
     setRankings(
-      players.map(player => sortedPlayers.indexOf(getScore(player.score)) + 1)
+      players.map(player => sortedScores.indexOf(getScore(player.score)) + 1)
     );
   }, [players]);
 
