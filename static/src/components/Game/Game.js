@@ -23,7 +23,6 @@ function Game() {
 
   function onNextTurn() {
     sendNextTurn(gameCode);
-    setEndTurnData(null);
     setPlayers(
       players.map((player, index) => {
         const newPlayer = endTurnData.players[index];
@@ -31,6 +30,7 @@ function Game() {
         return player;
       })
     );
+    setEndTurnData(null);
   }
 
   function getPlayersList() {
