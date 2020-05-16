@@ -1,6 +1,6 @@
 from flask import Blueprint
 from flask_socketio import SocketIO, emit, join_room
-from ..services import game_logic_service
+from ..services import game_logic_service, game_room_service, game_message_service
 from . import socketio
 from .timer_socket import Timer
 
@@ -12,6 +12,7 @@ def play_game_handler(data):
     game_code = data["gameCode"]
     rounds = data["rounds"]
     game_logic_service.game_init(game_code, rounds)
+    timer_threads[game_code] = Timer(game_code)
     socketio.emit("play_game_announcement", broadcast=True, room=game_code)
 
 @socketio.on("send_next_turn")
@@ -31,6 +32,13 @@ def send_selected_word_handler(data):
     game_logic_service.register_selected_word(game_code, word)
     socketio.emit("selected_word_announcement", broadcast=True, room=game_code)
 
-    timer = Timer(game_code)
-    timer_thread = socketio.start_background_task(target=timer.start_timer)
-    timer_threads[game_code] = timer
+    timer = timer_threads[game_code]
+    socketio.start_background_task(target=timer.start_timer)
+
+def _finished_guessing(game_code):
+    timer_threads[game_code].stop_timer()
+    players = game_room_service.get_all_players_in_game(game_code)
+    socketio.emit("end_turn_announcement", {
+        "players": players
+    }, broadcast=True, room=game_code)
+    game_message_service.update_all_players_scores(game_code)
