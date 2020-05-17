@@ -2,8 +2,8 @@ import os
 from flask import Flask, session, render_template
 from flask_cors import CORS
 from flask_socketio import SocketIO
-from .app.api import blueprints
-from .app.sockets import socketio, blueprints
+from app.api import blueprints
+from app.sockets import socketio, blueprints
 
 def create_app(test_config=None):
     # create and configure the app
