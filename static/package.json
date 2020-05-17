@@ -1,8 +1,8 @@
 {
-  "name": "huberthung",
+  "name": "skribbl",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://huberthung.me/",
+  "homepage": "https://skribbl-remake.herokuapp.com/",
   "dependencies": {
     "@material-ui/core": "^4.9.13",
     "animate.css": "^3.7.2",

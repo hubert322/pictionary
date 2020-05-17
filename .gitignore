@@ -9,7 +9,7 @@
 /coverage
 
 # production
-/build
+# /build
 
 # misc
 .DS_Store
@@ -36,5 +36,4 @@ instance/
 htmlcov/
 
 dist/
-build/
 *.egg-info/
