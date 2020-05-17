@@ -169,7 +169,6 @@ function Game() {
   }, []);
 
 
-
   return (
     <div className="Game">
       <Link to="/" className="GameTitleLink">

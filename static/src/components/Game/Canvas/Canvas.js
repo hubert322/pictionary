@@ -80,6 +80,7 @@ function Canvas(props) {
         currX: currX,
         currY: currY
       };
+      console.log("DRAW LINE");
       sendDrawLine(gameCode, line);
     } else {
       const dot = {
