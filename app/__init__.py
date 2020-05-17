@@ -4,7 +4,6 @@ from flask_cors import CORS
 from flask_socketio import SocketIO
 from .api import blueprints
 from .sockets import socketio, blueprints
-from .data.words_data import insert_words
 
 app = Flask(__name__, instance_relative_config=True, static_url_path="", static_folder="../static/build")
 
