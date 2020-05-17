@@ -6,18 +6,7 @@ from flask import Flask, render_template
 from .api import blueprints
 from .sockets import socketio, blueprints
 
-
-DEBUG = True
-
-@app.route("/")
-def index():
-    global DEBUG
-    if not DEBUG:
-        return render_template("index.html")
-
 def create_app(debug):
-    global DEBUG
-    DEBUG = debug
 
     # create and configure the app
     if debug:
@@ -47,5 +36,10 @@ def create_app(debug):
 
     cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
     socketio.init_app(app, cors_allowed_origins="*", async_handlers=True)
+
+    @app.route("/")
+    def index():
+        if not debug:
+            return render_template("index.html")
 
     return app
