@@ -30,7 +30,7 @@ def create_app(test_config=None):
         pass
 
     cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
-    socketio.init_app(app, cors_allowed_origins="*", async_handlers=True)
+    socketio.init_app(app, cors_allowed_origins="*", async_handlers=True, async_mode=True)
 
     @app.route('/')
     def root():
