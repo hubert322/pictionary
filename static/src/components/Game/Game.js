@@ -22,6 +22,7 @@ function Game() {
   const [guessedCorrectPid, setGuessedCorrectPid] = useState(null);
   const [timer, setTimer] = useState(null);
   const [results, setResults] = useState(null);
+  const [selectedWord, setSelectedWord] = useState(null);
   const { width } = useWindowSize();
   let history = useHistory();
 
@@ -84,11 +85,8 @@ function Game() {
           gameCode={gameCode}
           pid={pid}
           artist={artist}
-          isDrawing={isDrawing}
-          words={words}
           endTurnData={endTurnData}
-          onNextTurn={onNextTurn}
-          timer={timer}
+          selectedWord={selectedWord}
         />
       );
     }
@@ -101,7 +99,6 @@ function Game() {
         endTurnData={endTurnData}
         onNextTurn={onNextTurn}
         onShowResults={onShowResults}
-        players={players}
         results={results}
         history={history}
       />
@@ -146,8 +143,9 @@ function Game() {
   }, []);
 
   useEffect(() => {
-    socket.on("selected_word_announcement", () => {
+    socket.on("selected_word_announcement", data => {
       setIsDrawing(true);
+      setSelectedWord(data.selectedWord);
     });
 
     return () => {
@@ -167,7 +165,6 @@ function Game() {
       socket.off("end_turn_announcement");
     };
   }, []);
-
 
   return (
     <div className="Game">

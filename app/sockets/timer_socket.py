@@ -8,7 +8,7 @@ class Timer:
 
     def start_timer(self):
         time_count = self.draw_time
-        self.is_running = False # DEBUG
+        self.is_running = True
         while time_count > 0 and self.is_running:
             print(time_count)
             socketio.emit("timer_announcement", {

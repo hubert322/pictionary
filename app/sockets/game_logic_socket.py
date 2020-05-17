@@ -31,7 +31,9 @@ def send_selected_word_handler(data):
     game_code = data["gameCode"]
     word = data["word"]
     game_logic_service.register_selected_word(game_code, word)
-    socketio.emit("selected_word_announcement", broadcast=True, room=game_code)
+    socketio.emit("selected_word_announcement", {
+        "selectedWord": word
+    }, broadcast=True, room=game_code)
 
     timer = timer_threads[game_code]
     socketio.start_background_task(target=timer.start_timer)

@@ -80,7 +80,6 @@ function Canvas(props) {
         currX: currX,
         currY: currY
       };
-      console.log("DRAW LINE");
       sendDrawLine(gameCode, line);
     } else {
       const dot = {
@@ -234,7 +233,7 @@ function Canvas(props) {
 
   useEffect(() => {
     socket.on("timer_announcement", data => {
-      // setTimer(data.time);
+      setTimer(data.time);
     });
 
     return () => {
@@ -252,7 +251,11 @@ function Canvas(props) {
     <Panel className="CanvasContainer">
       <div className="CanvasHeader">
         <span className="CanvasHeaderDummy" />
-        <span>{selectedWord}</span>
+        <span>
+          {pid !== artist._id && selectedWord !== null
+            ? "_ ".repeat(selectedWord.length - 1) + "_"
+            : selectedWord}
+        </span>
         <span className="CanvasTimer">
           {timer !== null ? `Time: ${timer}` : null}
         </span>
