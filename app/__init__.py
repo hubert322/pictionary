@@ -2,12 +2,30 @@ import os
 from flask import Flask, session
 from flask_cors import CORS
 from flask_socketio import SocketIO
+from flask import Flask, render_template
 from .api import blueprints
 from .sockets import socketio, blueprints
 
-def create_app(test_config=None):
+
+DEBUG = True
+
+@app.route("/")
+def index():
+    global DEBUG
+    if not DEBUG:
+        return render_template("index.html")
+
+def create_app(debug):
+    global DEBUG
+    DEBUG = debug
+
     # create and configure the app
-    app = Flask(__name__, instance_relative_config=True)
+    if debug:
+        app = Flask(__name__, instance_relative_config=True)
+    else:
+        app = Flask(__name__, instance_relative_config=True, 
+        static_folder="../static/build/static", template_folder="../static/build")
+
     app.config.from_mapping(SECRET_KEY="dev")
     for blueprint in api.blueprints:
         app.register_blueprint(blueprint)
