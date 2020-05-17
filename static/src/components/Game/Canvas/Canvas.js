@@ -233,7 +233,7 @@ function Canvas(props) {
 
   useEffect(() => {
     socket.on("timer_announcement", data => {
-      setTimer(data.time);
+      // setTimer(data.time);
     });
 
     return () => {
