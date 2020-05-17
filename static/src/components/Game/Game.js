@@ -168,15 +168,7 @@ function Game() {
     };
   }, []);
 
-  useEffect(() => {
-    socket.on("timer_announcement", data => {
-      setTimer(data.time);
-    });
 
-    return () => {
-      socket.off("timer_announcement");
-    };
-  }, []);
 
   return (
     <div className="Game">

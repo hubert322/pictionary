@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import { socket } from "../../../utils/socket";
 import {
@@ -11,7 +11,8 @@ import Panel from "../../Panel/Panel";
 import "./Canvas.css";
 
 function Canvas(props) {
-  const { gameCode, pid, artist, endTurnData, timer, selectedWord } = props;
+  const { gameCode, pid, artist, endTurnData, selectedWord } = props;
+  const [timer, setTimer] = useState(null);
   const canvas = useRef(null);
   let isMouseDragging = useRef(false);
   let prevX = useRef(0);
@@ -231,6 +232,16 @@ function Canvas(props) {
   }, []);
 
   useEffect(() => {
+    socket.on("timer_announcement", data => {
+      setTimer(data.time);
+    });
+
+    return () => {
+      socket.off("timer_announcement");
+    };
+  }, []);
+
+  useEffect(() => {
     if (endTurnData !== null) {
       paths.current = [];
     }
@@ -308,14 +319,12 @@ Canvas.propTypes = {
   endTurnData: PropTypes.objectOf(
     PropTypes.oneOfType([PropTypes.array, PropTypes.string])
   ),
-  timer: PropTypes.number,
   selectedWord: PropTypes.string
 };
 
 Canvas.defaultProps = {
   artist: null,
   endTurnData: null,
-  timer: null,
   selectedWord: ""
 };
 
