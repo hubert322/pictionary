@@ -33,6 +33,7 @@ function Game() {
     updatePlayersScore();
     setEndTurnData(null);
     setArtist(null);
+    setSelectedWord(null);
   }
 
   function onShowResults() {
