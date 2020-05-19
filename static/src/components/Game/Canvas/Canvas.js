@@ -159,6 +159,7 @@ function Canvas(props) {
           y: points[0].y,
           newColor: newColor
         };
+        console.time("dot");
         drawDot(dot, false);
         for (let j = 1; j < points.length; ++j) {
           const line = {
@@ -198,6 +199,7 @@ function Canvas(props) {
   useEffect(() => {
     socket.on("draw_dot_announcement", data => {
       if (canvas.current !== null) {
+        console.timeEnd("dot");
         drawDot(data.dot, true);
       }
     });
@@ -253,7 +255,7 @@ function Canvas(props) {
         <span className="CanvasHeaderDummy" />
         <span>
           {pid !== artist._id && selectedWord !== null
-            ? "_ ".repeat(selectedWord.length - 1) + "_"
+            ? "_  ".repeat(selectedWord.length - 1) + "_"
             : selectedWord}
         </span>
         <span className="CanvasTimer">
