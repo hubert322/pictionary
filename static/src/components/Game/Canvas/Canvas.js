@@ -87,6 +87,7 @@ function Canvas(props) {
         y: currY,
         newColor: color.current
       };
+      console.time("dot");
       sendDrawDot(gameCode, dot);
     }
     prevX.current = currX;
@@ -159,7 +160,6 @@ function Canvas(props) {
           y: points[0].y,
           newColor: newColor
         };
-        console.time("dot");
         drawDot(dot, false);
         for (let j = 1; j < points.length; ++j) {
           const line = {
