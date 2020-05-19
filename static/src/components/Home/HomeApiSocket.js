@@ -38,23 +38,21 @@ export function sendNewGame(pid, playerName, history) {
   });
 }
 
-export function getPid() {
+export async function getPid() {
   let pid = localStorage.getItem("pid");
   if (pid != null) {
-    return pid;
+    return Promise.resolve(pid);
   }
-  return (async () => {
-    try {
-      let response = await axios.post(serverBaseUrl + "/api/player/new");
-      console.log(response.data);
-      pid = response.data["pid"];
-      localStorage.setItem("pid", pid);
-    } catch (e) {
-      console.log(e.response.data);
-    }
-
+  try {
+    let response = await axios.post(serverBaseUrl + "/api/player/new");
+    console.log(response.data);
+    pid = response.data["pid"];
+    localStorage.setItem("pid", pid);
     return pid;
-  })();
+  } catch (e) {
+    console.log(e.response);
+    return "";
+  }
 }
 
 function onJoinRoomAnnouncement(gameCode, pid, history) {

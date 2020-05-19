@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { sendJoinGame, sendNewGame, getPid } from "./HomeApiSocket";
 import { useLocalStorage } from "../../utils/hooks";
@@ -14,7 +14,7 @@ function Home() {
   const [hasPlayerNameError, setHasPlayerNameError] = useState(false);
   const [gameCodeLabel, setGameCodeLabel] = useState("Game Code");
   const [hasGameCodeError, setHasGameCodeError] = useState(false);
-  const pid = useRef(getPid());
+  const pid = useRef(null);
   let history = useHistory();
 
   function onJoinGame() {
@@ -27,6 +27,8 @@ function Home() {
         setHasPlayerNameError(true);
         setPlayerNameLabel("Name required");
       }
+    } else if (typeof pid.current !== "string") {
+      console.log("Waiting for promise to resolve...");
     } else {
       sendJoinGame(gameCode, pid.current, playerName, history);
     }
@@ -36,10 +38,20 @@ function Home() {
     if (playerName === "") {
       setHasPlayerNameError(true);
       setPlayerNameLabel("Name required");
+    } else if (typeof pid.current !== "string") {
+      console.log("Waiting for promise to resolve...");
     } else {
       sendNewGame(pid.current, playerName, history);
     }
   }
+
+  useEffect(() => {
+    getPid().then(pidValue => {
+      pid.current = pidValue;
+    });
+  }, []);
+
+  console.log(pid.current);
 
   return (
     <div className="Home">
