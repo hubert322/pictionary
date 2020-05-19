@@ -1,8 +1,11 @@
 .CanvasContainer {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: stretch;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  position: absolute;
 }
 
 .CanvasHeader {
@@ -23,9 +26,9 @@
   margin-right: 10px;
 }
 
-.CanvasHeaderDummy {
-  visibility: hidden;
+.CanvasCurrRound {
   flex: 1;
+  text-align: start;
   margin-left: 10px;
 }
   
@@ -50,7 +53,7 @@
   border-radius: 0px !important;
 }
 
-@media (max-width: 767.98px) {
+/* @media (max-width: 767.98px) {
   .CanvasContainer {
     width: 100%;
     height: 60%;
@@ -62,4 +65,4 @@
     width: 50%;
     height: 100%;
   }
-}
+} */

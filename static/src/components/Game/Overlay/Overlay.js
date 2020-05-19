@@ -1,8 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { useHistory } from "react-router-dom";
 import { sendSelectedWord } from "./OverlayApiSocket";
-import { sendJoinGame } from "../../Home/HomeApiSocket";
 import Panel from "../../Panel/Panel";
 import "./Overlay.css";
 
@@ -16,20 +14,8 @@ function Overlay(props) {
     onNextTurn,
     onShowResults,
     results,
-    history
+    onBackRoom
   } = props;
-
-  console.log(props);
-  console.log(endTurnData);
-
-  function getPlayerName(players, pid) {
-    for (const player of players) {
-      if (player._id === pid) {
-        return player.playerName;
-      }
-    }
-    return null;
-  }
 
   function selectOverlayContent() {
     if (results !== null) {
@@ -40,17 +26,7 @@ function Overlay(props) {
               #{results.rankings[index]} {player.playerName}: {player.score}
             </p>
           ))}
-          <button
-            type="button"
-            onClick={() => {
-              sendJoinGame(
-                gameCode,
-                pid,
-                getPlayerName(results.players, pid),
-                history
-              );
-            }}
-          >
+          <button type="button" onClick={onBackRoom}>
             Back to Room
           </button>
         </>
@@ -76,11 +52,11 @@ function Overlay(props) {
         </>
       );
     }
-    if (artist == null) {
-      return "Loading...";
+    if (artist === null) {
+      return <p>Loading...</p>;
     }
     if (pid !== artist._id) {
-      return `${artist.playerName} is currently choosing their word...`;
+      return <p>{artist.playerName} is currently choosing their word...</p>;
     }
     return (
       <>
@@ -106,14 +82,12 @@ Overlay.propTypes = {
   artist: PropTypes.objectOf(PropTypes.string),
   words: PropTypes.arrayOf(PropTypes.string).isRequired,
   endTurnData: PropTypes.objectOf(
-    PropTypes.oneOfType([PropTypes.array, PropTypes.string])
+    PropTypes.oneOfType([PropTypes.array, PropTypes.bool])
   ),
   onNextTurn: PropTypes.func.isRequired,
   onShowResults: PropTypes.func.isRequired,
   results: PropTypes.objectOf(PropTypes.array),
-  history: PropTypes.objectOf(
-    PropTypes.oneOfType([PropTypes.object, PropTypes.number])
-  ).isRequired
+  onBackRoom: PropTypes.func.isRequired
 };
 
 Overlay.defaultProps = {

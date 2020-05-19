@@ -12,7 +12,8 @@ def game_init(game_code: str, rounds: int) -> None:
     game["words"] = []
     game["guessedCorrectPlayers"] = []
     game["nextTurnCount"] = 0
-    game["rounds"] = rounds
+    game["maxRounds"] = rounds
+    game["currRound"] = 1
     games_data.update_game(game_code, game)
 
 def can_next_turn(game_code: str) -> bool:
@@ -33,7 +34,7 @@ def get_next_turn(game_code: str) -> Tuple:
     game["nextTurnCount"] = 0
     games_data.update_game(game_code, game)
 
-    return next_artist, next_words
+    return next_artist, next_words, game["currRound"]
 
 def register_selected_word(game_code: str, selected_word: str) -> None:
     games_data.update_selected_word(game_code, selected_word)
@@ -41,12 +42,12 @@ def register_selected_word(game_code: str, selected_word: str) -> None:
 def is_end_game(game_code: str) -> bool:
     game = games_data.get_game(game_code)
     if game["artistIndex"] == len(game["players"]) - 1:
-        game["rounds"] -= 1
-        if game["rounds"] == 0:
+        game["currRound"] -= 1
+        if game["currRound"] > game["maxRounds"]:
             games_data.update_players(game_code, [])
             games_data.update_playing_status(game_code, False)
             return True
-        games_data.update_rounds(game_code, game["rounds"])
+        games_data.update_curr_round(game_code, game["currRound"])
     return False
 
 

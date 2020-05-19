@@ -85,9 +85,6 @@ function Room() {
 
   useEffect(() => {
     socket.on("join_room_announcement", data => {
-      console.log("join_room_announcement");
-      console.log(data);
-      console.log(players);
       setPlayers(data.players);
       setOwnerPid(ownerPid);
     });
@@ -103,7 +100,8 @@ function Room() {
         gameCode: gameCode,
         pid: pid,
         players: players,
-        ownerPid: ownerPid
+        ownerPid: ownerPid,
+        drawTime: parseInt(drawTime.slice(0, -1))
       });
     });
 

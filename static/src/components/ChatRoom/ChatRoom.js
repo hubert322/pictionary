@@ -70,8 +70,6 @@ function ChatRoom(props) {
 
   useEffect(() => {
     socket.on("correct_word_announcement", data => {
-      console.log("correct!");
-      console.log(data);
       addMessage(`${data.player.playerName} has guessed the word!`, true);
       setGuessedCorrectPid(data.player._id);
     });

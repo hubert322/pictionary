@@ -4,6 +4,7 @@ import { socket } from "../../utils/socket";
 import { mediumDeviceMinWidth } from "../../utils/const";
 import { useWindowSize } from "../../utils/hooks";
 import { sendNextTurn } from "./GameApiSocket";
+import { sendJoinGame } from "../Home/HomeApiSocket";
 import PlayersList from "./PlayersList/PlayersList";
 import Canvas from "./Canvas/Canvas";
 import ChatRoom from "../ChatRoom/ChatRoom";
@@ -12,17 +13,18 @@ import "./Game.css";
 
 function Game() {
   const state = useLocation().state;
-  const { gameCode, pid, ownerPid } = state;
+  const { gameCode, pid, ownerPid, drawTime } = state;
   const [players, setPlayers] = useState(state.players);
   const [artist, setArtist] = useState(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [words, setWords] = useState([]);
+  const [timer, setTimer] = useState(drawTime);
   const [rankings, setRankings] = useState(new Array(players.length).fill(1));
   const [endTurnData, setEndTurnData] = useState(null);
   const [guessedCorrectPid, setGuessedCorrectPid] = useState(null);
-  const [timer, setTimer] = useState(null);
   const [results, setResults] = useState(null);
   const [selectedWord, setSelectedWord] = useState(null);
+  const [currRound, setCurrRound] = useState(1);
   const { width } = useWindowSize();
   let history = useHistory();
 
@@ -30,6 +32,7 @@ function Game() {
     sendNextTurn(gameCode);
     updatePlayersScore();
     setEndTurnData(null);
+    setArtist(null);
   }
 
   function onShowResults() {
@@ -38,6 +41,18 @@ function Game() {
       players: newPlayers,
       rankings: newRankings
     });
+  }
+
+  function onBackRoom() {
+    function getPlayerName() {
+      for (const player of players) {
+        if (player._id === pid) {
+          return player.playerName;
+        }
+      }
+      return null;
+    }
+    sendJoinGame(gameCode, pid, getPlayerName(), history);
   }
 
   function updatePlayersScore() {
@@ -79,29 +94,31 @@ function Game() {
   }
 
   function getCanvasOrOverlay() {
-    if (isDrawing) {
-      return (
+    return (
+      <div className="GameCanvasOverlayContainer">
         <Canvas
           gameCode={gameCode}
           pid={pid}
           artist={artist}
           endTurnData={endTurnData}
           selectedWord={selectedWord}
+          currRound={currRound}
+          timer={timer}
         />
-      );
-    }
-    return (
-      <Overlay
-        gameCode={gameCode}
-        pid={pid}
-        artist={artist}
-        words={words}
-        endTurnData={endTurnData}
-        onNextTurn={onNextTurn}
-        onShowResults={onShowResults}
-        results={results}
-        history={history}
-      />
+        {!isDrawing ? (
+          <Overlay
+            gameCode={gameCode}
+            pid={pid}
+            artist={artist}
+            words={words}
+            endTurnData={endTurnData}
+            onNextTurn={onNextTurn}
+            onShowResults={onShowResults}
+            results={results}
+            onBackRoom={onBackRoom}
+          />
+        ) : null}
+      </div>
     );
   }
 
@@ -131,10 +148,10 @@ function Game() {
 
   useEffect(() => {
     socket.on("next_artist_announcement", data => {
-      console.log(data.artist.playerName);
       setArtist(data.artist);
       setWords(data.words);
       setGuessedCorrectPid(null);
+      setCurrRound(data.currRound);
     });
 
     return () => {
@@ -154,11 +171,19 @@ function Game() {
   }, []);
 
   useEffect(() => {
+    socket.on("timer_announcement", data => {
+      setTimer(data.time);
+    });
+
+    return () => {
+      socket.off("timer_announcement");
+    };
+  }, []);
+
+  useEffect(() => {
     socket.on("end_turn_announcement", data => {
-      console.log(data);
       setEndTurnData(data);
       setIsDrawing(false);
-      setArtist(null);
     });
 
     return () => {

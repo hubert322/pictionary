@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import { socket } from "../../../utils/socket";
 import {
@@ -11,8 +11,7 @@ import Panel from "../../Panel/Panel";
 import "./Canvas.css";
 
 function Canvas(props) {
-  const { gameCode, pid, artist, endTurnData, selectedWord } = props;
-  const [timer, setTimer] = useState(null);
+  const { gameCode, pid, artist, selectedWord, currRound, timer } = props;
   const canvas = useRef(null);
   let isMouseDragging = useRef(false);
   let prevX = useRef(0);
@@ -80,6 +79,7 @@ function Canvas(props) {
         currX: currX,
         currY: currY
       };
+      drawLine(line, true);
       sendDrawLine(gameCode, line);
     } else {
       const dot = {
@@ -87,7 +87,7 @@ function Canvas(props) {
         y: currY,
         newColor: color.current
       };
-      console.time("dot");
+      drawDot(dot, true);
       sendDrawDot(gameCode, dot);
     }
     prevX.current = currX;
@@ -199,7 +199,6 @@ function Canvas(props) {
   useEffect(() => {
     socket.on("draw_dot_announcement", data => {
       if (canvas.current !== null) {
-        console.timeEnd("dot");
         drawDot(data.dot, true);
       }
     });
@@ -234,33 +233,21 @@ function Canvas(props) {
   }, []);
 
   useEffect(() => {
-    socket.on("timer_announcement", data => {
-      setTimer(data.time);
-    });
-
-    return () => {
-      socket.off("timer_announcement");
-    };
-  }, []);
-
-  useEffect(() => {
-    if (endTurnData !== null) {
-      paths.current = [];
+    if (artist === null) {
+      clearCanvas(true);
     }
-  }, [endTurnData]);
+  }, [artist]);
 
   return (
     <Panel className="CanvasContainer">
       <div className="CanvasHeader">
-        <span className="CanvasHeaderDummy" />
+        <span className="CanvasCurrRound">Round: {currRound}</span>
         <span>
-          {pid !== artist._id && selectedWord !== null
+          {artist !== null && pid !== artist._id && selectedWord !== null
             ? "_  ".repeat(selectedWord.length - 1) + "_"
             : selectedWord}
         </span>
-        <span className="CanvasTimer">
-          {timer !== null ? `Time: ${timer}` : null}
-        </span>
+        <span className="CanvasTimer">Timer: {timer}s</span>
       </div>
       <canvas
         className="Canvas"
@@ -322,15 +309,13 @@ Canvas.propTypes = {
   gameCode: PropTypes.string.isRequired,
   pid: PropTypes.string.isRequired,
   artist: PropTypes.objectOf(PropTypes.string),
-  endTurnData: PropTypes.objectOf(
-    PropTypes.oneOfType([PropTypes.array, PropTypes.string])
-  ),
-  selectedWord: PropTypes.string
+  selectedWord: PropTypes.string,
+  currRound: PropTypes.number.isRequired,
+  timer: PropTypes.number.isRequired
 };
 
 Canvas.defaultProps = {
   artist: null,
-  endTurnData: null,
   selectedWord: ""
 };
 

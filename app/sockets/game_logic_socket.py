@@ -20,10 +20,11 @@ def play_game_handler(data):
 def send_next_turn_handler(data):
     game_code = data["gameCode"]
     if game_logic_service.can_next_turn(game_code):
-        artist, words = game_logic_service.get_next_turn(game_code)
+        artist, words, curr_round = game_logic_service.get_next_turn(game_code)
         socketio.emit("next_artist_announcement", {
             "artist": artist,
-            "words": words
+            "words": words,
+            "currRound": curr_round
         }, broadcast=True, room=game_code)
 
 @socketio.on("send_selected_word")

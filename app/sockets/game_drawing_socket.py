@@ -10,7 +10,7 @@ def send_draw_line_handler(data):
     line = data["line"]
     socketio.emit("draw_line_announcement", {
         "line": line
-    }, broadcast=True, room=game_code)
+    }, broadcast=True, room=game_code, include_self=False)
 
 @socketio.on("send_draw_dot")
 def send_draw_dot_handler(data):
@@ -18,7 +18,7 @@ def send_draw_dot_handler(data):
     dot = data["dot"]
     socketio.emit("draw_dot_announcement", {
         "dot": dot
-    }, broadcast=True, room=game_code)
+    }, broadcast=True, room=game_code, include_self=False)
 
 @socketio.on("send_undo_canvas")
 def send_undo_canvas_handler(data):
