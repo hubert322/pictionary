@@ -112,6 +112,7 @@ function Game() {
             artist={artist}
             words={words}
             endTurnData={endTurnData}
+            selectedWord={selectedWord}
             onNextTurn={onNextTurn}
             onShowResults={onShowResults}
             results={results}

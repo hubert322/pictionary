@@ -184,6 +184,22 @@ function Canvas(props) {
     }
   }
 
+  function getUnderlinedWord(word) {
+    let underlinedWord = "";
+    for (let i = 0; i < word.length; ++i) {
+      if (word[i] === " ") {
+        underlinedWord += "  ";
+      } else {
+        underlinedWord += "__";
+      }
+      if (i + 1 !== word.length) {
+        underlinedWord += "  ";
+      }
+    }
+    console.log(underlinedWord);
+    return underlinedWord;
+  }
+
   useEffect(() => {
     socket.on("draw_line_announcement", data => {
       if (canvas.current !== null) {
@@ -242,9 +258,10 @@ function Canvas(props) {
     <Panel className="CanvasContainer">
       <div className="CanvasHeader">
         <span className="CanvasCurrRound">Round: {currRound}</span>
-        <span>
+        <span className="CanvasUnderlinedWord">
+          Word:{" "}
           {artist !== null && pid !== artist._id && selectedWord !== null
-            ? "_  ".repeat(selectedWord.length - 1) + "_"
+            ? getUnderlinedWord(selectedWord)
             : selectedWord}
         </span>
         <span className="CanvasTimer">Timer: {timer}s</span>

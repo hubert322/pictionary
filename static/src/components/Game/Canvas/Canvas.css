@@ -31,6 +31,10 @@
   text-align: start;
   margin-left: 10px;
 }
+
+.CanvasUnderlinedWord {
+  white-space: pre-wrap;
+}
   
 .Canvas {
   width: 100%;

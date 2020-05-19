@@ -11,6 +11,7 @@ function Overlay(props) {
     artist,
     words,
     endTurnData,
+    selectedWord,
     onNextTurn,
     onShowResults,
     results,
@@ -35,6 +36,7 @@ function Overlay(props) {
     if (endTurnData !== null) {
       return (
         <>
+          <p>{selectedWord}</p>
           {endTurnData.players.map(player => (
             <p key={player._id}>
               {player.playerName}: {player.score} + {player.earnedScore}
@@ -84,6 +86,7 @@ Overlay.propTypes = {
   endTurnData: PropTypes.objectOf(
     PropTypes.oneOfType([PropTypes.array, PropTypes.bool])
   ),
+  selectedWord: PropTypes.string,
   onNextTurn: PropTypes.func.isRequired,
   onShowResults: PropTypes.func.isRequired,
   results: PropTypes.objectOf(PropTypes.array),
@@ -93,6 +96,7 @@ Overlay.propTypes = {
 Overlay.defaultProps = {
   artist: null,
   endTurnData: null,
+  selectedWord: "",
   results: null
 };
 

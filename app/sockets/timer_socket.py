@@ -18,6 +18,9 @@ class Timer:
             socketio.sleep(1)
 
         if self.is_running:
+            socketio.emit("timer_announcement", {
+                "time": 0
+            }, broadcast=True, room=self.game_code)
             game_logic_socket._finished_guessing(self.game_code)
 
     def stop_timer(self):
