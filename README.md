@@ -1,5 +1,5 @@
 # Skribbl
-This is an attempt to remake the famous game [skribbl](https://skribbl.io)
+This is an online multiplayer version of pictionary.
 
 Currently live at: [https://skribbl-remake.herokuapp.com/](https://skribbl-remake.herokuapp.com/)
 
