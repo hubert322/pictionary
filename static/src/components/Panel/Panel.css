@@ -1,0 +1,23 @@
+.Panel {
+  background-color: rgba(255, 255, 255, 0.3);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  border: 5px solid white;
+  border-radius: 5px;
+  border-image-source: #12c2e9; /* fallback for old browsers */
+  border-image-source: -webkit-linear-gradient(
+    to right,
+    #12c2e9,
+    #c471ed,
+    #f64f59
+  ); /* Chrome 10-25, Safari 5.1-6 */
+  border-image-source: linear-gradient(
+    to right,
+    #12c2e9,
+    #c471ed,
+    #f64f59
+  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  border-image-slice: 1;
+}

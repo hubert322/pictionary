@@ -1,0 +1,127 @@
+.Room {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.RoomTitleLink {
+  color: black;
+  font-size: 4rem;
+  line-height: 4rem;
+}
+
+.RoomTitleLink:hover {
+  color: black;
+  text-decoration: none;
+}
+
+.RoomMainContainer {
+  display: flex;
+}
+
+.RoomContainerTitle {
+  text-align: center;
+  font-size: 3rem;
+}
+
+.RoomPlayersContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+.RoomPlayersList {
+  display: flex;
+  flex-direction: row;
+  flex-flow: wrap;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.RoomPlayer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 5px;
+}
+
+.RoomPlayerName {
+  display: inline-block
+}
+
+.RoomPlayerTag {
+  line-height: 1rem;
+  font-size: 1rem;
+}
+
+.RoomGameControlsContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  color: white;
+}
+
+@media (max-width: 767.98px) {
+  .RoomMainContainer {
+    width: 90%;
+    height: 70%;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+  }
+
+  .RoomContainerTitle {
+    font-size: 3rem;
+  }
+
+  .RoomPlayersContainer {
+    width: 100%;
+    height: 50%;
+  }
+
+  .RoomPlayerName {
+    line-height: 1.5rem;
+    font-size: 0.8rem;
+  }
+
+  .RoomGameControlsContainer {
+    width: 100%;
+    height: 50%;
+  }
+}
+
+@media (min-width: 767.99px) {
+  .RoomMainContainer {
+    width: 80%;
+    height: 60%;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+  }
+
+  .RoomContainerTitle {
+    font-size: 3rem;
+  }
+
+  .RoomPlayersContainer {
+    width: 50%;
+    height: 100%;
+  }
+
+  .RoomPlayerName {
+    line-height: 2rem;
+    font-size: 1.5rem;
+  }
+
+  .RoomGameControlsContainer {
+    width: 50%;
+    height: 100%;
+  }
+}

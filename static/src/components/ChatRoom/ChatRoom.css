@@ -1,0 +1,50 @@
+.ChatRoom {
+  margin: 0px;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.ChatRoomTitle {
+  font-size: 2rem;
+}
+
+.ChatRoomMessageArea {
+  width: 95%;
+  height: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  overflow-wrap: anywhere;
+  overflow-y: scroll;
+}
+
+.ChatRoomTextField {
+  width: 95%;
+}
+
+.ChatRoomMessage {
+  margin: 0px;
+}
+
+.ChatRoomCorrectMessage {
+  color: rgb(35, 231, 17);
+  font-weight: 500;
+}
+
+@media (max-width: 767.98px) {
+  .ChatRoom {
+    width: 50%;
+    height: 100%;
+  }
+}
+
+@media (min-width: 767.99px) {
+  .ChatRoom {
+    width: 30%;
+    height: 100%;
+  }
+}
