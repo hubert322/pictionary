@@ -56,7 +56,7 @@ function Home() {
   return (
     <div className="Home">
       <Link to="/" className="HomeTitle">
-        Skribbl
+        Pictionary Live
       </Link>
       <Panel className="HomeMainContainer">
         <TextField

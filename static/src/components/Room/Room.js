@@ -113,7 +113,7 @@ function Room() {
   return (
     <div className="Room">
       <Link to="/" className="RoomTitleLink">
-        Skribbl
+        Pictionary Live
       </Link>
       <h2>Room: {gameCode}</h2>
       <div className="RoomMainContainer">

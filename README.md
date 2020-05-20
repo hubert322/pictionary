@@ -1,7 +1,7 @@
-# Skribbl
+# Pictionary Live
 This is an online multiplayer version of pictionary.
 
-Currently live at: [https://skribbl-remake.herokuapp.com/](https://skribbl-remake.herokuapp.com/)
+Currently live at: [Pictionary Live](https://pictionary.live/)
 
 This project is created using React, Flask, MongoDB, and <span>Socket.IO</span>
 

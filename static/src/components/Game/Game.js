@@ -196,7 +196,7 @@ function Game() {
   return (
     <div className="Game">
       <Link to="/" className="GameTitleLink">
-        Skribbl
+        Pictionary Live
       </Link>
       <h2 className="GameGameCode">Game: {gameCode}</h2>
       <div className="GamePlayContainer">
