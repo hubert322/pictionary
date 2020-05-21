@@ -2,7 +2,7 @@ from ..data import games_data
 
 def is_correct_word(game_code: str, pid: str, word: str) -> bool:
     game = games_data.get_game(game_code)
-    return (word.lower() == game["selectedWord"] and 
+    return (word.lower() == game["selectedWord"].lower() and 
             pid != game["players"][game["artistIndex"]]["_id"] and
             pid not in game["guessedCorrectPlayers"])
 
