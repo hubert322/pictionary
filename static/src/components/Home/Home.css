@@ -9,7 +9,6 @@
 
 .HomeTitle {
   color: black;
-  font-size: 5rem;
 }
 
 .HomeTitle:hover {
@@ -43,6 +42,18 @@
   .HomeMainContainer {
     width: 90%;
   }
+
+  .HomeTitle {
+    font-size: 14vmin;
+  }
+
+  .HomeJoinGameButton {
+    font-size: 6vmin;
+  }
+
+  .HomeNewGameButton {
+    font-size: 6vmin;
+  }
 }
 
 @media (min-width: 767.99px) {
@@ -50,11 +61,15 @@
     width: 40%;
   }
 
+  .HomeTitle {
+    font-size: 14vmin;
+  }
+
   .HomeJoinGameButton {
-    font-size: 2rem;
+    font-size: 6vmin;
   }
 
   .HomeNewGameButton {
-    font-size: 2rem;
+    font-size: 6vmin;
   }
 }

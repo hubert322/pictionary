@@ -51,8 +51,6 @@ function Home() {
     });
   }, []);
 
-  console.log(pid.current);
-
   return (
     <div className="Home">
       <Link to="/" className="HomeTitle">

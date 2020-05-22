@@ -15,7 +15,7 @@ import "./Room.css";
 
 const useStyles = makeStyles({
   formControl: {
-    margin: "7px",
+    margin: "0px 7px",
     "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
       borderColor: "#f64f59"
     },
@@ -66,7 +66,7 @@ function Room() {
   const [ownerPid, setOwnerPid] = useState(state.ownerPid);
   // const { gameCode } = state;
   // const pid = 0;
-  // const ownerPid = 0;
+  // const [ownerPid, setOwnerPid] = useState(0);
   // const [players, setPlayers] = useState(() => {
   //   let tmp = [];
   //   for (let i = 0; i < 8; ++i) {
@@ -115,7 +115,7 @@ function Room() {
       <Link to="/" className="RoomTitleLink">
         Pictionary Live
       </Link>
-      <h2>Room: {gameCode}</h2>
+      <h2 className="RoomGameCode">Game Code: {gameCode}</h2>
       <div className="RoomMainContainer">
         <Panel className="RoomPlayersContainer">
           <h3 className="RoomContainerTitle">Players</h3>
@@ -177,7 +177,7 @@ function Room() {
           </FormControl>
           <button
             type="button"
-            className="Button"
+            className="Button RoomPlayButton"
             onClick={() => {
               if (players.length > 1) {
                 const drawTimeInt = parseInt(drawTime.slice(0, -1));
