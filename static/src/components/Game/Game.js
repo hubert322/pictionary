@@ -37,10 +37,10 @@ function Game() {
   }
 
   function onShowResults() {
-    const [newPlayers, newRankings] = updatePlayersScore();
+    const newPlayers = updatePlayersScore()[0];
+    newPlayers.sort((a, b) => b.score - a.score);
     setResults({
-      players: newPlayers,
-      rankings: newRankings
+      players: newPlayers
     });
   }
 

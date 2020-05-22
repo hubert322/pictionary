@@ -66,10 +66,18 @@
   border-color: #f64f59;
   margin: 0px 7px;
   margin-bottom: 5px;
+  user-select: none;
+  outline: none;
+}
+
+.RoomPlayButton:hover, .RoomPlayButton:focus {
+  border-color: #c471ed;
+  outline: none;
 }
 
 .RoomPlayButton:active {
   border-color: #12c2e9;
+  outline: none;
 }
 
 @media (max-width: 767.98px) {

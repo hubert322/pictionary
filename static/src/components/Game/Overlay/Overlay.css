@@ -15,22 +15,95 @@
   align-items: center;
   text-align: center;
   position: absolute;
-}
-
-.Overlay > p {
   color: white;
 }
 
-/* @media (max-width: 767.98px) {
+.OverlayWordButton {
+  width: 50%;
+  border-width: 2px;
+  border-radius: 3px;
+  border-color: #f64f59;
+  background-color: white;
+  color: black;
+  margin: 5px;
+  outline: none;
+  user-select: none;
+}
+
+.OverlayWordButton:hover, .OverlayWordButton:focus {
+  border-color: #c471ed;
+  outline: none;
+}
+
+.OverlayWordButton:active {
+  border-color: #12c2e9;
+  outline: none;
+}
+
+.OverlayEndTurnResultsContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.OverlayEndTurnResultsText {
+    margin: 5px;
+}
+
+.OverlayEndTurnResultsButton {
+  width: 50%;
+  border-color: #f64f59;
+  background-color: white;
+  color: black;
+  outline: none;
+  user-select: none;
+}
+
+.OverlayEndTurnResultsButton:hover, .OverlayEndTurnResultsButton:focus {
+  border-color: #c471ed;
+  outline: none;
+}
+
+.OverlayEndTurnResultsButton:active {
+  border-color: #12c2e9;
+  outline: none;
+}
+
+@media (max-width: 767.98px) {
   .Overlay {
-    width: 100%;
-    height: 60%;
+    font-size: 5vmin;
+  }
+
+  .OverlayWordButton {
+    font-size: 5vmin;
+  }
+
+  .OverlayEndTurnResultsContainer {
+    font-size: 3.5vmin;
+  }
+
+  .OverlayEndTurnResultsButton {
+    font-size: 5vmin;
   }
 }
 
 @media (min-width: 767.99px) {
   .Overlay {
-    width: 50%;
-    height: 100%;
+    font-size: 5vmin;
   }
-} */
+
+  .OverlayWordButton {
+    font-size: 5vmin;
+  }
+
+  .OverlayEndTurnResultsContainer {
+    font-size: 3vmin;
+  }
+
+  .OverlayEndTurnResultsButton {
+    font-size: 5vmin;
+  }
+}
