@@ -8,6 +8,7 @@ import {
   sendClearCanvas
 } from "./CanvasApiSocket";
 import Panel from "../../Panel/Panel";
+import "../../App/App.css"
 import "./Canvas.css";
 
 function Canvas(props) {
@@ -288,7 +289,7 @@ function Canvas(props) {
       <div className="CanvasControlsContainer">
         <button
           type="button"
-          className="CanvasControl"
+          className="Button CanvasControl"
           onClick={() => {
             color.current = "#f64f59";
           }}
@@ -297,7 +298,7 @@ function Canvas(props) {
         </button>
         <button
           type="button"
-          className="CanvasControl"
+          className="Button CanvasControl"
           onClick={() => {
             color.current = "#12c2e9";
           }}
@@ -306,7 +307,7 @@ function Canvas(props) {
         </button>
         <button
           type="button"
-          className="CanvasControl"
+          className="Button CanvasControl"
           onClick={() => {
             if (paths.current.length && artist !== null && pid === artist._id) {
               sendUndoCanvas(gameCode);
@@ -317,7 +318,7 @@ function Canvas(props) {
         </button>
         <button
           type="button"
-          className="CanvasControl"
+          className="Button CanvasControl"
           onClick={() => {
             if (paths.current.length && artist !== null && pid === artist._id) {
               sendClearCanvas(gameCode);

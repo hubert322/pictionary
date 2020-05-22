@@ -95,6 +95,7 @@ function Game() {
   }
 
   function getCanvasOrOverlay() {
+    let isDrawing = true;
     return (
       <div className="GameCanvasOverlayContainer">
         <Canvas
