@@ -198,7 +198,7 @@ function Game() {
       <Link to="/" className="GameTitleLink">
         Pictionary Live
       </Link>
-      <h2 className="GameGameCode">Game: {gameCode}</h2>
+      <h2 className="GameGameCode">Game Code: {gameCode}</h2>
       <div className="GamePlayContainer">
         {width >= mediumDeviceMinWidth ? (
           <>

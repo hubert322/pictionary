@@ -58,7 +58,7 @@
     }
 
     .PlayersListPlayerName {
-        line-height: 1vmin;
+        line-height: 2vmin;
         font-size: 3vmin;
     }
 }
