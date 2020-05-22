@@ -14,8 +14,8 @@ function Canvas(props) {
   const { gameCode, pid, artist, selectedWord, currRound, timer } = props;
   const canvas = useRef(null);
   let isMouseDragging = useRef(false);
-  let prevX = useRef(0);
-  let prevY = useRef(0);
+  let prevX = useRef(null);
+  let prevY = useRef(null);
   let color = useRef("#f64f59");
   const paths = useRef([]);
 
@@ -29,6 +29,8 @@ function Canvas(props) {
       return;
     }
     isMouseDragging.current = true;
+    document.body.style.userSelect = "none";
+    window.getSelection().removeAllRanges();
     if (isTouch) {
       for (let i = 0; i < 1; ++i) {
         draw(e, false, i);
@@ -67,12 +69,18 @@ function Canvas(props) {
     if (pid !== artist._id) {
       return;
     }
+    document.body.style.userSelect = "auto";
     isMouseDragging.current = false;
+  }
+
+  function mouseLeave() {
+    prevX.current = null;
+    prevY.current = null;
   }
 
   function draw(e, isMouseMove, touchIndex) {
     const { currX, currY } = getMousePos(e, touchIndex);
-    if (isMouseMove) {
+    if (isMouseMove && prevX.current !== null && prevY.current !== null) {
       const line = {
         prevX: prevX.current,
         prevY: prevY.current,
@@ -275,6 +283,7 @@ function Canvas(props) {
         onMouseMove={mouseMove}
         onTouchEnd={touchEnd}
         onMouseUp={mouseUp}
+        onMouseLeave={mouseLeave}
       />
       <div className="CanvasControlsContainer">
         <button
