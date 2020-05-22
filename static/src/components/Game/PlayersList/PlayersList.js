@@ -19,6 +19,15 @@ function PlayerList(props) {
   } = props;
   const { width } = useWindowSize();
 
+  // let debugPlayers = [];
+  // for (let i = 0; i < 8; ++i) {
+  //   debugPlayers.push({
+  //     _id: i,
+  //     playerName: `Hurgurto${i}`,
+  //     score: 3000
+  //   });
+  // }
+
   return (
     <Panel className="PlayersList">
       {players.map(({ playerName, _id, score }, index) => (

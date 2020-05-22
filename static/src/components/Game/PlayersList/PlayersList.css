@@ -32,13 +32,11 @@
     }
 
     .PlayersListRanking {
-        line-height: 1rem;
-        font-size: 1rem;
+        font-size: 4vmin;
     }
 
     .PlayersListPlayerName {
-        line-height: 0.5rem;
-        font-size: 0.5rem;
+        font-size: 2.5vmin;
     }
 }
 
@@ -56,12 +54,11 @@
     }
 
     .PlayersListRanking {
-        line-height: 1rem;
-        font-size: 1.5rem;
+        font-size: 3vmin;
     }
 
     .PlayersListPlayerName {
-        line-height: 0.5rem;
-        font-size: 1rem;
+        line-height: 1vmin;
+        font-size: 3vmin;
     }
 }
