@@ -61,23 +61,23 @@ const useStyles = makeStyles({
 function Room() {
   const classes = useStyles();
   const state = useLocation().state;
-  const { gameCode, pid } = state;
-  const [players, setPlayers] = useState(state.players);
-  const [ownerPid, setOwnerPid] = useState(state.ownerPid);
-  // const { gameCode } = state;
-  // const pid = 0;
-  // const [ownerPid, setOwnerPid] = useState(0);
-  // const [players, setPlayers] = useState(() => {
-  //   let tmp = [];
-  //   for (let i = 0; i < 8; ++i) {
-  //     tmp.push({
-  //       _id: i,
-  //       playerName: `Hurgurto${i}`
-  //     });
-  //   }
+  // const { gameCode, pid } = state;
+  // const [players, setPlayers] = useState(state.players);
+  // const [ownerPid, setOwnerPid] = useState(state.ownerPid);
+  const { gameCode } = state;
+  const pid = 0;
+  const [ownerPid, setOwnerPid] = useState(1);
+  const [players, setPlayers] = useState(() => {
+    let tmp = [];
+    for (let i = 0; i < 8; ++i) {
+      tmp.push({
+        _id: i,
+        playerName: `Hurgurto${i}`
+      });
+    }
 
-  //   return tmp;
-  // });
+    return tmp;
+  });
   const [rounds, setRounds] = useState(3);
   const [drawTime, setDrawTime] = useState("60s");
   const { width } = useWindowSize();

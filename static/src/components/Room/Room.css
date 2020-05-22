@@ -80,6 +80,14 @@
   outline: none;
 }
 
+.RoomPlayButton:disabled {
+  background-color: #ddd;
+  border-color: rgba(255, 255, 255, 0.38);
+  color: rgba(0, 0, 0, 0.20);
+  outline: none;
+  cursor: not-allowed;
+}
+
 @media (max-width: 767.98px) {
   .RoomMainContainer {
     width: 90%;
