@@ -89,9 +89,6 @@ function ChatRoom(props) {
     const ENTER_KEY_CODE = 13;
     if (e.keyCode === ENTER_KEY_CODE && message !== "") {
       onSendMessage();
-      // addMessage(message, true);
-      // addMessage(message, false);
-      // setMessage("");
     }
   }
 
