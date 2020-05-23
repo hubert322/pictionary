@@ -86,6 +86,7 @@
 
   .CanvasControl {
     font-size: 2vh;
+    line-height: 2vh;
   }
 }
 
@@ -96,5 +97,6 @@
 
   .CanvasControl {
     font-size: 3.5vmin;
+    line-height: 3.5vmin;
   }
 }

@@ -290,6 +290,7 @@ function Canvas(props) {
         <button
           type="button"
           className="Button CanvasControl"
+          disabled={artist !== null && pid !== artist._id}
           onClick={() => {
             color.current = "#f64f59";
           }}
@@ -299,6 +300,7 @@ function Canvas(props) {
         <button
           type="button"
           className="Button CanvasControl"
+          disabled={artist !== null && pid !== artist._id}
           onClick={() => {
             color.current = "#12c2e9";
           }}
@@ -308,6 +310,7 @@ function Canvas(props) {
         <button
           type="button"
           className="Button CanvasControl"
+          disabled={artist !== null && pid !== artist._id}
           onClick={() => {
             if (paths.current.length && artist !== null && pid === artist._id) {
               sendUndoCanvas(gameCode);
@@ -319,6 +322,7 @@ function Canvas(props) {
         <button
           type="button"
           className="Button CanvasControl"
+          disabled={artist !== null && pid !== artist._id}
           onClick={() => {
             if (paths.current.length && artist !== null && pid === artist._id) {
               sendClearCanvas(gameCode);
