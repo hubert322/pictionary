@@ -119,17 +119,6 @@ def insert_player_earned_score(game_code: str, pid: str, earned_score: int):
         },
     )
 
-# def update_and_get_player_score(game_code: str, pid: str, score_increment_value: int):
-#     return games_collection.find_one_and_update({"_id": game_code, "players.pid": pid}, 
-#         {
-#             "$inc":
-#             {
-#                 "players.$.score": score_increment_value
-#             }
-#         },
-#         return_document=ReturnDocument.AFTER
-#     )
-
 def add_payer_to_guessed_correct(game_code: str, pid: str):
     games_collection.update({"_id": game_code},
         {

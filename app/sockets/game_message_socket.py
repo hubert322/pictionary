@@ -27,4 +27,5 @@ def _guessed_correct_word(game_code, pid, player):
     }, broadcast=True, room=game_code)
     game_message_service.register_player_guessed_correct(game_code, pid)
     if game_message_service.has_finished_guessing(game_code):
+        game_message_service.set_artist_mega_score(game_code)
         game_logic_socket._finished_guessing(game_code)
