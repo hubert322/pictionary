@@ -37,3 +37,5 @@ htmlcov/
 
 dist/
 *.egg-info/
+
+/static/build/
