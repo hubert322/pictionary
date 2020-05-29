@@ -1,4 +1,4 @@
-from . import socketio
+from . import socketio, game_logic_socket
 
 class Timer:
     def __init__(self, game_code, draw_time):
@@ -23,8 +23,6 @@ class Timer:
                 socketio.emit("timer_announcement", {
                     "time": 0
                 }, broadcast=True, room=self.game_code)
-
-                import game_logic_socket
                 game_logic_socket._finished_guessing(self.game_code)
         
         socketio.start_background_task(target=start_timer_helper)
