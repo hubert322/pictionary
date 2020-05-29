@@ -5,11 +5,11 @@ from flask_socketio import SocketIO
 from .api import blueprints
 from .sockets import socketio, blueprints
 
-app = Flask(__name__, instance_relative_config=True, static_url_path="", static_folder="../static/build")
+app = Flask(__name__, instance_relative_config=True)
+# app = Flask(__name__, instance_relative_config=True, static_url_path="", static_folder="../static/build")
 
 def create_app(test_config=None):
     # create and configure the app
-    # app = Flask(__name__, instance_relative_config=True, static_url_path="", static_folder="../static/build")
     app.config.from_mapping(SECRET_KEY="dev")
     for blueprint in api.blueprints:
         app.register_blueprint(blueprint)
@@ -32,8 +32,8 @@ def create_app(test_config=None):
     cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
     socketio.init_app(app, cors_allowed_origins="*", async_handlers=True)
 
-    @app.route('/')
-    def root():
-        return app.send_static_file('index.html')
+    # @app.route('/')
+    # def root():
+    #     return app.send_static_file('index.html')
 
     return app
