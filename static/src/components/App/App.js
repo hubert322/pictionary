@@ -3,8 +3,9 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Home from "../Home/Home";
 import Room from "../Room/Room";
 import Game from "../Game/Game";
-import "./App.css";
 import { useWindowSize } from "../../utils/hooks";
+import "prevent-pull-refresh";
+import "./App.css";
 
 function App() {
   const { height } = useWindowSize();

@@ -184,7 +184,7 @@ function Room() {
                 sendPlayGame(gameCode, rounds, drawTimeInt);
               }
             }}
-            disabled={pid !== ownerPid}
+            disabled={pid !== ownerPid || players.length <= 1}
           >
             Play
           </button>
