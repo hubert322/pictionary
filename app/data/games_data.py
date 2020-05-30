@@ -68,12 +68,12 @@ def update_playing_status(game_code: str, is_playing: str):
         }
     )
 
-def update_and_get_next_turn_count(game_code: str):
+def update_and_get_enter_game_count(game_code: str):
     return games_collection.find_one_and_update({"_id": game_code}, 
         {
             "$inc":
             {
-                "nextTurnCount": 1
+                "enterGameCount": 1
             }
         },
         return_document=ReturnDocument.AFTER

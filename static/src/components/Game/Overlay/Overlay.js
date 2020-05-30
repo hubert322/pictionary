@@ -12,10 +12,7 @@ function Overlay(props) {
     artist,
     words,
     endTurnData,
-    selectedWord,
-    onNextTurn,
-    onShowResults,
-    results,
+    endGameData,
     onBackRoom
   } = props;
 
@@ -32,9 +29,9 @@ function Overlay(props) {
     // }
     return (
       <div className="OverlayEndTurnResultsContainer">
-        {results.players.map((player, index) => (
+        {endGameData.players.map((player, index) => (
           <p key={player._id} className="OverlayEndTurnResultsText">
-            #{index + 1} {player.playerName}: {player.score}
+            #{endGameData.rankings[index]} {player.playerName}: {player.score}
           </p>
         ))}
         <button
@@ -65,14 +62,14 @@ function Overlay(props) {
     return (
       <div className="OverlayEndTurnResultsContainer">
         <p className="OverlayEndTurnResultsText">
-          Selected Word: {selectedWord}
+          Selected Word: {endTurnData.selectedWord}
         </p>
         {endTurnData.players.map(player => (
           <p key={player._id} className="OverlayEndTurnResultsText">
             {player.playerName}: {player.score} + {player.earnedScore}
           </p>
         ))}
-        {endTurnData.isEndGame ? (
+        {/* {endTurnData.isEndGame ? (
           <button
             type="button"
             className="Button OverlayEndTurnResultsButton"
@@ -80,15 +77,7 @@ function Overlay(props) {
           >
             Results
           </button>
-        ) : (
-          <button
-            type="button"
-            className="Button OverlayEndTurnResultsButton"
-            onClick={onNextTurn}
-          >
-            Next Turn
-          </button>
-        )}
+        ) : null} */}
       </div>
     );
   }
@@ -120,7 +109,7 @@ function Overlay(props) {
   }
 
   function selectOverlayContent() {
-    if (results !== null) {
+    if (endGameData !== null) {
       return getResults();
     }
     if (endTurnData !== null) {
@@ -145,20 +134,16 @@ Overlay.propTypes = {
   artist: PropTypes.objectOf(PropTypes.string),
   words: PropTypes.arrayOf(PropTypes.string).isRequired,
   endTurnData: PropTypes.objectOf(
-    PropTypes.oneOfType([PropTypes.array, PropTypes.bool])
+    PropTypes.oneOfType([PropTypes.array, PropTypes.string])
   ),
-  selectedWord: PropTypes.string,
-  onNextTurn: PropTypes.func.isRequired,
-  onShowResults: PropTypes.func.isRequired,
-  results: PropTypes.objectOf(PropTypes.array),
+  endGameData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.arrayl])),
   onBackRoom: PropTypes.func.isRequired
 };
 
 Overlay.defaultProps = {
   artist: null,
   endTurnData: null,
-  selectedWord: "",
-  results: null
+  endGameData: null
 };
 
 export default Overlay;

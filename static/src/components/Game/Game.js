@@ -3,7 +3,7 @@ import { Link, useHistory, useLocation } from "react-router-dom";
 import { socket } from "../../utils/socket";
 import { mediumDeviceMinWidth } from "../../utils/const";
 import { useWindowSize } from "../../utils/hooks";
-import { sendNextTurn } from "./GameApiSocket";
+import { sendEnterGame } from "./GameApiSocket";
 import { sendJoinGame } from "../Home/HomeApiSocket";
 import PlayersList from "./PlayersList/PlayersList";
 import Canvas from "./Canvas/Canvas";
@@ -22,27 +22,11 @@ function Game() {
   const [rankings, setRankings] = useState(new Array(players.length).fill(1));
   const [endTurnData, setEndTurnData] = useState(null);
   const [guessedCorrectPid, setGuessedCorrectPid] = useState(null);
-  const [results, setResults] = useState(null);
+  const [endGameData, setEndGameData] = useState(null);
   const [selectedWord, setSelectedWord] = useState(null);
   const [currRound, setCurrRound] = useState(1);
   const { width } = useWindowSize();
   let history = useHistory();
-
-  function onNextTurn() {
-    sendNextTurn(gameCode);
-    updatePlayersScore();
-    setEndTurnData(null);
-    setArtist(null);
-    setSelectedWord(null);
-  }
-
-  function onShowResults() {
-    const newPlayers = updatePlayersScore()[0];
-    newPlayers.sort((a, b) => b.score - a.score);
-    setResults({
-      players: newPlayers
-    });
-  }
 
   function onBackRoom() {
     function getPlayerName() {
@@ -57,28 +41,28 @@ function Game() {
   }
 
   function updatePlayersScore() {
-    const newPlayers = players.map((player, index) => {
-      const newPlayer = endTurnData.players[index];
-      player["score"] = newPlayer.score + newPlayer.earnedScore;
-      return player;
-    });
-    setPlayers(newPlayers);
+    if (endTurnData === null) {
+      return;
+    }
+
+    setPlayers(
+      players.map((player, index) => {
+        const newPlayer = endTurnData.players[index];
+        player["score"] = newPlayer.score + newPlayer.earnedScore;
+        return player;
+      })
+    );
 
     function getScore(score) {
       return score ? score : 0;
     }
-
     const sortedScores = players
       .map(player => getScore(player.score))
       .sort()
       .reverse();
-
-    const newRankings = players.map(
-      player => sortedScores.indexOf(getScore(player.score)) + 1
+    setRankings(
+      players.map(player => sortedScores.indexOf(getScore(player.score)) + 1)
     );
-    setRankings(newRankings);
-
-    return [newPlayers, newRankings];
   }
 
   function getPlayersList() {
@@ -101,7 +85,6 @@ function Game() {
           gameCode={gameCode}
           pid={pid}
           artist={artist}
-          endTurnData={endTurnData}
           selectedWord={selectedWord}
           currRound={currRound}
           timer={timer}
@@ -113,10 +96,7 @@ function Game() {
             artist={artist}
             words={words}
             endTurnData={endTurnData}
-            selectedWord={selectedWord}
-            onNextTurn={onNextTurn}
-            onShowResults={onShowResults}
-            results={results}
+            endGameData={endGameData}
             onBackRoom={onBackRoom}
           />
         ) : null}
@@ -135,7 +115,7 @@ function Game() {
   }
 
   useEffect(() => {
-    sendNextTurn(gameCode);
+    sendEnterGame(gameCode);
   }, []);
 
   useEffect(() => {
@@ -150,6 +130,10 @@ function Game() {
 
   useEffect(() => {
     socket.on("next_artist_announcement", data => {
+      console.log("got next artist");
+      updatePlayersScore();
+      setEndTurnData(null);
+      setSelectedWord(null);
       setArtist(data.artist);
       setWords(data.words);
       setGuessedCorrectPid(null);
@@ -190,6 +174,16 @@ function Game() {
 
     return () => {
       socket.off("end_turn_announcement");
+    };
+  }, []);
+
+  useEffect(() => {
+    socket.on("end_game_announcement", data => {
+      setEndGameData(data);
+    });
+
+    return () => {
+      socket.off("end_game_announcement");
     };
   }, []);
 

@@ -32,7 +32,6 @@ def new_room_handler(data):
         data["gameCode"] = game_code
         join_room_announcement(data)
 
-
 def join_room_announcement(data):
     game_code = data["gameCode"]
     pid = data["pid"]

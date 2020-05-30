@@ -1,5 +1,5 @@
 from typing import List, Dict, Tuple
-from ..services import player_service, word_service
+from ..services import player_service, word_service, game_room_service
 from ..data import games_data
 
 def game_init(game_code: str, rounds: int) -> None:
@@ -11,15 +11,14 @@ def game_init(game_code: str, rounds: int) -> None:
     game["artistIndex"] = -1
     game["words"] = []
     game["guessedCorrectPlayers"] = []
-    game["nextTurnCount"] = 0
+    game["enterGameCount"] = 0
     game["maxRounds"] = rounds
     game["currRound"] = 1
     games_data.update_game(game_code, game)
 
-def can_next_turn(game_code: str) -> bool:
-    game = games_data.update_and_get_next_turn_count(game_code)
-    print(f"NEXT TURN: {game['nextTurnCount']}")
-    return game["nextTurnCount"] == len(game["players"])
+def can_start_game(game_code: str) -> bool:
+    game = games_data.update_and_get_enter_game_count(game_code)
+    return game["enterGameCount"] == len(game["players"])
 
 def get_next_turn(game_code: str) -> Tuple:
     game = games_data.get_game(game_code)
@@ -31,7 +30,6 @@ def get_next_turn(game_code: str) -> Tuple:
     next_artist = _get_next_artist(game)
     next_words = _get_next_words(game)
     game["words"] += next_words
-    game["nextTurnCount"] = 0
     games_data.update_game(game_code, game)
 
     return next_artist, next_words, game["currRound"]
@@ -42,15 +40,30 @@ def register_selected_word(game_code: str, selected_word: str) -> None:
 def is_end_game(game_code: str) -> bool:
     game = games_data.get_game(game_code)
     if game["artistIndex"] == len(game["players"]) - 1:
-        game["currRound"] -= 1
+        game["currRound"] += 1
         if game["currRound"] > game["maxRounds"]:
-            games_data.update_players(game_code, [])
-            games_data.update_playing_status(game_code, False)
             return True
         games_data.update_curr_round(game_code, game["currRound"])
     return False
 
+def get_players_and_rankings(game_code: str, is_end_game) -> Tuple:
+    players = game_room_service.get_all_players_in_game(game_code)
+    players.sort(key=lambda player: player["score"], reverse=True)
+    rankings = [1 for _ in range(0, len(players))]
+    currRanking = 1
+    for i in range(1, len(players)):
+        if players[i]["score"] < players[i - 1]["score"]:
+            currRanking += 1
+        rankings[i] = currRanking
+    return players, rankings
 
+def get_selected_word(game_code: str) -> str:
+    game = games_data.get_game(game_code)
+    return game["selectedWord"]
+
+def set_end_game(game_code: str) -> None:
+    games_data.update_players(game_code, [])
+    games_data.update_playing_status(game_code, False)
 
 def _get_next_artist(game) -> Dict:
     artist_index = game["artistIndex"]

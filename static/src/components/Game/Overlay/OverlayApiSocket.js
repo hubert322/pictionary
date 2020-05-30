@@ -6,10 +6,3 @@ export function sendSelectedWord(gameCode, word) {
     word: word
   });
 }
-
-export function sendNextTurn(gameCode, pid) {
-  socket.emit("send_next_turn", {
-    gameCode: gameCode,
-    pid: pid
-  });
-}

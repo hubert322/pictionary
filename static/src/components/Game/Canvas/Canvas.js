@@ -8,7 +8,7 @@ import {
   sendClearCanvas
 } from "./CanvasApiSocket";
 import Panel from "../../Panel/Panel";
-import "../../App/App.css"
+import "../../App/App.css";
 import "./Canvas.css";
 
 function Canvas(props) {
@@ -205,7 +205,6 @@ function Canvas(props) {
         underlinedWord += "  ";
       }
     }
-    console.log(underlinedWord);
     return underlinedWord;
   }
 

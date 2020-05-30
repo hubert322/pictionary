@@ -1,7 +1,7 @@
 import { socket } from "../../utils/socket";
 
-export function sendNextTurn(gameCode) {
-  socket.emit("send_next_turn", {
+export function sendEnterGame(gameCode) {
+  socket.emit("send_enter_game", {
     gameCode: gameCode
   });
 }

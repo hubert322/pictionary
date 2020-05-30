@@ -7,7 +7,6 @@ game_message_socket_blueprint = Blueprint("game_message_socket", __name__)
 
 @socketio.on("send_message")
 def send_message_handler(data):
-    print("GOT MSG")
     game_code = data["gameCode"]
     pid = data["pid"]
     message = data["message"]
