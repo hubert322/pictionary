@@ -20,6 +20,14 @@ def send_draw_dot_handler(data):
         "dot": dot
     }, broadcast=True, room=game_code, include_self=False)
 
+@socketio.on("send_draw_fill")
+def send_draw_fill_handler(data):
+    game_code = data["gameCode"]
+    fill = data["fill"]
+    socketio.emit("draw_fill_announcement", {
+        "fill": fill
+    }, broadcast=True, room=game_code, include_self=False)
+
 @socketio.on("send_undo_canvas")
 def send_undo_canvas_handler(data):
     game_code = data["gameCode"]

@@ -3,7 +3,7 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: stretch;
   position: absolute;
 }
@@ -38,22 +38,40 @@
   
 .Canvas {
   width: 100%;
-  height: 80%;
+  height: 75%;
   background-color: white;
+}
+
+.CanvasDummy {
+  width: 100%;
+  height: 15%;
 }
 
 .CanvasControlsContainer {
   width: 100%;
-  height: 10%;
+  height: 15%;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
   align-items: stretch;
-  /* border-top: 1px solid #DDD; */
+  position:absolute
+}
+
+.CanvasColorsContainer {
+  flex: 1 1 60%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  flex-wrap: wrap;
 }
 
 .CanvasControl {
-  flex: 1 1 25%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  flex: 1 1 10%;
   margin: 0px;
   border-radius: 0px !important;
   border-color: #f64f59;
@@ -61,21 +79,32 @@
   outline: none;
 }
 
-.CanvasControl:hover, .CanvasControl:focus {
-  border-color: #c471ed;
+.CanvasControl:hover {
+  outline: none;
+}
+
+.CanvasControl:focus {
   outline: none;
 }
 
 .CanvasControl:active {
-  border-color: #12c2e9;
   outline: none;
 }
 
-.CanvasControl:disabled {
-  background-color: #ddd;
-  border-color: rgba(255, 255, 255, 0.38);
-  color: rgba(0, 0, 0, 0.20);
-  outline: none;
+.CanvasColorControl {
+  border-color: rgba(255, 255, 255, 0.56);
+}
+
+.CanvasControlsOverlay {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+  padding: 0;
+  z-index: 2;
+  position: absolute;
+  background-color: rgba(43, 83, 129, 0.5);
   cursor: not-allowed;
 }
 
@@ -83,20 +112,10 @@
   .CanvasHeader {
     font-size: 2vh;
   }
-
-  .CanvasControl {
-    font-size: 2vh;
-    line-height: 2vh;
-  }
 }
 
 @media (min-width: 767.99px) {
   .CanvasHeader {
     font-size: 3vmin;
-  }
-
-  .CanvasControl {
-    font-size: 3.5vmin;
-    line-height: 3.5vmin;
   }
 }

@@ -1,9 +1,14 @@
-import React, { useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
+import { IconContext } from "react-icons";
+import { IoMdUndo } from "react-icons/io";
+import { FaTrash, FaPaintBrush, FaCheck } from "react-icons/fa";
+import { GiPaintBucket } from "react-icons/gi";
 import { socket } from "../../../utils/socket";
 import {
   sendDrawLine,
   sendDrawDot,
+  sendDrawFill,
   sendUndoCanvas,
   sendClearCanvas
 } from "./CanvasApiSocket";
@@ -13,12 +18,28 @@ import "./Canvas.css";
 
 function Canvas(props) {
   const { gameCode, pid, artist, selectedWord, currRound, timer } = props;
+  const [color, setColor] = useState("#000000");
+  const [brushStyle, setBrushStyle] = useState("brush");
   const canvas = useRef(null);
   let isMouseDragging = useRef(false);
   let prevX = useRef(null);
   let prevY = useRef(null);
-  let color = useRef("#f64f59");
   const paths = useRef([]);
+  const colors = [
+    "#000000",
+    "#FFFFFF",
+    "#808080",
+    "#C0C0C0",
+    "#FF0000",
+    "#FF7F00",
+    "#FFFF00",
+    "#00FF00",
+    "#00FFFF",
+    "#0000FF",
+    "#7F00FF",
+    "#FF00FF"
+  ];
+  const controlsIconSize = "5vmin";
 
   function touchStart(e) {
     e.preventDefault();
@@ -26,7 +47,7 @@ function Canvas(props) {
   }
 
   function mouseDown(e, isTouch = false) {
-    if (pid !== artist._id) {
+    if (artist === null || pid !== artist._id) {
       return;
     }
     isMouseDragging.current = true;
@@ -47,7 +68,7 @@ function Canvas(props) {
   }
 
   function mouseMove(e, isTouch = false) {
-    if (pid !== artist._id) {
+    if (artist === null || pid !== artist._id || brushStyle === "bucket") {
       return;
     }
     if (isMouseDragging.current) {
@@ -67,7 +88,7 @@ function Canvas(props) {
   }
 
   function mouseUp() {
-    if (pid !== artist._id) {
+    if (artist === null || pid !== artist._id) {
       return;
     }
     document.body.style.userSelect = "auto";
@@ -81,26 +102,37 @@ function Canvas(props) {
 
   function draw(e, isMouseMove, touchIndex) {
     const { currX, currY } = getMousePos(e, touchIndex);
-    if (isMouseMove && prevX.current !== null && prevY.current !== null) {
-      const line = {
-        prevX: prevX.current,
-        prevY: prevY.current,
-        currX: currX,
-        currY: currY
-      };
-      drawLine(line, true);
-      sendDrawLine(gameCode, line);
+    if (brushStyle === "brush") {
+      if (isMouseMove && prevX.current !== null && prevY.current !== null) {
+        const line = {
+          prevX: prevX.current,
+          prevY: prevY.current,
+          currX: currX,
+          currY: currY,
+          newColor: color
+        };
+        drawLine(line, true);
+        sendDrawLine(gameCode, line);
+      } else {
+        const dot = {
+          x: currX,
+          y: currY,
+          newColor: color
+        };
+        drawDot(dot, true);
+        sendDrawDot(gameCode, dot);
+      }
+      prevX.current = currX;
+      prevY.current = currY;
     } else {
-      const dot = {
+      const fill = {
         x: currX,
         y: currY,
-        newColor: color.current
+        newColor: color
       };
-      drawDot(dot, true);
-      sendDrawDot(gameCode, dot);
+      drawFill(fill, true);
+      sendDrawFill(gameCode, fill);
     }
-    prevX.current = currX;
-    prevY.current = currY;
   }
 
   function getMousePos(e, touchIndex) {
@@ -124,10 +156,10 @@ function Canvas(props) {
   }
 
   function drawLine(line, addPath) {
-    const { prevX, prevY, currX, currY } = line;
+    const { prevX, prevY, currX, currY, newColor } = line;
     const ctx = canvas.current.getContext("2d");
     ctx.beginPath();
-    ctx.strokeStyle = color.current;
+    ctx.strokeStyle = newColor;
     ctx.lineWidth = 2;
     ctx.moveTo(prevX, prevY);
     ctx.lineTo(currX, currY);
@@ -144,15 +176,109 @@ function Canvas(props) {
   function drawDot(dot, addPath) {
     const { x, y, newColor } = dot;
     const ctx = canvas.current.getContext("2d");
-    color.current = newColor;
     ctx.beginPath();
-    ctx.fillStyle = color.current;
+    ctx.fillStyle = newColor;
     ctx.fillRect(x, y, 2, 2);
     ctx.closePath();
     if (addPath) {
       paths.current.push({
         points: [],
-        newColor: color.current
+        newColor: newColor,
+        brushStyle: "brush"
+      });
+      paths.current[paths.current.length - 1].points.push({ x: x, y: y });
+    }
+  }
+
+  function drawFill(fill, addPath) {
+    function getInitialColor(x, y, imageData) {
+      const baseIndex = (y * width + x) * 4;
+      const redOffset = 0;
+      const greenOffset = 1;
+      const blueOffset = 2;
+      const alphaOffset = 3;
+      return [
+        imageData.data[baseIndex + redOffset],
+        imageData.data[baseIndex + greenOffset],
+        imageData.data[baseIndex + blueOffset],
+        imageData.data[baseIndex + alphaOffset]
+      ];
+    }
+
+    function isInRange(x, y, width, height) {
+      return 0 <= x && x < width && 0 <= y && y < height;
+    }
+
+    function isEmpty(x, y, width, imageData, r, g, b, a) {
+      // 4 is used since each cell has rgba
+      const baseIndex = (y * width + x) * 4;
+      const redOffset = 0;
+      const greenOffset = 1;
+      const blueOffset = 2;
+      const alphaOffset = 3;
+      return (
+        imageData.data[baseIndex + redOffset] === r &&
+        imageData.data[baseIndex + greenOffset] === g &&
+        imageData.data[baseIndex + blueOffset] === b &&
+        imageData.data[baseIndex + alphaOffset] === a
+      );
+    }
+
+    let { x, y, newColor } = fill;
+    x = Math.floor(x);
+    y = Math.floor(y);
+    const ctx = canvas.current.getContext("2d");
+    let { width, height } = canvas.current.getBoundingClientRect();
+    width = Math.floor(width);
+    height = Math.floor(height);
+
+    if (!isInRange(x, y, width, height)) {
+      return;
+    }
+
+    const imageData = ctx.getImageData(0, 0, width, height);
+    const [r, g, b, a] = getInitialColor(x, y, imageData);
+
+    const dirs = [
+      [0, -1],
+      [1, -1],
+      [1, 0],
+      [1, 1],
+      [0, 1],
+      [-1, 1],
+      [-1, 0],
+      [-1, -1]
+    ];
+    const visited = {};
+    visited[`${x}+${y}`] = 1;
+    let stack = [[x, y]];
+    ctx.beginPath();
+    ctx.fillStyle = newColor;
+    ctx.fillRect(x, y, 1, 1);
+
+    while (stack.length) {
+      const [x, y] = stack.pop();
+      for (const [dx, dy] of dirs) {
+        const newX = x + dx;
+        const newY = y + dy;
+        if (
+          isInRange(newX, newY, width, height) &&
+          isEmpty(newX, newY, width, imageData, r, g, b, a) &&
+          !visited.hasOwnProperty(`${newX}+${newY}`)
+        ) {
+          ctx.fillRect(newX, newY, 1, 1);
+          stack.push([newX, newY]);
+          visited[`${newX}+${newY}`] = 1;
+        }
+      }
+    }
+    ctx.closePath();
+
+    if (addPath) {
+      paths.current.push({
+        points: [],
+        newColor: newColor,
+        brushStyle: "bucket"
       });
       paths.current[paths.current.length - 1].points.push({ x: x, y: y });
     }
@@ -163,21 +289,30 @@ function Canvas(props) {
       clearCanvas(false);
       paths.current.pop();
       for (let i = 0; i < paths.current.length; ++i) {
-        const { points, newColor } = paths.current[i];
-        const dot = {
-          x: points[0].x,
-          y: points[0].y,
-          newColor: newColor
-        };
-        drawDot(dot, false);
-        for (let j = 1; j < points.length; ++j) {
-          const line = {
-            prevX: points[j - 1].x,
-            prevY: points[j - 1].y,
-            currX: points[j].x,
-            currY: points[j].y
+        const { points, newColor, brushStyle } = paths.current[i];
+        if (brushStyle === "brush") {
+          const dot = {
+            x: points[0].x,
+            y: points[0].y,
+            newColor: newColor
           };
-          drawLine(line, false);
+          drawDot(dot, false);
+          for (let j = 1; j < points.length; ++j) {
+            const line = {
+              prevX: points[j - 1].x,
+              prevY: points[j - 1].y,
+              currX: points[j].x,
+              currY: points[j].y
+            };
+            drawLine(line, false);
+          }
+        } else {
+          const fill = {
+            x: points[0].x,
+            y: points[0].y,
+            newColor: newColor
+          };
+          drawFill(fill, false);
         }
       }
     }
@@ -233,6 +368,18 @@ function Canvas(props) {
   }, []);
 
   useEffect(() => {
+    socket.on("draw_fill_announcement", data => {
+      if (canvas.current !== null) {
+        drawFill(data.fill, true);
+      }
+    });
+
+    return () => {
+      socket.off("draw_fill_announcement");
+    };
+  }, []);
+
+  useEffect(() => {
     socket.on("undo_canvas_announcement", () => {
       if (canvas.current !== null) {
         undoCanvas();
@@ -257,7 +404,7 @@ function Canvas(props) {
   }, []);
 
   useEffect(() => {
-    if (artist === null) {
+    if (selectedWord === null) {
       clearCanvas(true);
     }
   }, [artist]);
@@ -285,51 +432,113 @@ function Canvas(props) {
         onMouseUp={mouseUp}
         onMouseLeave={mouseLeave}
       />
+      <div className="CanvasDummy" />
       <div className="CanvasControlsContainer">
+        <div className="CanvasColorsContainer">
+          {colors.map(tmpColor => (
+            <button
+              key={tmpColor}
+              type="button"
+              style={{
+                backgroundColor: tmpColor,
+                color:
+                  artist !== null && pid === artist._id && color === tmpColor
+                    ? tmpColor !== "#ffffff"
+                      ? "white"
+                      : "black"
+                    : tmpColor
+              }}
+              className="Button CanvasControl CanvasColorControl"
+              disabled={artist !== null && pid !== artist._id}
+              onClick={() => {
+                setColor(tmpColor);
+              }}
+            >
+              <IconContext.Provider
+                value={{
+                  size: "2.5vmin"
+                }}
+              >
+                <FaCheck />
+              </IconContext.Provider>
+            </button>
+          ))}
+        </div>
         <button
           type="button"
           className="Button CanvasControl"
-          disabled={artist !== null && pid !== artist._id}
-          onClick={() => {
-            color.current = "#f64f59";
+          style={{
+            backgroundColor:
+              artist !== null && pid === artist._id && brushStyle === "brush"
+                ? "#f64f59"
+                : "#ffffff"
           }}
+          onClick={() => setBrushStyle("brush")}
         >
-          Red
+          <IconContext.Provider
+            value={{
+              size: controlsIconSize
+            }}
+          >
+            <FaPaintBrush />
+          </IconContext.Provider>
         </button>
         <button
           type="button"
           className="Button CanvasControl"
-          disabled={artist !== null && pid !== artist._id}
-          onClick={() => {
-            color.current = "#12c2e9";
+          style={{
+            backgroundColor:
+              artist !== null && pid === artist._id && brushStyle === "bucket"
+                ? "#f64f59"
+                : "#ffffff"
           }}
+          onClick={() => setBrushStyle("bucket")}
         >
-          Blue
+          <IconContext.Provider
+            value={{
+              size: controlsIconSize
+            }}
+          >
+            <GiPaintBucket />
+          </IconContext.Provider>
         </button>
         <button
           type="button"
           className="Button CanvasControl"
-          disabled={artist !== null && pid !== artist._id}
           onClick={() => {
             if (paths.current.length && artist !== null && pid === artist._id) {
               sendUndoCanvas(gameCode);
             }
           }}
         >
-          Undo
+          <IconContext.Provider
+            value={{
+              size: controlsIconSize
+            }}
+          >
+            <IoMdUndo />
+          </IconContext.Provider>
         </button>
         <button
           type="button"
           className="Button CanvasControl"
-          disabled={artist !== null && pid !== artist._id}
           onClick={() => {
             if (paths.current.length && artist !== null && pid === artist._id) {
               sendClearCanvas(gameCode);
             }
           }}
         >
-          Clear
+          <IconContext.Provider
+            value={{
+              size: controlsIconSize
+            }}
+          >
+            <FaTrash />
+          </IconContext.Provider>
         </button>
+        {artist === null || pid !== artist._id ? (
+          <div className="CanvasControlsOverlay" />
+        ) : null}
       </div>
     </Panel>
   );

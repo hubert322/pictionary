@@ -14,6 +14,13 @@ export function sendDrawDot(gameCode, dot) {
   });
 }
 
+export function sendDrawFill(gameCode, fill) {
+  socket.emit("send_draw_fill", {
+    gameCode: gameCode,
+    fill: fill
+  });
+}
+
 export function sendUndoCanvas(gameCode) {
   socket.emit("send_undo_canvas", {
     gameCode: gameCode

@@ -35,7 +35,8 @@
   }
 
   .GameGameCode {
-    font-size: 6vmin;
+    line-height: 7vmin;
+    font-size: 5vmin;
   }
 
   .GamePlayContainer{
@@ -68,7 +69,8 @@
   }
 
   .GameGameCode {
-    font-size: 1.5rem;
+    line-height: 7vmin;
+    font-size: 5vmin;
   }
 
   .GamePlayContainer{
