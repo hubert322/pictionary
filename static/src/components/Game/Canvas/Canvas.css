@@ -58,7 +58,8 @@
 }
 
 .CanvasColorsContainer {
-  flex: 1 1 60%;
+  width: 60%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -67,11 +68,12 @@
 }
 
 .CanvasControl {
+  width: 10%;
+  height: 100%;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  flex: 1 1 10%;
   margin: 0px;
   border-radius: 0px !important;
   border-color: #f64f59;
@@ -92,6 +94,8 @@
 }
 
 .CanvasColorControl {
+  width: auto;
+  height: 50%;
   border-color: rgba(255, 255, 255, 0.56);
 }
 

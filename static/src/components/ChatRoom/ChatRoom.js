@@ -28,20 +28,18 @@ const useStyles = makeStyles({
 
 function ChatRoom(props) {
   const classes = useStyles();
-  const { gameCode, pid, setGuessedCorrectPid } = props;
+  const { gameCode, pid, setGuessedCorrectPid, messages, setMessages } = props;
   const [message, setMessage] = useState("");
   // const [isFirstTime, setIsFirstTime] = useState(true);
   const messageArea = useRef(null);
   const messageTextField = useRef(null);
 
   function addMessage(message, isCorrect) {
-    let messageNode = document.createElement("p");
-    messageNode.textContent = message;
-    messageNode.className = "ChatRoomMessage";
-    if (isCorrect) {
-      messageNode.className += " ChatRoomCorrectMessage";
-    }
-    messageArea.current.appendChild(messageNode);
+    let newMessage = {
+      message: message,
+      isCorrect: isCorrect
+    };
+    setMessages(messages => [...messages, newMessage]);
     scroll();
   }
 
@@ -94,8 +92,19 @@ function ChatRoom(props) {
 
   return (
     <Panel className="ChatRoom">
-      {/* <h2 className="ChatRoomTitle">Chat Room</h2> */}
-      <div className="ChatRoomMessageArea" ref={messageArea} />
+      <div className="ChatRoomMessageArea" ref={messageArea}>
+        {messages.map((message, index) => (
+          <p
+            // eslint-disable-next-line react/no-array-index-key
+            key={`msg${index}`}
+            className={`ChatRoomMessage ${
+              message.isCorrect ? "ChatRoomCorrectMessage" : ""
+            }`}
+          >
+            {message.message}
+          </p>
+        ))}
+      </div>
       <TextField
         className={`${classes.textField} ChatRoomTextField`}
         label="message"
@@ -105,9 +114,6 @@ function ChatRoom(props) {
         inputRef={messageTextField}
         onKeyDown={e => messageTextFieldOnKey(e)}
       />
-      {/* <button type="button" onClick={() => onSendMessage()}>
-        Send
-      </button> */}
     </Panel>
   );
 }
@@ -115,7 +121,13 @@ function ChatRoom(props) {
 ChatRoom.propTypes = {
   gameCode: PropTypes.string.isRequired,
   pid: PropTypes.string.isRequired,
-  setGuessedCorrectPid: PropTypes.func.isRequired
+  setGuessedCorrectPid: PropTypes.func.isRequired,
+  messages: PropTypes.arrayOf(PropTypes.string),
+  setMessages: PropTypes.func.isRequired
+};
+
+ChatRoom.defaultProps = {
+  messages: []
 };
 
 export default ChatRoom;

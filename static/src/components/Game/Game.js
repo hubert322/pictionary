@@ -25,6 +25,7 @@ function Game() {
   const [endGameData, setEndGameData] = useState(null);
   const [selectedWord, setSelectedWord] = useState(null);
   const [currRound, setCurrRound] = useState(1);
+  const [messages, setMessages] = useState([]);
   const { width } = useWindowSize();
   let history = useHistory();
 
@@ -78,7 +79,7 @@ function Game() {
     );
   }
 
-  function getCanvasOrOverlay() {
+  function getCanvasAndOverlay() {
     return (
       <div className="GameCanvasOverlayContainer">
         <Canvas
@@ -110,6 +111,8 @@ function Game() {
         gameCode={gameCode}
         pid={pid}
         setGuessedCorrectPid={setGuessedCorrectPid}
+        messages={messages}
+        setMessages={setMessages}
       />
     );
   }
@@ -197,12 +200,12 @@ function Game() {
         {width >= mediumDeviceMinWidth ? (
           <>
             {getPlayersList()}
-            {getCanvasOrOverlay()}
+            {getCanvasAndOverlay()}
             {getChatRoom()}
           </>
         ) : (
           <>
-            {getCanvasOrOverlay()}
+            {getCanvasAndOverlay()}
             <div className="GamePlayersChatContainer">
               {getPlayersList()}
               {getChatRoom()}

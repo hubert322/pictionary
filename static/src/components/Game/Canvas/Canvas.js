@@ -443,7 +443,7 @@ function Canvas(props) {
                 backgroundColor: tmpColor,
                 color:
                   artist !== null && pid === artist._id && color === tmpColor
-                    ? tmpColor !== "#ffffff"
+                    ? tmpColor !== "#FFFFFF"
                       ? "white"
                       : "black"
                     : tmpColor
