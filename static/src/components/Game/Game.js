@@ -190,6 +190,8 @@ function Game() {
     };
   }, []);
 
+  console.log(width);
+
   return (
     <div className="Game">
       <Link to="/" className="GameTitleLink">
