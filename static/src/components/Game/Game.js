@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import { socket } from "../../utils/socket";
-import { mediumDeviceMinWidth } from "../../utils/const";
-import { useWindowSize } from "../../utils/hooks";
 import { sendEnterGame } from "./GameApiSocket";
 import { sendJoinGame } from "../Home/HomeApiSocket";
 import PlayersList from "./PlayersList/PlayersList";
@@ -25,8 +23,6 @@ function Game() {
   const [endGameData, setEndGameData] = useState(null);
   const [selectedWord, setSelectedWord] = useState(null);
   const [currRound, setCurrRound] = useState(1);
-  const [messages, setMessages] = useState([]);
-  const { width } = useWindowSize();
   let history = useHistory();
 
   function onBackRoom() {
@@ -63,57 +59,6 @@ function Game() {
       .reverse();
     setRankings(
       players.map(player => sortedScores.indexOf(getScore(player.score)) + 1)
-    );
-  }
-
-  function getPlayersList() {
-    return (
-      <PlayersList
-        players={players}
-        pid={pid}
-        ownerPid={ownerPid}
-        artistPid={artist !== null ? artist._id : null}
-        guessedCorrectPid={guessedCorrectPid}
-        rankings={rankings}
-      />
-    );
-  }
-
-  function getCanvasAndOverlay() {
-    return (
-      <div className="GameCanvasOverlayContainer">
-        <Canvas
-          gameCode={gameCode}
-          pid={pid}
-          artist={artist}
-          selectedWord={selectedWord}
-          currRound={currRound}
-          timer={timer}
-        />
-        {!isDrawing ? (
-          <Overlay
-            gameCode={gameCode}
-            pid={pid}
-            artist={artist}
-            words={words}
-            endTurnData={endTurnData}
-            endGameData={endGameData}
-            onBackRoom={onBackRoom}
-          />
-        ) : null}
-      </div>
-    );
-  }
-
-  function getChatRoom() {
-    return (
-      <ChatRoom
-        gameCode={gameCode}
-        pid={pid}
-        setGuessedCorrectPid={setGuessedCorrectPid}
-        messages={messages}
-        setMessages={setMessages}
-      />
     );
   }
 
@@ -190,8 +135,6 @@ function Game() {
     };
   }, []);
 
-  console.log(width);
-
   return (
     <div className="Game">
       <Link to="/" className="GameTitleLink">
@@ -199,21 +142,44 @@ function Game() {
       </Link>
       <h2 className="GameGameCode">Game Code: {gameCode}</h2>
       <div className="GamePlayContainer">
-        {width >= mediumDeviceMinWidth ? (
-          <>
-            {getPlayersList()}
-            {getCanvasAndOverlay()}
-            {getChatRoom()}
-          </>
-        ) : (
-          <>
-            {getCanvasAndOverlay()}
-            <div className="GamePlayersChatContainer">
-              {getPlayersList()}
-              {getChatRoom()}
-            </div>
-          </>
-        )}
+        <div className="GameDummyPlayer" />
+        <div className="GameCanvasOverlayContainer">
+          <Canvas
+            gameCode={gameCode}
+            pid={pid}
+            artist={artist}
+            selectedWord={selectedWord}
+            currRound={currRound}
+            timer={timer}
+          />
+          {!isDrawing ? (
+            <Overlay
+              gameCode={gameCode}
+              pid={pid}
+              artist={artist}
+              words={words}
+              endTurnData={endTurnData}
+              endGameData={endGameData}
+              onBackRoom={onBackRoom}
+            />
+          ) : null}
+        </div>
+        <div className="GameDummyChat" />
+        <div className="GamePlayersChatContainer">
+          <PlayersList
+            players={players}
+            pid={pid}
+            ownerPid={ownerPid}
+            artistPid={artist !== null ? artist._id : null}
+            guessedCorrectPid={guessedCorrectPid}
+            rankings={rankings}
+          />
+          <ChatRoom
+            gameCode={gameCode}
+            pid={pid}
+            setGuessedCorrectPid={setGuessedCorrectPid}
+          />
+        </div>
       </div>
     </div>
   );

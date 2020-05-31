@@ -28,9 +28,10 @@ const useStyles = makeStyles({
 
 function ChatRoom(props) {
   const classes = useStyles();
-  const { gameCode, pid, setGuessedCorrectPid, messages, setMessages } = props;
+  const { gameCode, pid, setGuessedCorrectPid } = props;
   const [message, setMessage] = useState("");
   // const [isFirstTime, setIsFirstTime] = useState(true);
+  const [messages, setMessages] = useState([]);
   const messageArea = useRef(null);
   const messageTextField = useRef(null);
 
@@ -121,13 +122,7 @@ function ChatRoom(props) {
 ChatRoom.propTypes = {
   gameCode: PropTypes.string.isRequired,
   pid: PropTypes.string.isRequired,
-  setGuessedCorrectPid: PropTypes.func.isRequired,
-  messages: PropTypes.arrayOf(PropTypes.string),
-  setMessages: PropTypes.func.isRequired
-};
-
-ChatRoom.defaultProps = {
-  messages: []
+  setGuessedCorrectPid: PropTypes.func.isRequired
 };
 
 export default ChatRoom;
