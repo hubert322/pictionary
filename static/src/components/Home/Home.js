@@ -2,10 +2,11 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { sendJoinGame, sendNewGame, getPid } from "./HomeApiSocket";
 import { useLocalStorage } from "../../utils/hooks";
-import "../App/App.css";
-import "./Home.css";
 import Panel from "../Panel/Panel";
 import TextField from "../TextField/TextField";
+import Footer from "./Footer/Footer";
+import "../App/App.css";
+import "./Home.css";
 
 function Home() {
   const [gameCode, setGameCode] = useState("");
@@ -89,6 +90,7 @@ function Home() {
           New Game
         </button>
       </Panel>
+      <Footer />
     </div>
   );
 }
