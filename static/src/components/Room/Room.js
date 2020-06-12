@@ -180,8 +180,7 @@ function Room() {
             className="Button RoomPlayButton"
             onClick={() => {
               if (players.length > 1) {
-                const drawTimeInt = parseInt(drawTime.slice(0, -1));
-                sendPlayGame(gameCode, rounds, drawTimeInt);
+                sendPlayGame(gameCode, rounds, drawTime);
               }
             }}
             disabled={pid !== ownerPid || players.length <= 1}

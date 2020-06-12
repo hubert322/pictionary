@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { sendJoinGame, sendNewGame, getPid } from "./HomeApiSocket";
 import { useLocalStorage } from "../../utils/hooks";
@@ -15,7 +15,7 @@ function Home() {
   const [hasPlayerNameError, setHasPlayerNameError] = useState(false);
   const [gameCodeLabel, setGameCodeLabel] = useState("Game Code");
   const [hasGameCodeError, setHasGameCodeError] = useState(false);
-  const pid = useRef(null);
+  const [pid, setPid] = useState(null);
   let history = useHistory();
 
   function onJoinGame() {
@@ -28,10 +28,10 @@ function Home() {
         setHasPlayerNameError(true);
         setPlayerNameLabel("Name required");
       }
-    } else if (typeof pid.current !== "string") {
+    } else if (typeof pid !== "string") {
       console.log("Waiting for promise to resolve...");
     } else {
-      sendJoinGame(gameCode, pid.current, playerName, history);
+      sendJoinGame(gameCode, pid, playerName, history);
     }
   }
 
@@ -39,16 +39,16 @@ function Home() {
     if (playerName === "") {
       setHasPlayerNameError(true);
       setPlayerNameLabel("Name required");
-    } else if (typeof pid.current !== "string") {
+    } else if (typeof pid !== "string") {
       console.log("Waiting for promise to resolve...");
     } else {
-      sendNewGame(pid.current, playerName, history);
+      sendNewGame(pid, playerName, history);
     }
   }
 
   useEffect(() => {
     getPid().then(pidValue => {
-      pid.current = pidValue;
+      setPid(pidValue);
     });
   }, []);
 
@@ -57,39 +57,43 @@ function Home() {
       <Link to="/" className="HomeTitle">
         Pictionary Live
       </Link>
-      <Panel className="HomeMainContainer">
-        <TextField
-          label={playerNameLabel}
-          variant="outlined"
-          value={playerName}
-          onChange={e => setPlayerName(e.target.value)}
-          error={hasPlayerNameError}
-        />
-        <div className="HomeJoinGameContainer">
+      {pid !== null ? (
+        <Panel className="HomeMainContainer">
           <TextField
-            label={gameCodeLabel}
+            label={playerNameLabel}
             variant="outlined"
-            className="HomeJoinGameTextField"
-            value={gameCode}
-            onChange={e => setGameCode(e.target.value)}
-            error={hasGameCodeError}
+            value={playerName}
+            onChange={e => setPlayerName(e.target.value)}
+            error={hasPlayerNameError}
           />
+          <div className="HomeJoinGameContainer">
+            <TextField
+              label={gameCodeLabel}
+              variant="outlined"
+              className="HomeJoinGameTextField"
+              value={gameCode}
+              onChange={e => setGameCode(e.target.value)}
+              error={hasGameCodeError}
+            />
+            <button
+              type="button"
+              className="Button HomeJoinGameButton"
+              onClick={onJoinGame}
+            >
+              Join Game
+            </button>
+          </div>
           <button
             type="button"
-            className="Button HomeJoinGameButton"
-            onClick={onJoinGame}
+            className="Button HomeNewGameButton"
+            onClick={onNewGame}
           >
-            Join Game
+            New Game
           </button>
-        </div>
-        <button
-          type="button"
-          className="Button HomeNewGameButton"
-          onClick={onNewGame}
-        >
-          New Game
-        </button>
-      </Panel>
+        </Panel>
+      ) : (
+        <p>Loading...</p>
+      )}
       <Footer />
     </div>
   );

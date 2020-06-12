@@ -32,7 +32,7 @@ def add_player_to_game(game_code: str, pid: str):
     )
 
 def get_all_players_in_game(game_code: str):
-    return games_collection.aggregate([
+    docs = games_collection.aggregate([
         {"$match": {"_id": game_code}},
         {"$unwind": {"path": "$players"}}, 
         {
@@ -56,7 +56,11 @@ def get_all_players_in_game(game_code: str):
                 "players": "$players"
             }
         }
-    ]).next()["players"]
+    ])
+    
+    for doc in docs:
+        return doc["players"]
+    return []
 
 def update_playing_status(game_code: str, is_playing: str):
     games_collection.update_one({"_id": game_code}, 

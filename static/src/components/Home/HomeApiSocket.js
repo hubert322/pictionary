@@ -3,36 +3,37 @@ import { socket } from "../../utils/socket";
 import { serverBaseUrl } from "../../utils/const";
 
 export function sendJoinGame(gameCode, pid, playerName, history) {
+  gameCode = gameCode.toLowerCase();
   socket.emit("send_join_room", {
     gameCode: gameCode,
     pid: pid,
-    playerName: playerName
+    playerName: playerName,
   });
 
-  socket.on("join_room_success", data => {
+  socket.on("join_room_success", (data) => {
     socket.off("join_room_success");
     onJoinRoomAnnouncement(gameCode, pid, history);
   });
 
-  socket.on("join_room_error", data => {
+  socket.on("join_room_error", (data) => {
     socket.off("join_room_error");
-    console.log("join room error");
+    alert("join room error");
   });
 }
 
 export function sendNewGame(pid, playerName, history) {
   socket.emit("send_new_room", {
     pid: pid,
-    playerName: playerName
+    playerName: playerName,
   });
 
-  socket.on("new_room_success", data => {
+  socket.on("new_room_success", (data) => {
     socket.off("new_room_success");
     onJoinRoomAnnouncement(data.gameCode, pid, history);
   });
 
-  socket.on("new_room_error", data => {
-    console.log("new room error");
+  socket.on("new_room_error", (data) => {
+    alert("new room error");
     console.log(data);
     socket.off("new_room_error");
   });
@@ -50,13 +51,14 @@ export async function getPid() {
     localStorage.setItem("pid", pid);
     return pid;
   } catch (e) {
+    alert("Failed to get pid");
     console.log(e.response);
     return "";
   }
 }
 
 function onJoinRoomAnnouncement(gameCode, pid, history) {
-  socket.on("join_room_announcement", data => {
+  socket.on("join_room_announcement", (data) => {
     socket.off("join_room_announcement");
     data.gameCode = gameCode;
     data.pid = pid;
