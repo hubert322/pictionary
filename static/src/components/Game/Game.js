@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import { socket } from "../../utils/socket";
 import { sendEnterGame } from "./GameApiSocket";
@@ -23,6 +23,7 @@ function Game() {
   const [endGameData, setEndGameData] = useState(null);
   const [selectedWord, setSelectedWord] = useState(null);
   const [currRound, setCurrRound] = useState(1);
+  const chatRoomRef = useRef(null);
   let history = useHistory();
 
   function onBackRoom() {
@@ -56,16 +57,6 @@ function Game() {
   useEffect(() => {
     sendEnterGame(gameCode);
   }, []);
-
-  useEffect(() => {
-    socket.on("player_disconnect", data => {
-      setPlayers(players.filter(player => player._id !== data.player._id));
-    });
-
-    return () => {
-      socket.off("player_disconnect");
-    };
-  }, [players]);
 
   useEffect(() => {
     socket.on("next_artist_announcement", data => {
@@ -128,6 +119,33 @@ function Game() {
     };
   }, []);
 
+  useEffect(() => {
+    socket.on("disconnect_announcement", data => {
+      console.log(data);
+    });
+
+    return () => {
+      socket.off("disconnect_announcement");
+    };
+  }, []);
+
+  useEffect(() => {
+    socket.on("disconnect_announcement", data => {
+      console.log(data);
+      setPlayers(data.players);
+      setRankings(data.rankings);
+      console.log(chatRoomRef);
+      console.log(chatRoomRef.current);
+      let message = `${data.playerName} has disconnected`;
+      let status = "Disconnected";
+      chatRoomRef.current.addMessage(message, status);
+    });
+
+    return () => {
+      socket.off("disconnect_announcement");
+    };
+  }, [chatRoomRef]);
+
   return (
     <div className="Game">
       <Link to="/" className="GameTitleLink">
@@ -171,6 +189,7 @@ function Game() {
             gameCode={gameCode}
             pid={pid}
             addGuessedCorrectPid={addGuessedCorrectPid}
+            ref={chatRoomRef}
           />
         </div>
       </div>

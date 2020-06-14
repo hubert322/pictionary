@@ -110,6 +110,17 @@ function Room() {
     };
   }, [gameCode, pid, players, history]);
 
+  useEffect(() => {
+    socket.on("disconnect_announcement", data => {
+      console.log(data);
+      setPlayers(data.players);
+    });
+
+    return () => {
+      socket.off("disconnect_announcement");
+    };
+  }, []);
+
   return (
     <div className="Room">
       <Link to="/" className="RoomTitleLink">

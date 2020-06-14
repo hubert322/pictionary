@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  forwardRef,
+  useImperativeHandle
+} from "react";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
 import { socket } from "../../utils/socket";
@@ -26,7 +32,7 @@ const useStyles = makeStyles({
   }
 });
 
-function ChatRoom(props) {
+const ChatRoom = forwardRef((props, ref) => {
   const classes = useStyles();
   const { gameCode, pid, addGuessedCorrectPid } = props;
   const [message, setMessage] = useState("");
@@ -35,10 +41,14 @@ function ChatRoom(props) {
   const messageArea = useRef(null);
   const messageTextField = useRef(null);
 
-  function addMessage(message, isCorrect) {
+  useImperativeHandle(ref, () => ({
+    addMessage: addMessage
+  }));
+
+  function addMessage(message, status) {
     let newMessage = {
       message: message,
-      isCorrect: isCorrect
+      status: status
     };
     setMessages(messages => [...messages, newMessage]);
     scroll();
@@ -59,7 +69,9 @@ function ChatRoom(props) {
 
   useEffect(() => {
     socket.on("send_message_announcement", data => {
-      addMessage(`${data.player.playerName}: ${data.message}`, false);
+      let message = `${data.player.playerName}: ${data.message}`;
+      let status = "";
+      addMessage(message, status);
     });
 
     return () => {
@@ -69,7 +81,9 @@ function ChatRoom(props) {
 
   useEffect(() => {
     socket.on("correct_word_announcement", data => {
-      addMessage(`${data.player.playerName} has guessed the word!`, true);
+      let message = `${data.player.playerName} has guessed the word!`;
+      let status = "Correct";
+      addMessage(message, status);
       addGuessedCorrectPid(data.player._id);
     });
 
@@ -92,15 +106,13 @@ function ChatRoom(props) {
   }
 
   return (
-    <Panel className="ChatRoom">
+    <Panel className="ChatRoom" ref={ref}>
       <div className="ChatRoomMessageArea" ref={messageArea}>
         {messages.map((message, index) => (
           <p
             // eslint-disable-next-line react/no-array-index-key
             key={`msg${index}`}
-            className={`ChatRoomMessage ${
-              message.isCorrect ? "ChatRoomCorrectMessage" : ""
-            }`}
+            className={`ChatRoomMessage ChatRoomMessage${message.status}`}
           >
             {message.message}
           </p>
@@ -117,7 +129,9 @@ function ChatRoom(props) {
       />
     </Panel>
   );
-}
+});
+
+ChatRoom.displayName = "ChatRoom";
 
 ChatRoom.propTypes = {
   gameCode: PropTypes.string.isRequired,

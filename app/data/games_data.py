@@ -62,6 +62,13 @@ def get_all_players_in_game(game_code: str):
         return doc["players"]
     return []
 
+def update(game_code: str, update_data: list):
+    games_collection.update_one({"_id": game_code},
+        {
+            "$set": update_data
+        }
+    )
+
 def update_playing_status(game_code: str, is_playing: str):
     games_collection.update_one({"_id": game_code}, 
         {

@@ -9,7 +9,6 @@ def get_pid() -> str:
     PID_GENERATE_LIMIT = 10
     for counter in range(0, PID_GENERATE_LIMIT):
         pid = "".join(secrets.choice(PID_STR_RANGE) for i in range(0, PID_LENGTH))
-        print(pid)
         if not _pid_exists(players_data.get_player(pid)):
             return pid
     return ""

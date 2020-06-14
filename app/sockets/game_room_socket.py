@@ -1,9 +1,10 @@
-from flask import Blueprint
-from flask_socketio import SocketIO, emit, join_room
-from ..services import game_room_service, player_service
-from . import socketio
+from flask import Blueprint, request
+from flask_socketio import SocketIO, emit, join_room, rooms
+from ..services import game_room_service, player_service, game_logic_service
+from . import socketio, clients
 
 game_room_socket_blueprint = Blueprint("game_room_socket", __name__)
+
 
 @socketio.on("send_join_room")
 def join_room_handler(data):
@@ -17,13 +18,14 @@ def join_room_handler(data):
         socketio.emit("join_room_success")
         join_room_announcement(data)
 
+
 @socketio.on("send_new_room")
 def new_room_handler(data):
     pid = data["pid"]
     player_name = data["playerName"]
     game_code = game_room_service.get_game_code()
     if game_code == "":
-        socketio.emit("new_room_error");
+        socketio.emit("new_room_error")
     else:
         game_room_service.register_game_code(game_code, pid)
         socketio.emit("new_room_success", {
@@ -32,12 +34,14 @@ def new_room_handler(data):
         data["gameCode"] = game_code
         join_room_announcement(data)
 
+
 def join_room_announcement(data):
     game_code = data["gameCode"]
     pid = data["pid"]
     player_name = data["playerName"]
     game_room_service.join_game(game_code, pid)
     join_room(game_code)
+    clients[request.sid] = data
     player_service.update_player_name(pid, player_name)
     players = game_room_service.get_all_players_in_game(game_code)
     owner_pid = game_room_service.get_game_owner_pid(game_code)
@@ -45,3 +49,19 @@ def join_room_announcement(data):
         "players": players,
         "ownerPid": owner_pid
     }, broadcast=True, room=game_code)
+
+
+@socketio.on("disconnect")
+def disconnect_handler():
+    if request.sid in clients:
+        client = clients[request.sid]
+        game_code = client["gameCode"]
+        pid = client["pid"]
+        player_name = client["playerName"]
+        game_room_service.remove_player(game_code, pid)
+        players, rankings = game_logic_service.get_players_and_rankings(game_code, False)
+        socketio.emit("disconnect_announcement", {
+            "players": players,
+            "rankings": rankings,
+            "playerName": player_name
+        })

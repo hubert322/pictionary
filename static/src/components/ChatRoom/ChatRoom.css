@@ -31,8 +31,18 @@
   margin: 0px;
 }
 
-.ChatRoomCorrectMessage {
+.ChatRoomMessageCorrect {
   color: rgb(35, 231, 17);
+  font-weight: 500;
+}
+
+.ChatRoomMessageConnected {
+  color: rgb(49, 117, 218);
+  font-weight: 500;
+}
+
+.ChatRoomMessageDisconnected {
+  color: rgb(231, 74, 54);
   font-weight: 500;
 }
 
