@@ -1,6 +1,6 @@
 import secrets
 import string
-from typing import List
+from typing import Dict
 from ..data import players_data
 
 def get_pid() -> str:
@@ -9,11 +9,12 @@ def get_pid() -> str:
     PID_GENERATE_LIMIT = 10
     for counter in range(0, PID_GENERATE_LIMIT):
         pid = "".join(secrets.choice(PID_STR_RANGE) for i in range(0, PID_LENGTH))
+        print(pid)
         if not _pid_exists(players_data.get_player(pid)):
             return pid
     return ""
 
-def get_player(pid: str) -> List:
+def get_player(pid: str) -> Dict:
     return players_data.get_player(pid)
 
 def register_player(pid: str) -> None:
@@ -23,4 +24,4 @@ def update_player_name(pid: str, player_name: str) -> None:
     players_data.update_player_name(pid, player_name)
 
 def _pid_exists(player) -> bool:
-    return player is not None
+    return player != {}

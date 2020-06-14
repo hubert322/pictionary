@@ -10,7 +10,7 @@ def create_player(pid: str):
 
 def get_player(pid: str):
     if players_collection.count_documents({"_id": pid}, limit=1) == 0:
-        return None
+        return {}
     players = players_collection.find({"_id": pid})
     return players[0]
 

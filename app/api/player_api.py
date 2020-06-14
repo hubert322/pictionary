@@ -11,3 +11,11 @@ def new_player():
 
     player_service.register_player(pid)
     return jsonify({"pid": pid})
+
+@player_api.route("/api/player/isValid", methods=["POST"])
+def is_valid_player():
+    pid = request.json["pid"]
+    player = player_service.get_player(pid)
+    return jsonify({
+        "isValid": pid != {}
+    })
