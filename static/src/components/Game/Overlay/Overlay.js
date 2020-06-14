@@ -136,7 +136,7 @@ Overlay.propTypes = {
   endTurnData: PropTypes.objectOf(
     PropTypes.oneOfType([PropTypes.array, PropTypes.string])
   ),
-  endGameData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.arrayl])),
+  endGameData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.array])),
   onBackRoom: PropTypes.func.isRequired
 };
 

@@ -19,7 +19,7 @@ function Game() {
   const [timer, setTimer] = useState(drawTime);
   const [rankings, setRankings] = useState(new Array(players.length).fill(1));
   const [endTurnData, setEndTurnData] = useState(null);
-  const [guessedCorrectPid, setGuessedCorrectPid] = useState(null);
+  const [guessedCorrectPids, setGuessedCorrectPids] = useState({});
   const [endGameData, setEndGameData] = useState(null);
   const [selectedWord, setSelectedWord] = useState(null);
   const [currRound, setCurrRound] = useState(1);
@@ -37,29 +37,20 @@ function Game() {
     sendJoinGame(gameCode, pid, getPlayerName(), history);
   }
 
-  function updatePlayersScore() {
-    if (endTurnData === null) {
-      return;
-    }
-
+  function updatePlayersScore(players) {
     setPlayers(
-      players.map((player, index) => {
-        const newPlayer = endTurnData.players[index];
-        player["score"] = newPlayer.score + newPlayer.earnedScore;
+      players.map(player => {
+        player.score = player.score + player.earnedScore;
         return player;
       })
     );
+  }
 
-    function getScore(score) {
-      return score ? score : 0;
-    }
-    const sortedScores = players
-      .map(player => getScore(player.score))
-      .sort()
-      .reverse();
-    setRankings(
-      players.map(player => sortedScores.indexOf(getScore(player.score)) + 1)
-    );
+  function addGuessedCorrectPid(pid) {
+    setGuessedCorrectPids(guessedCorrectPids => {
+      guessedCorrectPids[pid] = true;
+      return guessedCorrectPids;
+    });
   }
 
   useEffect(() => {
@@ -79,12 +70,14 @@ function Game() {
   useEffect(() => {
     socket.on("next_artist_announcement", data => {
       console.log("got next artist");
-      updatePlayersScore();
+      console.log(data);
+      updatePlayersScore(data.players);
+      setRankings(data.rankings);
       setEndTurnData(null);
       setSelectedWord(null);
       setArtist(data.artist);
       setWords(data.words);
-      setGuessedCorrectPid(null);
+      setGuessedCorrectPids({});
       setCurrRound(data.currRound);
     });
 
@@ -171,13 +164,13 @@ function Game() {
             pid={pid}
             ownerPid={ownerPid}
             artistPid={artist !== null ? artist._id : null}
-            guessedCorrectPid={guessedCorrectPid}
+            guessedCorrectPids={guessedCorrectPids}
             rankings={rankings}
           />
           <ChatRoom
             gameCode={gameCode}
             pid={pid}
-            setGuessedCorrectPid={setGuessedCorrectPid}
+            addGuessedCorrectPid={addGuessedCorrectPid}
           />
         </div>
       </div>

@@ -2,6 +2,7 @@ from typing import List, Dict, Tuple
 from ..services import player_service, word_service, game_room_service
 from ..data import games_data
 
+
 def game_init(game_code: str, rounds: int) -> None:
     game = games_data.get_game(game_code)
     for player in game["players"]:
@@ -16,9 +17,11 @@ def game_init(game_code: str, rounds: int) -> None:
     game["currRound"] = 1
     games_data.update_game(game_code, game)
 
+
 def can_start_game(game_code: str) -> bool:
     game = games_data.update_and_get_enter_game_count(game_code)
     return game["enterGameCount"] == len(game["players"])
+
 
 def get_next_turn(game_code: str) -> Tuple:
     game = games_data.get_game(game_code)
@@ -34,8 +37,10 @@ def get_next_turn(game_code: str) -> Tuple:
 
     return next_artist, next_words, game["currRound"]
 
+
 def register_selected_word(game_code: str, selected_word: str) -> None:
     games_data.update_selected_word(game_code, selected_word)
+
 
 def is_end_game(game_code: str) -> bool:
     game = games_data.get_game(game_code)
@@ -46,7 +51,8 @@ def is_end_game(game_code: str) -> bool:
         games_data.update_curr_round(game_code, game["currRound"])
     return False
 
-def get_players_and_rankings(game_code: str, is_end_game) -> Tuple:
+
+def get_players_and_rankings(game_code: str, is_end_game: bool) -> Tuple:
     players = game_room_service.get_all_players_in_game(game_code)
     players.sort(key=lambda player: player["score"], reverse=True)
     rankings = [1 for _ in range(0, len(players))]
@@ -57,19 +63,23 @@ def get_players_and_rankings(game_code: str, is_end_game) -> Tuple:
         rankings[i] = currRanking
     return players, rankings
 
+
 def get_selected_word(game_code: str) -> str:
     game = games_data.get_game(game_code)
     return game["selectedWord"]
+
 
 def set_end_game(game_code: str) -> None:
     games_data.update_players(game_code, [])
     games_data.update_playing_status(game_code, False)
 
+
 def _get_next_artist(game) -> Dict:
     artist_index = game["artistIndex"]
     pid = game["players"][artist_index]["_id"]
-    
+
     return player_service.get_player(pid)
+
 
 def _get_next_words(game) -> List:
     prev_words = game["words"]
@@ -80,6 +90,7 @@ def _get_next_words(game) -> List:
         if _are_valid_words(next_words, prev_words):
             return next_words
     return []
+
 
 def _are_valid_words(next_words: List[str], prev_words: List) -> bool:
     for word in next_words:

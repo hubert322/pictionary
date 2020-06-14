@@ -14,7 +14,7 @@ function PlayerList(props) {
     pid,
     ownerPid,
     artistPid,
-    guessedCorrectPid,
+    guessedCorrectPids,
     rankings
   } = props;
   const { width } = useWindowSize();
@@ -35,8 +35,9 @@ function PlayerList(props) {
           className="PlayersListPlayer"
           key={_id}
           style={{
-            backgroundColor:
-              _id === guessedCorrectPid ? "rgb(35, 231, 17)" : "transparent"
+            backgroundColor: guessedCorrectPids.hasOwnProperty(_id)
+              ? "rgb(35, 231, 17)"
+              : "transparent"
           }}
         >
           <div className="PlayersListPlayerRankingIcon">
@@ -71,13 +72,12 @@ PlayerList.propTypes = {
   pid: PropTypes.string.isRequired,
   ownerPid: PropTypes.string.isRequired,
   artistPid: PropTypes.string,
-  guessedCorrectPid: PropTypes.string,
+  guessedCorrectPids: PropTypes.objectOf(PropTypes.bool).isRequired,
   rankings: PropTypes.arrayOf(PropTypes.number).isRequired
 };
 
 PlayerList.defaultProps = {
-  artistPid: null,
-  guessedCorrectPid: null
+  artistPid: null
 };
 
 export default PlayerList;
