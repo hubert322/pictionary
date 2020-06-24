@@ -20,13 +20,21 @@ def register_game_code(game_code: str, pid: str) -> None:
     games_data.create_game(game_code, pid)
 
 
-def can_join_game(game_code: str) -> bool:
+def can_join_game(game_code: str, pid: str) -> bool:
     game = games_data.get_game(game_code)
-    return _game_code_exists(game) and not game["isPlaying"]
+    return _game_code_exists(game)
 
 
 def join_game(game_code: str, pid: str) -> None:
-    games_data.add_player_to_game(game_code, pid)
+    game = games_data.get_game(game_code)
+    index = get_index_of_player(game["players"], pid)
+    if index == -1:
+        games_data.add_player_to_game(game_code, pid)
+    else:
+            game["players"].append(game["players"].pop(index))
+            games_data.update(game_code, {
+                "players": game["players"]
+            })
 
 
 def get_all_players_in_game(game_code: str) -> List:
@@ -38,22 +46,17 @@ def get_game_owner_pid(game_code: str) -> str:
     return game["ownerPid"]
 
 
-def remove_player(game_code: str, pid: str) -> None:
+def get_game_is_playing(game_code):
     game = games_data.get_game(game_code)
-    for i, player in enumerate(game["players"]):
-        if player["_id"] == pid:
-            if len(game["players"]) == 2:
-                # end game
-                pass
-            game["players"].pop(i)
-            break
-
-    update_data = {
-        "ownerPid": game["players"][0]["_id"],
-        "players": game["players"]
-    }
-    games_data.update(game_code, update_data)
+    return game["isPlaying"]
 
 
 def _game_code_exists(game) -> bool:
     return game is not None
+
+
+def get_index_of_player(players, pid):
+    for i, player in enumerate(players):
+        if player["_id"] == pid:
+            return i
+    return -1

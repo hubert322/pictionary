@@ -1,7 +1,7 @@
-from flask import Blueprint
+from flask import Blueprint, request
 from flask_socketio import SocketIO, emit, join_room
 from ..services import game_logic_service, game_room_service, game_message_service, timer_service
-from . import socketio
+from . import socketio, clients
 
 game_logic_socket_blueprint = Blueprint("game_logic_socket", __name__)
 
@@ -20,6 +20,7 @@ def play_game_handler(data):
 def send_enter_game_handler(data):
     game_code = data["gameCode"]
     if game_logic_service.can_start_game(game_code):
+        game_logic_service.set_is_playing(game_code, True)
         next_artist_announcement(data)
 
 
@@ -51,13 +52,41 @@ def next_artist_announcement(data):
 
 def end_game_announcement(data):
     game_code = data["gameCode"]
-    players, rankings = game_logic_service.get_players_and_rankings(
-        game_code, True)
+    if "players" not in data or "rankings" not in data:
+        players, rankings = game_logic_service.get_players_and_rankings(
+            game_code, True)
+    else:
+        players = data["players"]
+        rankings = data["rankings"]
     game_logic_service.set_end_game(game_code)
     socketio.emit("end_game_announcement", {
         "players": players,
         "rankings": rankings
     })
+
+
+@socketio.on("disconnect")
+def disconnect_handler():
+    if request.sid in clients:
+        client = clients[request.sid]
+        game_code = client["gameCode"]
+        pid = client["pid"]
+        player_name = client["playerName"]
+        clients.pop(request.sid)
+        no_more_players = game_logic_service.remove_player(game_code, pid)
+        players, rankings = game_logic_service.get_players_and_rankings(
+            game_code, False)
+        socketio.emit("disconnect_announcement", {
+            "players": players,
+            "rankings": rankings,
+            "playerName": player_name
+        })
+        if no_more_players:
+            end_game_announcement({
+                "gameCode": game_code,
+                "players": players,
+                "rankings": rankings
+            })
 
 
 def _finished_guessing(game_code):

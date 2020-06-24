@@ -25,7 +25,9 @@ def add_player_to_game(game_code: str, pid: str):
             "$push": 
             {
                 "players": {
-                    "_id": pid
+                    "_id": pid,
+                    "score": 0,
+                    "earnedScore": 0
                 }
             }
         }
