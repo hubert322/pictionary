@@ -5,9 +5,6 @@ from ..data import games_data
 
 def game_init(game_code: str, rounds: int) -> None:
     game = games_data.get_game(game_code)
-    for player in game["players"]:
-        player["score"] = 0
-    game["isPlaying"] = True
     game["selectedWord"] = ""
     game["artistIndex"] = -1
     game["words"] = []
@@ -20,7 +17,13 @@ def game_init(game_code: str, rounds: int) -> None:
 
 def can_start_game(game_code: str) -> bool:
     game = games_data.update_and_get_enter_game_count(game_code)
-    return game["enterGameCount"] == len(game["players"])
+    return not game["isPlaying"] and game["enterGameCount"] == len(game["players"])
+
+
+def set_is_playing(game_code: str, is_playing):
+    games_data.update(game_code, {
+        "isPlaying": is_playing
+    })
 
 
 def get_next_turn(game_code: str) -> Tuple:
@@ -72,6 +75,23 @@ def get_selected_word(game_code: str) -> str:
 def set_end_game(game_code: str) -> None:
     games_data.update_players(game_code, [])
     games_data.update_playing_status(game_code, False)
+
+
+def remove_player(game_code: str, pid: str) -> bool:
+    game = games_data.get_game(game_code)
+    for i, player in enumerate(game["players"]):
+        if player["_id"] == pid:
+            if len(game["players"]) <= 2:
+                return True
+            game["players"].pop(i)
+            break
+
+    update_data = {
+        "ownerPid": game["players"][0]["_id"],
+        "players": game["players"]
+    }
+    games_data.update(game_code, update_data)
+    return False
 
 
 def _get_next_artist(game) -> Dict:

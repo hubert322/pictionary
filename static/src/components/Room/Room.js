@@ -96,6 +96,7 @@ function Room() {
 
   useEffect(() => {
     socket.on("play_game_announcement", () => {
+      console.log("YO");
       history.push(`/game?gameCode=${gameCode}`, {
         gameCode: gameCode,
         pid: pid,
