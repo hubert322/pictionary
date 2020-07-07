@@ -22,7 +22,8 @@ def register_game_code(game_code: str, pid: str) -> None:
 
 def can_join_game(game_code: str, pid: str) -> bool:
     game = games_data.get_game(game_code)
-    return _game_code_exists(game)
+    # disabling joining mid game for now
+    return _game_code_exists(game) and not game["isPlaying"]
 
 
 def join_game(game_code: str, pid: str) -> None:
