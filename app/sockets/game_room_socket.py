@@ -14,7 +14,7 @@ def join_room_handler(data):
 
     if not game_room_service.can_join_game(game_code, pid):
         socketio.emit("join_room_error")
-    else:   
+    else:
         socketio.emit("join_room_success")
         join_room_announcement(data)
 
@@ -35,6 +35,28 @@ def new_room_handler(data):
         join_room_announcement(data)
 
 
+@socketio.on("send_rounds")
+def rounds_handler(data):
+    game_code = data["gameCode"]
+    rounds = data["rounds"]
+    game_room_service.set_rounds(game_code, rounds)
+    if rounds in (3, 5, 10):
+        socketio.emit("rounds_announcement", {
+            "rounds": rounds
+        }, brodcast=True, room=game_code)
+
+
+@socketio.on("send_draw_time")
+def rounds_handler(data):
+    game_code = data["gameCode"]
+    draw_time = data["drawTime"]
+    game_room_service.set_draw_time(game_code, draw_time)
+    if draw_time in (30, 60, 90):
+        socketio.emit("draw_time_announcement", {
+            "drawTime": draw_time
+        }, brodcast=True, room=game_code)
+
+
 def join_room_announcement(data):
     game_code = data["gameCode"]
     pid = data["pid"]
@@ -43,13 +65,11 @@ def join_room_announcement(data):
     join_room(game_code)
     clients[request.sid] = data
     player_service.update_player_name(pid, player_name)
-    players = game_room_service.get_all_players_in_game(game_code)
-    owner_pid = game_room_service.get_game_owner_pid(game_code)
-    socketio.emit("join_room_announcement", {
-        "players": players,
-        "ownerPid": owner_pid,
-    }, broadcast=True, room=game_code)
+    game = game_room_service.get_game(game_code)
+    params = ["players", "ownerPid", "rounds", "drawTime"]
+    data = {param: game[param] for param in params}
+    socketio.emit("join_room_announcement", data, broadcast=True, room=game_code)
 
-    if game_room_service.get_game_is_playing(game_code):
+    if game["isPlaying"]:
         print("is playing")
         socketio.emit("play_game_announcement", room=game_code)

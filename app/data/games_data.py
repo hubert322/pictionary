@@ -10,7 +10,9 @@ def create_game(game_code: str, owner_pid: str):
         "_id": game_code,
         "ownerPid": owner_pid,
         "players": [],
-        "isPlaying": False
+        "isPlaying": False,
+        "rounds": 3,
+        "drawTime": 60
     })
 
 def get_game(game_code: str):

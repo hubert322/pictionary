@@ -8,7 +8,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useWindowSize } from "../../utils/hooks";
 import { socket } from "../../utils/socket";
 import { mediumDeviceMinWidth } from "../../utils/const";
-import { sendPlayGame } from "./RoomApiSocket";
+import { sendPlayGame, sendRounds, sendDrawTime } from "./RoomApiSocket";
 import Panel from "../Panel/Panel";
 import "../App/App.css";
 import "./Room.css";
@@ -78,21 +78,41 @@ function Room() {
 
   //   return tmp;
   // });
-  const [rounds, setRounds] = useState(3);
-  const [drawTime, setDrawTime] = useState("60s");
+  const [rounds, setRounds] = useState(state.rounds);
+  const [drawTime, setDrawTime] = useState(state.drawTime.toString() + "s");
   const { width } = useWindowSize();
   const history = useHistory();
 
   useEffect(() => {
     socket.on("join_room_announcement", data => {
       setPlayers(data.players);
-      setOwnerPid(ownerPid);
+      setOwnerPid(data.ownerPid);
     });
 
     return () => {
       socket.off("join_room_announcement");
     };
   }, []);
+
+  useEffect(() => {
+    socket.on("rounds_announcement", data => {
+      setRounds(data.rounds);
+    });
+
+    return () => {
+      socket.off("rounds_announcement");
+    };
+  });
+
+  useEffect(() => {
+    socket.on("draw_time_announcement", data => {
+      setDrawTime(data.drawTime.toString() + "s");
+    });
+
+    return () => {
+      socket.off("draw_time_announcement");
+    };
+  });
 
   useEffect(() => {
     socket.on("play_game_announcement", () => {
@@ -161,7 +181,7 @@ function Room() {
               native
               label="Rounds"
               value={rounds}
-              onChange={e => setRounds(e.target.value)}
+              onChange={e => sendRounds(gameCode, e.target.value)}
               inputProps={{ id: "roundsSelector" }}
             >
               <option>3</option>
@@ -174,12 +194,12 @@ function Room() {
             className={classes.formControl}
             disabled={pid !== ownerPid}
           >
-            <InputLabel htmlFor="roundsSelector">Draw Time</InputLabel>
+            <InputLabel htmlFor="drawTimeSelector">Draw Time</InputLabel>
             <Select
               native
-              label="Rounds"
+              label="Draw Time"
               value={drawTime}
-              onChange={e => setDrawTime(e.target.value)}
+              onChange={e => sendDrawTime(gameCode, e.target.value)}
               inputProps={{ id: "drawTime" }}
             >
               <option>30s</option>

@@ -38,6 +38,12 @@ def join_game(game_code: str, pid: str) -> None:
             })
 
 
+def get_game(game_code: str):
+    game = games_data.get_game(game_code)
+    game["players"] = games_data.get_all_players_in_game(game_code)
+    return game
+
+
 def get_all_players_in_game(game_code: str) -> List:
     return games_data.get_all_players_in_game(game_code)
 
@@ -50,6 +56,18 @@ def get_game_owner_pid(game_code: str) -> str:
 def get_game_is_playing(game_code):
     game = games_data.get_game(game_code)
     return game["isPlaying"]
+
+
+def set_rounds(game_code, rounds):
+    games_data.update(game_code, {
+        "rounds": rounds
+    })
+
+
+def set_draw_time(game_code, draw_time):
+    games_data.update(game_code, {
+        "drawTime": draw_time
+    })
 
 
 def _game_code_exists(game) -> bool:
