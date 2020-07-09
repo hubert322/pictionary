@@ -132,13 +132,14 @@ function Room() {
   }, [gameCode, pid, players, history]);
 
   useEffect(() => {
-    socket.on("disconnect_announcement", data => {
+    socket.on("room_disconnect_announcement", data => {
       console.log(data);
       setPlayers(data.players);
+      setOwnerPid(data.ownerPid);
     });
 
     return () => {
-      socket.off("disconnect_announcement");
+      socket.off("room_disconnect_announcement");
     };
   }, []);
 

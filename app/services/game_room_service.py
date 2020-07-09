@@ -48,12 +48,12 @@ def get_all_players_in_game(game_code: str) -> List:
     return games_data.get_all_players_in_game(game_code)
 
 
-def get_game_owner_pid(game_code: str) -> str:
+def get_owner_pid(game_code: str) -> str:
     game = games_data.get_game(game_code)
     return game["ownerPid"]
 
 
-def get_game_is_playing(game_code):
+def is_playing(game_code):
     game = games_data.get_game(game_code)
     return game["isPlaying"]
 
@@ -68,6 +68,23 @@ def set_draw_time(game_code, draw_time):
     games_data.update(game_code, {
         "drawTime": draw_time
     })
+
+
+def remove_player(game_code, pid):
+    game = games_data.get_game(game_code)
+    for i, player in enumerate(game["players"]):
+        if player["_id"] == pid:
+            if len(game["players"]) <= 1:
+                return True
+            game["players"].pop(i)
+            break
+
+    update_data = {
+        "ownerPid": game["players"][0]["_id"],
+        "players": game["players"]
+    }
+    games_data.update(game_code, update_data)
+    return False
 
 
 def _game_code_exists(game) -> bool:

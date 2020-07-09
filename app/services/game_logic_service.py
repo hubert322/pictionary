@@ -77,11 +77,12 @@ def set_end_game(game_code: str) -> None:
     games_data.update_playing_status(game_code, False)
 
 
-def remove_player(game_code: str, pid: str) -> bool:
+def remove_player(game_code: str, pid: str, is_playing: bool) -> bool:
     game = games_data.get_game(game_code)
+    player_min = 2 if is_playing else 1
     for i, player in enumerate(game["players"]):
         if player["_id"] == pid:
-            if len(game["players"]) <= 2:
+            if len(game["players"]) <= player_min:
                 return True
             game["players"].pop(i)
             break

@@ -73,20 +73,29 @@ def disconnect_handler():
         pid = client["pid"]
         player_name = client["playerName"]
         clients.pop(request.sid)
-        no_more_players = game_logic_service.remove_player(game_code, pid)
-        players, rankings = game_logic_service.get_players_and_rankings(
-            game_code, False)
-        socketio.emit("disconnect_announcement", {
-            "players": players,
-            "rankings": rankings,
-            "playerName": player_name
-        })
-        if no_more_players:
-            end_game_announcement({
-                "gameCode": game_code,
+        is_playing = game_room_service.is_playing(game_code)
+        no_more_players = game_logic_service.remove_player(game_code, pid, is_playing)
+        if is_playing:
+            players, rankings = game_logic_service.get_players_and_rankings(
+                game_code, False)
+            socketio.emit("disconnect_announcement", {
                 "players": players,
-                "rankings": rankings
-            })
+                "rankings": rankings,
+                "playerName": player_name
+            }, broadcast=True, room=game_code)
+            if no_more_players:
+                end_game_announcement({
+                    "gameCode": game_code,
+                    "players": players,
+                    "rankings": rankings
+                })
+        elif not no_more_players:
+            players = game_room_service.get_all_players_in_game(game_code)
+            ownerPid = game_room_service.get_owner_pid(game_code)
+            socketio.emit("room_disconnect_announcement", {
+                "players": players,
+                "ownerPid": ownerPid
+            }, broadcast=True, room=game_code)
 
 
 def _finished_guessing(game_code):
