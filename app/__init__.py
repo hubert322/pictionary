@@ -29,7 +29,7 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+    cors = CORS(app, resources={r"/api/*": {"origins": "https://pictionary.live"}})
     socketio.init_app(app, cors_allowed_origins="*", async_handlers=True)
 
     # @app.route('/')
