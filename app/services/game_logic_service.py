@@ -3,17 +3,17 @@ from ..services import player_service, word_service, game_room_service
 from ..data import games_data
 
 
-def game_init(game_code: str, rounds: int) -> None:
+def game_init(game_code: str) -> Dict:
     game = games_data.get_game(game_code)
     game["selectedWord"] = ""
     game["artistIndex"] = -1
     game["words"] = []
     game["guessedCorrectPlayers"] = []
     game["enterGameCount"] = 0
-    game["maxRounds"] = rounds
     game["currRound"] = 1
+    game["isPlaying"] = True
     games_data.update_game(game_code, game)
-
+    return game
 
 def can_start_game(game_code: str) -> bool:
     game = games_data.update_and_get_enter_game_count(game_code)
@@ -47,9 +47,11 @@ def register_selected_word(game_code: str, selected_word: str) -> None:
 
 def is_end_game(game_code: str) -> bool:
     game = games_data.get_game(game_code)
+    if len(game["players"]) == 1:
+        return True
     if game["artistIndex"] == len(game["players"]) - 1:
         game["currRound"] += 1
-        if game["currRound"] > game["maxRounds"]:
+        if game["currRound"] > game["rounds"]:
             return True
         games_data.update_curr_round(game_code, game["currRound"])
     return False
@@ -79,20 +81,28 @@ def set_end_game(game_code: str) -> None:
 
 def remove_player(game_code: str, pid: str, is_playing: bool) -> bool:
     game = games_data.get_game(game_code)
-    player_min = 2 if is_playing else 1
+    player_min = 1 if is_playing else 0
+    if game["players"][game["artistIndex"]]["_id"] == pid:
+        game["artistIndex"] -= 1
+
     for i, player in enumerate(game["players"]):
         if player["_id"] == pid:
-            if len(game["players"]) <= player_min:
-                return True
             game["players"].pop(i)
             break
 
-    update_data = {
-        "ownerPid": game["players"][0]["_id"],
-        "players": game["players"]
-    }
+    no_more_players = len(game["players"]) <= player_min
+    if no_more_players:
+        update_data = {
+            "players": game["players"]
+        }
+    else:
+        update_data = {
+            "artistIndex": game["artistIndex"],
+            "ownerPid": game["players"][0]["_id"],
+            "players": game["players"]
+        }
     games_data.update(game_code, update_data)
-    return False
+    return no_more_players
 
 
 def _get_next_artist(game) -> Dict:

@@ -8,7 +8,12 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useWindowSize } from "../../utils/hooks";
 import { socket } from "../../utils/socket";
 import { mediumDeviceMinWidth } from "../../utils/const";
-import { sendPlayGame, sendRounds, sendDrawTime } from "./RoomApiSocket";
+import {
+  sendEnterRoom,
+  sendPlayGame,
+  sendRounds,
+  sendDrawTime
+} from "./RoomApiSocket";
 import Panel from "../Panel/Panel";
 import "../App/App.css";
 import "./Room.css";
@@ -61,9 +66,9 @@ const useStyles = makeStyles({
 function Room() {
   const classes = useStyles();
   const state = useLocation().state;
-  const { gameCode, pid } = state;
-  const [players, setPlayers] = useState(state.players);
-  const [ownerPid, setOwnerPid] = useState(state.ownerPid);
+  const { gameCode, pid, playerName } = state;
+  const [players, setPlayers] = useState([]);
+  const [ownerPid, setOwnerPid] = useState("");
   // const { gameCode } = state;
   // const pid = 0;
   // const [ownerPid, setOwnerPid] = useState(1);
@@ -78,13 +83,18 @@ function Room() {
 
   //   return tmp;
   // });
-  const [rounds, setRounds] = useState(state.rounds);
-  const [drawTime, setDrawTime] = useState(state.drawTime.toString() + "s");
+  const [rounds, setRounds] = useState(3);
+  const [drawTime, setDrawTime] = useState(60 + "s");
   const { width } = useWindowSize();
   const history = useHistory();
 
   useEffect(() => {
+    sendEnterRoom(gameCode, pid, playerName);
+  }, []);
+
+  useEffect(() => {
     socket.on("join_room_announcement", data => {
+      console.log(data);
       setPlayers(data.players);
       setOwnerPid(data.ownerPid);
     });
@@ -102,7 +112,7 @@ function Room() {
     return () => {
       socket.off("rounds_announcement");
     };
-  });
+  }, []);
 
   useEffect(() => {
     socket.on("draw_time_announcement", data => {
@@ -112,7 +122,7 @@ function Room() {
     return () => {
       socket.off("draw_time_announcement");
     };
-  });
+  }, []);
 
   useEffect(() => {
     socket.on("play_game_announcement", () => {
@@ -129,7 +139,7 @@ function Room() {
     return () => {
       socket.off("play_game_announcement");
     };
-  }, [gameCode, pid, players, history]);
+  }, [gameCode, pid, players, ownerPid, drawTime, history]);
 
   useEffect(() => {
     socket.on("room_disconnect_announcement", data => {
@@ -213,7 +223,7 @@ function Room() {
             className="Button RoomPlayButton"
             onClick={() => {
               if (players.length > 1) {
-                sendPlayGame(gameCode, rounds, drawTime);
+                sendPlayGame(gameCode);
               }
             }}
             disabled={pid !== ownerPid || players.length <= 1}

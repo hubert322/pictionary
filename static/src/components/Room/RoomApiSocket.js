@@ -1,11 +1,16 @@
 import { socket } from "../../utils/socket";
 
-export function sendPlayGame(gameCode, rounds, drawTime) {
-  drawTime = parseInt(drawTime.slice(0, -1));
-  socket.emit("send_play_game", {
+export function sendEnterRoom(gameCode, pid, playerName) {
+  socket.emit("send_enter_room", {
     gameCode: gameCode,
-    rounds: rounds,
-    drawTime: drawTime
+    pid: pid,
+    playerName: playerName
+  });
+}
+
+export function sendPlayGame(gameCode) {
+  socket.emit("send_play_game", {
+    gameCode: gameCode
   });
 }
 

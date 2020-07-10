@@ -5,17 +5,17 @@ import { serverBaseUrl } from "../../utils/const";
 export function sendJoinGame(gameCode, pid, playerName, history) {
   gameCode = gameCode.toLowerCase();
   socket.emit("send_join_room", {
-    gameCode: gameCode,
-    pid: pid,
-    playerName: playerName
+    gameCode: gameCode
   });
 
   socket.on("join_room_success", data => {
     socket.off("join_room_success");
-    onJoinRoomAnnouncement(gameCode, pid, history);
+    socket.off("join_room_error");
+    enterRoom(gameCode, pid, playerName, history);
   });
 
   socket.on("join_room_error", data => {
+    socket.off("join_room_success");
     socket.off("join_room_error");
     alert("join room error");
   });
@@ -23,24 +23,26 @@ export function sendJoinGame(gameCode, pid, playerName, history) {
 
 export function sendNewGame(pid, playerName, history) {
   socket.emit("send_new_room", {
-    pid: pid,
-    playerName: playerName
+    pid: pid
   });
 
   socket.on("new_room_success", data => {
     socket.off("new_room_success");
-    onJoinRoomAnnouncement(data.gameCode, pid, history);
+    socket.off("new_room_error");
+    enterRoom(data.gameCode, pid, playerName, history);
   });
 
   socket.on("new_room_error", data => {
     alert("new room error");
     console.log(data);
+    socket.off("new_room_success");
     socket.off("new_room_error");
   });
 }
 
 export async function getPid() {
   let pid = localStorage.getItem("pid");
+  pid = null; // debug
   if (pid != null) {
     try {
       let data = {
@@ -73,11 +75,18 @@ export async function getPid() {
   }
 }
 
-function onJoinRoomAnnouncement(gameCode, pid, history) {
-  socket.on("join_room_announcement", data => {
-    socket.off("join_room_announcement");
-    data.gameCode = gameCode;
-    data.pid = pid;
-    history.push(`/room?gameCode=${gameCode}`, data);
-  });
+function enterRoom(gameCode, pid, playerName, history) {
+  let data = {
+    gameCode: gameCode,
+    pid: pid,
+    playerName: playerName
+  };
+  console.log(data);
+  history.push(`/room?gameCode=${gameCode}`, data);
+  // socket.on("join_room_announcement", data => {
+  //   socket.off("join_room_announcement");
+  //   data.gameCode = gameCode;
+  //   data.pid = pid;
+  //   history.push(`/room?gameCode=${gameCode}`, data);
+  // });
 }

@@ -11,8 +11,9 @@ import "./Game.css";
 
 function Game() {
   const state = useLocation().state;
-  const { gameCode, pid, ownerPid, drawTime } = state;
+  const { gameCode, pid, drawTime } = state;
   const [players, setPlayers] = useState(state.players);
+  const [ownerPid, setOwnerPid] = useState(state.ownerPid);
   const [artist, setArtist] = useState(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [words, setWords] = useState([]);
@@ -120,29 +121,17 @@ function Game() {
   }, []);
 
   useEffect(() => {
-    socket.on("disconnect_announcement", data => {
-      console.log(data);
-    });
-
-    return () => {
-      socket.off("disconnect_announcement");
-    };
-  }, []);
-
-  useEffect(() => {
-    socket.on("disconnect_announcement", data => {
-      console.log(data);
+    socket.on("game_disconnect_announcement", data => {
       setPlayers(data.players);
       setRankings(data.rankings);
-      console.log(chatRoomRef);
-      console.log(chatRoomRef.current);
+      setOwnerPid(data.ownerPid);
       let message = `${data.playerName} has disconnected`;
       let status = "Disconnected";
       chatRoomRef.current.addMessage(message, status);
     });
 
     return () => {
-      socket.off("disconnect_announcement");
+      socket.off("game_disconnect_announcement");
     };
   }, [chatRoomRef]);
 
