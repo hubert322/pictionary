@@ -7,10 +7,10 @@ This project is created using React, Flask, MongoDB, and <span>Socket.IO</span>
 
 ## Demo
 Allow players to join the same room
-![](join-game.gif)
+![](./demo/join-game.gif)
 
 Synchronized drawing with various features
-![](draw.gif)
+![](./dem/odraw.gif)
 
 Chatroom feature
-![](message.gif)
+![](./demo/message.gif)
