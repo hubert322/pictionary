@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 from flask_socketio import SocketIO, emit, join_room
-from ..services import game_room_service, player_service
-from . import socketio, clients
+from ..services import game_room_service, player_service, client_service
+from . import socketio
 
 game_room_socket_blueprint = Blueprint("game_room_socket", __name__)
 
@@ -37,7 +37,7 @@ def enter_room_handler(data):
     player_name = data["playerName"]
     game_room_service.join_game(game_code, pid)
     join_room(game_code)
-    clients[request.sid] = data
+    client_service.update_client(request.sid, data)
     player_service.update_player_name(pid, player_name)
     game = game_room_service.get_game(game_code)
     params = ["players", "ownerPid", "rounds", "drawTime"]

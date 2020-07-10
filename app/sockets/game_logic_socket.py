@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 from flask_socketio import SocketIO, emit, join_room
-from ..services import game_logic_service, game_room_service, game_message_service, timer_service, player_service
-from . import socketio, clients
+from ..services import game_logic_service, game_room_service, game_message_service, timer_service, player_service, client_service
+from . import socketio
 
 game_logic_socket_blueprint = Blueprint("game_logic_socket", __name__)
 
@@ -69,9 +69,9 @@ def end_game_announcement(data):
 
 @socketio.on("disconnect")
 def disconnect_handler():
-    if request.sid in clients:
-        client = clients[request.sid]
-        clients.pop(request.sid)
+    client = client_service.get_client(request.sid)
+    if client:
+        client_service.delete_client(request.sid)
 
         at_home = "gameCode" not in client
         if at_home:

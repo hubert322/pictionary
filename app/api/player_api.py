@@ -1,6 +1,5 @@
 from flask import Blueprint, request, jsonify
 from ..services import player_service
-from ..sockets import clients
 
 player_api = Blueprint("player_api", __name__)
 

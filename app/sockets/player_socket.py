@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 from flask_socketio import SocketIO, emit, join_room
-from ..services import player_service
-from . import socketio, clients
+from ..services import player_service, client_service
+from . import socketio
 
 player_socket_blueprint = Blueprint("player_socket", __name__)
 
@@ -13,7 +13,11 @@ def get_pid_handler(data):
         emit("get_pid_error")
     else:
         player_service.register_player(pid)
-        clients[request.sid] = {"pid": pid}
+        data = {
+            "_id": request.sid,
+            "pid": pid
+        }
+        client_service.create_client(data)
         emit("get_pid_success", {
             "pid": pid
         })
