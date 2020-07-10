@@ -97,6 +97,8 @@ function Room() {
       console.log(data);
       setPlayers(data.players);
       setOwnerPid(data.ownerPid);
+      setRounds(data.rounds);
+      setDrawTime(data.drawTime.toString() + "s");
     });
 
     return () => {
