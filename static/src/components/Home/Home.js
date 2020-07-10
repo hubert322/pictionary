@@ -10,7 +10,8 @@ import "./Home.css";
 
 function Home() {
   const [gameCode, setGameCode] = useState("");
-  const [playerName, setPlayerName] = useLocalStorage("playerName", "");
+  // const [playerName, setPlayerName] = useLocalStorage("playerName", "");
+  const [playerName, setPlayerName] = useState("");
   const [playerNameLabel, setPlayerNameLabel] = useState("Name");
   const [hasPlayerNameError, setHasPlayerNameError] = useState(false);
   const [gameCodeLabel, setGameCodeLabel] = useState("Game Code");

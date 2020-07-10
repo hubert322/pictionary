@@ -6,7 +6,6 @@ from .api import blueprints
 from .sockets import socketio, blueprints
 
 app = Flask(__name__, instance_relative_config=True)
-# app = Flask(__name__, instance_relative_config=True, static_url_path="", static_folder="../static/build")
 
 def create_app(test_config=None):
     # create and configure the app
@@ -29,12 +28,9 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    # cors = CORS(app, resources={r"/api/*": {"origins": "https://pictionary.live"}})
-    # socketio.init_app(
-    #     app, cors_allowed_origins="https://pictionary.live", async_handlers=True)
-
-    # @app.route('/')
-    # def root():
-    #     return app.send_static_file('index.html')
+    cors = CORS(app, resources={
+                r"/api/*": {"origins": "https://pictionary.live"}})
+    socketio.init_app(
+        app, cors_allowed_origins="https://pictionary.live", async_handlers=True)
 
     return app

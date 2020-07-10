@@ -41,33 +41,34 @@ export function sendNewGame(pid, playerName, history) {
 }
 
 export async function getPid() {
-  let pid = localStorage.getItem("pid");
-  pid = null; // debug
-  if (pid != null) {
-    try {
-      let data = {
-        pid: pid
-      };
-      let response = await axios.post(
-        serverBaseUrl + "/api/player/isValid",
-        data
-      );
-      console.log(response.data);
-      if (response.data["isValid"]) {
-        return pid;
-      }
-    } catch (e) {
-      alert("Error checking pid. Please reload the page.");
-      console.log(e.response);
-      return null;
-    }
-  }
+  // let pid = localStorage.getItem("pid");
+  // if (pid != null) {
+  //   try {
+  //     let data = {
+  //       pid: pid
+  //     };
+  //     let response = await axios.post(
+  //       serverBaseUrl + "/api/player/isValid",
+  //       data
+  //     );
+  //     console.log(response.data);
+  //     if (response.data["isValid"]) {
+  //       return pid;
+  //     }
+  //   } catch (e) {
+  //     alert("Error checking pid. Please reload the page.");
+  //     console.log(e.response);
+  //     return null;
+  //   }
+  // }
+
+  // Change to not storing pid
   try {
     let response = await axios.post(serverBaseUrl + "/api/player/new");
     console.log(response.data);
-    pid = response.data["pid"];
-    localStorage.setItem("pid", pid);
-    return pid;
+    // pid = response.data["pid"];
+    // localStorage.setItem("pid", pid);
+    return response.data["pid"];
   } catch (e) {
     alert("Failed to get pid. Please reload the page.");
     console.log(e.response);
