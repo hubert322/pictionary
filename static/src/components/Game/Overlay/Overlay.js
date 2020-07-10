@@ -28,8 +28,6 @@ function Overlay(props) {
     //   });
     // }
 
-    console.log(endGameData);
-
     return (
       <div className="OverlayEndTurnResultsContainer">
         {endGameData.players.map((player, index) => (
