@@ -10,7 +10,7 @@ Allow players to join the same room
 ![](./demo/join-game.gif)
 
 Synchronized drawing with various features
-![](./dem/odraw.gif)
+![](./demo/draw.gif)
 
 Chatroom feature
 ![](./demo/message.gif)
