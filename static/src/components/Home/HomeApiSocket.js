@@ -40,7 +40,9 @@ export function sendNewGame(pid, playerName, history) {
   });
 }
 
-export async function getPid() {
+export function sendGetPid() {
+  socket.emit("send_get_pid", {});
+
   // let pid = localStorage.getItem("pid");
   // if (pid != null) {
   //   try {
@@ -63,17 +65,18 @@ export async function getPid() {
   // }
 
   // Change to not storing pid
-  try {
-    let response = await axios.post(serverBaseUrl + "/api/player/new");
-    console.log(response.data);
-    // pid = response.data["pid"];
-    // localStorage.setItem("pid", pid);
-    return response.data["pid"];
-  } catch (e) {
-    alert("Failed to get pid. Please reload the page.");
-    console.log(e.response);
-    return null;
-  }
+  // try {
+  //   let response = await axios.post(serverBaseUrl + "/api/player/new");
+  //   console.log(response.data);
+  //   // pid = response.data["pid"];
+  //   // localStorage.setItem("pid", pid);
+  //   return response.data["pid"];
+  // } catch (e) {
+  //   alert("Failed to get pid.");
+  //   console.log(e.response);
+  //   window.location.reload();
+  //   return null;
+  // }
 }
 
 function enterRoom(gameCode, pid, playerName, history) {

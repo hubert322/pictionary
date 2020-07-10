@@ -11,9 +11,9 @@ def join_room_handler(data):
     game_code = data["gameCode"]
 
     if not game_room_service.can_join_game(game_code):
-        socketio.emit("join_room_error")
+        emit("join_room_error")
     else:
-        socketio.emit("join_room_success")
+        emit("join_room_success")
 
 
 @socketio.on("send_new_room")
@@ -21,10 +21,10 @@ def new_room_handler(data):
     pid = data["pid"]
     game_code = game_room_service.get_game_code()
     if game_code == "":
-        socketio.emit("new_room_error")
+        emit("new_room_error")
     else:
         game_room_service.register_game_code(game_code, pid)
-        socketio.emit("new_room_success", {
+        emit("new_room_success", {
             "gameCode": game_code
         })
         data["gameCode"] = game_code
@@ -42,12 +42,13 @@ def enter_room_handler(data):
     game = game_room_service.get_game(game_code)
     params = ["players", "ownerPid", "rounds", "drawTime"]
     data = {param: game[param] for param in params}
-    socketio.emit("join_room_announcement", data,
-                  broadcast=True, room=game_code)
+    emit("join_room_announcement", data, room=game_code)
 
-    if game["isPlaying"]:
-        print("is playing")
-        socketio.emit("play_game_announcement", room=game_code)
+    # used to join mid-game
+    # currently not available
+    # if game["isPlaying"]:
+    #     print("is playing")
+    #     emit("play_game_announcement", room=game_code)
 
 
 @socketio.on("send_rounds")
@@ -56,7 +57,7 @@ def rounds_handler(data):
     rounds = data["rounds"]
     game_room_service.set_rounds(game_code, rounds)
     if rounds in (3, 5, 10):
-        socketio.emit("rounds_announcement", {
+        emit("rounds_announcement", {
             "rounds": rounds
         }, brodcast=True, room=game_code)
 
@@ -67,7 +68,7 @@ def rounds_handler(data):
     draw_time = data["drawTime"]
     game_room_service.set_draw_time(game_code, draw_time)
     if draw_time in (30, 60, 90):
-        socketio.emit("draw_time_announcement", {
+        emit("draw_time_announcement", {
             "drawTime": draw_time
         }, brodcast=True, room=game_code)
 

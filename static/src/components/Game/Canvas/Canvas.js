@@ -407,7 +407,7 @@ function Canvas(props) {
     if (selectedWord === null) {
       clearCanvas(true);
     }
-  }, [artist]);
+  }, [selectedWord]);
 
   return (
     <Panel className="CanvasContainer">

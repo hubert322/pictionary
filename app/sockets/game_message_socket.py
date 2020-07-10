@@ -14,16 +14,16 @@ def send_message_handler(data):
     if game_message_service.is_correct_word(game_code, pid, message):
         _guessed_correct_word(game_code, pid, player)
     else:
-        socketio.emit("send_message_announcement", {
+        emit("send_message_announcement", {
             "player": player,
             "message": message
-        }, broadcast=True, room=game_code)
+        }, room=game_code)
 
 def _guessed_correct_word(game_code, pid, player):
     game_message_service.set_player_earned_score(game_code, pid)
-    socketio.emit("correct_word_announcement", {
+    emit("correct_word_announcement", {
         "player": player
-    }, broadcast=True, room=game_code)
+    }, room=game_code)
     game_message_service.register_player_guessed_correct(game_code, pid)
     if game_message_service.has_finished_guessing(game_code):
         game_message_service.set_artist_mega_score(game_code)

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
-import { sendJoinGame, sendNewGame, getPid } from "./HomeApiSocket";
+import { sendJoinGame, sendNewGame, sendGetPid } from "./HomeApiSocket";
 import { useLocalStorage } from "../../utils/hooks";
+import { socket } from "../../utils/socket";
 import Panel from "../Panel/Panel";
 import TextField from "../TextField/TextField";
 import Footer from "./Footer/Footer";
@@ -47,10 +48,31 @@ function Home() {
     }
   }
 
+  // useEffect(() => {
+  //   getPid().then(pidValue => {
+  //     setPid(pidValue);
+  //   });
+  // }, []);
+
   useEffect(() => {
-    getPid().then(pidValue => {
-      setPid(pidValue);
+    sendGetPid();
+  }, []);
+
+  useEffect(() => {
+    socket.on("get_pid_success", data => {
+      setPid(data.pid);
     });
+
+    return () => socket.off("get_pid_success");
+  }, []);
+
+  useEffect(() => {
+    socket.on("get_pid_error", data => {
+      alert("Failed to get pid. Please reload the page.");
+      // window.location.reload();
+    });
+
+    return () => socket.off("get_pid_error");
   }, []);
 
   return (

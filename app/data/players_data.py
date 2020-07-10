@@ -22,3 +22,6 @@ def update_player_name(pid: str, player_name: str):
             }
         }
     )
+
+def delete_player(pid: str):
+    players_collection.delete_one({"_id": pid})

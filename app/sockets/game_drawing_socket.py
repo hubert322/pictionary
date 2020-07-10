@@ -8,32 +8,32 @@ game_drawing_socket_blueprint = Blueprint("game_drawing_socket", __name__)
 def send_draw_line_handler(data):
     game_code = data["gameCode"]
     line = data["line"]
-    socketio.emit("draw_line_announcement", {
+    emit("draw_line_announcement", {
         "line": line
-    }, broadcast=True, room=game_code, include_self=False)
+    }, room=game_code, include_self=False)
 
 @socketio.on("send_draw_dot")
 def send_draw_dot_handler(data):
     game_code = data["gameCode"]
     dot = data["dot"]
-    socketio.emit("draw_dot_announcement", {
+    emit("draw_dot_announcement", {
         "dot": dot
-    }, broadcast=True, room=game_code, include_self=False)
+    }, room=game_code, include_self=False)
 
 @socketio.on("send_draw_fill")
 def send_draw_fill_handler(data):
     game_code = data["gameCode"]
     fill = data["fill"]
-    socketio.emit("draw_fill_announcement", {
+    emit("draw_fill_announcement", {
         "fill": fill
-    }, broadcast=True, room=game_code, include_self=False)
+    }, room=game_code, include_self=False)
 
 @socketio.on("send_undo_canvas")
 def send_undo_canvas_handler(data):
     game_code = data["gameCode"]
-    socketio.emit("undo_canvas_announcement", {}, broadcast=True, room=game_code)
+    emit("undo_canvas_announcement", {}, room=game_code)
 
 @socketio.on("send_clear_canvas")
 def send_clear_canvas_handler(data):
     game_code = data["gameCode"]
-    socketio.emit("clear_canvas_announcement", {}, broadcast=True, room=game_code)
+    emit("clear_canvas_announcement", {}, room=game_code)

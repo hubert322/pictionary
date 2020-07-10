@@ -7,7 +7,7 @@ from .sockets import socketio, blueprints
 
 app = Flask(__name__, instance_relative_config=True)
 
-def create_app(test_config=None):
+def create_app(test_config=None, debug=False):
     # create and configure the app
     app.config.from_mapping(SECRET_KEY="dev")
     for blueprint in api.blueprints:
@@ -28,9 +28,13 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    # cors = CORS(app, resources={
-    #             r"/api/*": {"origins": "https://pictionary.live"}})
-    # socketio.init_app(
-    #     app, cors_allowed_origins="https://pictionary.live", async_handlers=True)
+    if debug:
+        cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+        socketio.init_app(app, cors_allowed_origins="*", async_handlers=True)
+    else:
+        cors = CORS(app, resources={
+                    r"/api/*": {"origins": "https://pictionary.live"}})
+        socketio.init_app(
+            app, cors_allowed_origins="https://pictionary.live", async_handlers=True)
 
     return app

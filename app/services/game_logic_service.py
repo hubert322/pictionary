@@ -102,6 +102,9 @@ def remove_player(game_code: str, pid: str, is_playing: bool) -> bool:
             "players": game["players"]
         }
     games_data.update(game_code, update_data)
+    players_service.delete_player(pid)
+    if no_more_players and not is_playing:
+        games_data.delete_game(game_code)
     return no_more_players
 
 
