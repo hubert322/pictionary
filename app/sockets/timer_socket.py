@@ -13,14 +13,14 @@ class Timer:
             self.time_count = self.draw_time
             self.is_drawing = True
             while self.time_count > 0 and self.is_drawing:
-                emit("timer_announcement", {
+                socketio.emit("timer_announcement", {
                     "time": self.time_count
                 }, room=self.game_code)
                 self.time_count -= 1
                 socketio.sleep(1)
 
             if self.is_drawing:
-                emit("timer_announcement", {
+                socketio.emit("timer_announcement", {
                     "time": 0
                 }, room=self.game_code)
                 game_logic_socket._finished_guessing(self.game_code)

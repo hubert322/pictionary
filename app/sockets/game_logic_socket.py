@@ -43,7 +43,7 @@ def next_artist_announcement(data):
     artist, words, curr_round = game_logic_service.get_next_turn(game_code)
     players, rankings = game_logic_service.get_players_and_rankings(
         game_code, False)
-    emit("next_artist_announcement", {
+    socketio.emit("next_artist_announcement", {
         "artist": artist,
         "words": words,
         "currRound": curr_round,
@@ -61,10 +61,10 @@ def end_game_announcement(data):
         players = data["players"]
         rankings = data["rankings"]
     game_logic_service.set_end_game(game_code)
-    emit("end_game_announcement", {
+    socketio.emit("end_game_announcement", {
         "players": players,
         "rankings": rankings
-    })
+    }, room=game_code)
 
 
 @socketio.on("disconnect")
@@ -82,20 +82,20 @@ def disconnect_handler():
             player_name = client["playerName"]
             is_playing = game_room_service.is_playing(game_code)
             owner_pid = game_room_service.get_owner_pid(game_code)
-            no_more_players = game_logic_service.remove_player(
+            players_length = game_logic_service.remove_player(
                 game_code, pid, is_playing)
             if is_playing:
                 _disconnect_game(game_code, pid, player_name,
-                                 owner_pid, no_more_players)
-            elif not no_more_players:
-                _disconnect_room(game_code, players, owner_pid)
+                                 owner_pid)
+            elif players_length > 0:
+                _disconnect_room(game_code)
 
 
 def _disconnect_home(pid):
     player_service.delete_player(pid)
 
 
-def _disconnect_game(game_code, pid, player_name, owner_pid, no_more_players):
+def _disconnect_game(game_code, pid, player_name, owner_pid):
     if pid == owner_pid:
         _finished_guessing(game_code)
     players, rankings = game_logic_service.get_players_and_rankings(
@@ -107,16 +107,16 @@ def _disconnect_game(game_code, pid, player_name, owner_pid, no_more_players):
         "ownerPid": owner_pid,
         "playerName": player_name
     }, room=game_code)
-    if no_more_players:
+    if len(players) <= 1:
         timer_service.stop_drawing_timer(game_code)
-        end_game_announcement({
-            "gameCode": game_code,
-            "players": players,
-            "rankings": rankings
-        })
+        # end_game_announcement({
+        #     "gameCode": game_code,
+        #     "players": players,
+        #     "rankings": rankings
+        # })
 
 
-def _disconnect_room(game_code, players, owner_pid):
+def _disconnect_room(game_code):
     players = game_room_service.get_all_players_in_game(game_code)
     owner_pid = game_room_service.get_owner_pid(game_code)
     emit("room_disconnect_announcement", {
@@ -130,7 +130,7 @@ def _finished_guessing(game_code):
     selected_word = game_logic_service.get_selected_word(game_code)
     players = game_room_service.get_all_players_in_game(game_code)
     isEndGame = game_logic_service.is_end_game(game_code)
-    emit("end_turn_announcement", {
+    socketio.emit("end_turn_announcement", {
         "players": players,
         "selectedWord": selected_word
     }, room=game_code)

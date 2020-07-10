@@ -15,6 +15,7 @@ def game_init(game_code: str) -> Dict:
     games_data.update_game(game_code, game)
     return game
 
+
 def can_start_game(game_code: str) -> bool:
     game = games_data.update_and_get_enter_game_count(game_code)
     return not game["isPlaying"] and game["enterGameCount"] == len(game["players"])
@@ -79,10 +80,9 @@ def set_end_game(game_code: str) -> None:
     games_data.update_playing_status(game_code, False)
 
 
-def remove_player(game_code: str, pid: str, is_playing: bool) -> bool:
+def remove_player(game_code: str, pid: str, is_playing: bool) -> int:
     game = games_data.get_game(game_code)
-    player_min = 1 if is_playing else 0
-    if game["players"][game["artistIndex"]]["_id"] == pid:
+    if is_playing and game["players"][game["artistIndex"]]["_id"] == pid:
         game["artistIndex"] -= 1
 
     for i, player in enumerate(game["players"]):
@@ -90,22 +90,20 @@ def remove_player(game_code: str, pid: str, is_playing: bool) -> bool:
             game["players"].pop(i)
             break
 
-    no_more_players = len(game["players"]) <= player_min
-    if no_more_players:
-        update_data = {
-            "players": game["players"]
-        }
-    else:
-        update_data = {
-            "artistIndex": game["artistIndex"],
-            "ownerPid": game["players"][0]["_id"],
-            "players": game["players"]
-        }
+    update_data = {
+        "players": game["players"]
+    }
+    if game["players"]:
+        update_data["ownerPid"] = game["players"][0]["_id"]
+    if is_playing:
+        update_data["artistIndex"] = game["artistIndex"]
+
     games_data.update(game_code, update_data)
-    players_service.delete_player(pid)
-    if no_more_players and not is_playing:
+    player_service.delete_player(pid)
+    if not game["players"]:
         games_data.delete_game(game_code)
-    return no_more_players
+
+    return len(game["players"])
 
 
 def _get_next_artist(game) -> Dict:

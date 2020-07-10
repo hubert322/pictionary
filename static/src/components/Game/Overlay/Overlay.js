@@ -27,6 +27,9 @@ function Overlay(props) {
     //     score: 3000
     //   });
     // }
+
+    console.log(endGameData);
+
     return (
       <div className="OverlayEndTurnResultsContainer">
         {endGameData.players.map((player, index) => (

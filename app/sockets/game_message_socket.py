@@ -21,7 +21,7 @@ def send_message_handler(data):
 
 def _guessed_correct_word(game_code, pid, player):
     game_message_service.set_player_earned_score(game_code, pid)
-    emit("correct_word_announcement", {
+    socketio.emit("correct_word_announcement", {
         "player": player
     }, room=game_code)
     game_message_service.register_player_guessed_correct(game_code, pid)
