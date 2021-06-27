@@ -33,8 +33,8 @@ def create_app(test_config=None, debug=False):
         socketio.init_app(app, cors_allowed_origins="*", async_handlers=True)
     else:
         cors = CORS(app, resources={
-                    r"/api/*": {"origins": "https://pictionary.live"}})
+                    r"/api/*": {"origins": "https://hubert322.github.io/pictionary"}})
         socketio.init_app(
-            app, cors_allowed_origins="https://pictionary.live", async_handlers=True)
+            app, cors_allowed_origins="https://hubert322.github.io/pictionary", async_handlers=True)
 
     return app
