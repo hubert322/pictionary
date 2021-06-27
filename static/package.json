@@ -2,7 +2,7 @@
   "name": "pictionary",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://hubert322.github.io/pictionary",
+  "homepage": "https://pictionary.huberthung.me",
   "dependencies": {
     "@material-ui/core": "^4.9.13",
     "animate.css": "^3.7.2",
