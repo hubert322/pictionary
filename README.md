@@ -1,6 +1,6 @@
 # Pictionary Live
 This is an online multiplayer version of pictionary. \
-Currently live at: [Pictionary Live](https://pictionary.huberthung.me) \
+~~Currently unavailable due to Heroku cancelling their free tier: [Pictionary Live](https://pictionary.huberthung.me)~~ \
 This project is created using React, Flask, MongoDB, and <span>Socket.IO</span>
 
 ## Demo
